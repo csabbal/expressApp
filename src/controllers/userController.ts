@@ -1,6 +1,7 @@
 import express from 'express';
 import { UserService } from '../services/userService';
 import { User } from '../types/User';
+import { logger } from '../utils/logger/logger';
 
 export class UserController {
     protected static _instance: UserController;
@@ -17,6 +18,7 @@ export class UserController {
     }
 
     public getAllUsers = async (req: express.Request, res: express.Response) => {
+        logger.info('[UserController][getAllUsers] called' )
         try {
             const users: User[] = await this.userService.getAllUsers();
             res.json(users);
