@@ -1,14 +1,12 @@
 import express from 'express';
 import { UserService } from '../services/userService';
 import { User } from '../types/User';
-import { logger } from '../utils/logger/logger';
+import { loggedMethod,logger } from '../utils/logger/logger';
 
 export class UserController {
     protected static _instance: UserController;
 
-    constructor(private userService: UserService) {
-        this.userService = userService;
-    }
+    constructor(private userService: UserService) {}
 
     static getInstance():UserController {
         if (!this._instance) {
@@ -17,8 +15,8 @@ export class UserController {
         return this._instance
     }
 
-    public getAllUsers = async (req: express.Request, res: express.Response) => {
-        logger.info('[UserController][getAllUsers] called' )
+    @loggedMethod('[UserController]')
+    public async getAllUsers(req: express.Request, res: express.Response){
         try {
             const users: User[] = await this.userService.getAllUsers();
             res.json(users);

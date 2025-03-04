@@ -24,7 +24,7 @@ const router = express.Router();
  *                     type: string
  *                     example: John Doe
  */
-router.get('/user', UserController.getInstance().getAllUsers);
+router.get('/user', (req,res)=>UserController.getInstance().getAllUsers(req,res));
 
 
 export default router
