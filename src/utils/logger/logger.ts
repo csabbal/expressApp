@@ -1,5 +1,6 @@
 import { createLogger, format, transports } from 'winston'
-import DailyLogRotate, { GeneralDailyRotateFileTransportOptions } from 'winston-daily-rotate-file'
+import DailyLogRotate from 'winston-daily-rotate-file'
+import LocalStorageClass from '../asyncLocalStorage/asyncLocalStorage'
 
 
 
@@ -13,7 +14,10 @@ class LoggerClass {
     format = format.combine(
         format.colorize(),
         format.timestamp(),
-        format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`)
+        format.printf(({ timestamp, level, message })=>{
+            const requestId = LocalStorageClass.getRequestId()
+            return `${timestamp} ${level} (${requestId}): ${message}`
+        })
     )
 
     init() {
