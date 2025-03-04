@@ -2,7 +2,8 @@ import { createLogger, format, transports } from 'winston'
 import { Request, Response, NextFunction } from 'express';
 import DailyLogRotate from 'winston-daily-rotate-file'
 import LocalStorageClass from '../asyncLocalStorage/asyncLocalStorage'
-
+import _  from 'lodash'
+import { safeStringify } from '../helper';
 
 
 export class LoggerClass {
@@ -68,7 +69,22 @@ export class LoggerClass {
         next()
     }
 
+    loggedMethod(context:string, info?:string) {
+        return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+            const targetMethod = descriptor.value
+            descriptor.value = function (...args: any[]) {
+              const withArgs = args?.length > 0 ? `is called with arguments ${safeStringify(args)}` : 'is called'
+              logger.info(`${context} [${propertyKey}] ${withArgs}`)
+              _.isUndefined(info) ?? logger.info(`${context} [${propertyKey}] ${info}`)
+              return targetMethod.apply(this, args)
+            }
+            return descriptor
+        };
+    }
 }
+
+
+export const loggedMethod = LoggerClass.getInstance().loggedMethod
 export const logger = LoggerClass.getInstance().logger
 export const logMiddleware = LoggerClass.getInstance().logMiddleware
 
