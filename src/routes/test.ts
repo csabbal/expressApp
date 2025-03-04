@@ -4,7 +4,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/user:
+ * /api/user/all:
  *   get:
  *     summary: Retrieve a list of users
  *     responses:
@@ -24,7 +24,24 @@ const router = express.Router();
  *                     type: string
  *                     example: John Doe
  */
-router.get('/user', (req,res)=>UserController.getInstance().getAllUsers(req,res));
+router.get('/user/all', (req, res, next) => UserController.getInstance().getAllUsers(req, res, next));
+
+/**
+ * @swagger
+ * /api/user/error:
+ *   get:
+ *     summary: Retrieve n error
+ *     responses:
+ *       200:
+ *         description: An error tester method
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: error
+ *               items:
+ *                 type: error
+ */
+router.get('/user/error', (req, res, next) => UserController.getInstance().getError(req, res, next));
 
 
 export default router

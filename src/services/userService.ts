@@ -14,4 +14,8 @@ export class UserService {
     public async getAllUsers(): Promise<User[]> {
         return Promise.resolve([{ id: '1', name: 'John Doe' }])
     }
+    @loggedMethod('[UserService]')
+    public async throwError(): Promise<void> {
+        throw new Error('somehting went wrong')
+    }
 }
