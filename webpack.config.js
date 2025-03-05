@@ -12,7 +12,8 @@ module.exports = {
   target: 'node',
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: 'index.js'
+    filename: 'index.js',
+    libraryTarget:'commonjs2'
   },
   resolve: {
     extensions: ['.ts', '.js'],
