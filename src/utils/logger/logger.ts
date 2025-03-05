@@ -1,10 +1,12 @@
-import { createLogger, format, transports } from 'winston'
+import { createLogger, format, transports, Logger } from 'winston'
+import { stringify } from 'flatted'
 import { Request, Response, NextFunction } from 'express';
 import DailyLogRotate from 'winston-daily-rotate-file'
 import LocalStorageClass from '../asyncLocalStorage/asyncLocalStorage'
-import _  from 'lodash'
+import _ from 'lodash'
 import { safeStringify } from '../helper';
 
+export type LoggerType = Logger
 
 export class LoggerClass {
     static _instance: LoggerClass
@@ -29,6 +31,19 @@ export class LoggerClass {
         }
         return this._instance
     }
+
+    public objectToString(obj: any): string {
+        if (typeof obj === 'undefined') return 'undefined'
+        let str = ''
+        try {
+            str = stringify(obj)
+        } catch (e) {
+            str = obj
+        }
+
+        return str
+    }
+
 
     init() {
         this.logger = createLogger({
@@ -62,21 +77,21 @@ export class LoggerClass {
         const { method, url } = req;
         this.logger.info(`--> ${method} ${url}`);
         res.on('finish', () => {
-            const duration = Date.now() - start; 
-            const { statusCode } = res; 
+            const duration = Date.now() - start;
+            const { statusCode } = res;
             this.logger.info(`<-- ${method} ${url} ${statusCode} - ${duration}ms`);
         });
         next()
     }
 
-    loggedMethod(context:string, info?:string) {
+    loggedMethod(context: string, info?: string) {
         return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
             const targetMethod = descriptor.value
             descriptor.value = function (...args: any[]) {
-              const withArgs = args?.length > 0 ? `is called with arguments ${safeStringify(args)}` : 'is called'
-              logger.info(`${context} [${propertyKey}] ${withArgs}`)
-              _.isUndefined(info) ?? logger.info(`${context} [${propertyKey}] ${info}`)
-              return targetMethod.apply(this, args)
+                const withArgs = args?.length > 0 ? `is called with arguments ${safeStringify(args)}` : 'is called'
+                logger.info(`${context} [${propertyKey}] ${withArgs}`)
+                _.isUndefined(info) ?? logger.info(`${context} [${propertyKey}] ${info}`)
+                return targetMethod.apply(this, args)
             }
             return descriptor
         };
@@ -87,5 +102,6 @@ export class LoggerClass {
 export const loggedMethod = LoggerClass.getInstance().loggedMethod
 export const logger = LoggerClass.getInstance().logger
 export const logMiddleware = LoggerClass.getInstance().logMiddleware
+export const objectToString = LoggerClass.getInstance().objectToString
 
 
