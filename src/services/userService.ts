@@ -1,4 +1,6 @@
+import { AppDataSource } from "../component/data/data-source";
 import { User } from "../types/User";
+import {User as UserEntity} from '../entities/User.entity'
 import { loggedMethod } from "../utils/logger/logger";
 
 export class UserService {
@@ -11,8 +13,9 @@ export class UserService {
         return this._instance
     }
     @loggedMethod('[UserService]')
-    public async getAllUsers(): Promise<User[]> {
-        return Promise.resolve([{ id: '1', name: 'John Doe' }])
+    public async getAllUsers(): Promise<UserEntity[]> {
+        const users = await AppDataSource.getRepository(UserEntity).find()
+        return users
     }
     @loggedMethod('[UserService]')
     public async throwError(): Promise<void> {
