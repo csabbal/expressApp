@@ -16,13 +16,15 @@ export class LoggerClass {
         this.init()
     }
 
+    printFunction = ({ timestamp, level, message }) => {
+        const requestId = LocalStorageClass.getRequestId()
+        return `${timestamp} ${level} (${requestId}): ${message}`
+    }
+
     format = format.combine(
         format.colorize(),
         format.timestamp(),
-        format.printf(({ timestamp, level, message }) => {
-            const requestId = LocalStorageClass.getRequestId()
-            return `${timestamp} ${level} (${requestId}): ${message}`
-        })
+        format.printf(this.printFunction.bind(this))
     )
 
     static getInstance(): LoggerClass {
