@@ -34,7 +34,7 @@ export class LoggerClass {
         return this._instance
     }
 
-    public objectToString(obj: any): string {
+    public static objectToString(obj: any): string {
         if (typeof obj === 'undefined') return 'undefined'
         let str = ''
         try {
@@ -104,6 +104,5 @@ export class LoggerClass {
 export const loggedMethod = LoggerClass.getInstance().loggedMethod
 export const logger = LoggerClass.getInstance().logger
 export const logMiddleware = LoggerClass.getInstance().logMiddleware
-export const objectToString = LoggerClass.getInstance().objectToString
 
 

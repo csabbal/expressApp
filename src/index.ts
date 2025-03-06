@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { AppDataSource, init } from './component/data/data-source';
+import { init } from './component/data/data-source';
 import express, { Application } from 'express';
 import dotenv from 'dotenv';
 import router from './routes/index'

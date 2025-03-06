@@ -10,7 +10,7 @@ export default class TypeORMLoggerClass implements Logger {
     try {
       if (_.isUndefined(parameters)) return paramStr + '-'
       if (_.isArray(parameters)) {
-        return paramStr + parameters.map(it => this.loggerComponent.objectToString(it))
+        return paramStr + parameters.map(it => LoggerClass.objectToString(it))
       } else {
         return paramStr + parameters
       }
