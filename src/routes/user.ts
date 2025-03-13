@@ -1,6 +1,30 @@
 import express from 'express';
 import { UserController } from '../controllers/userController';
+import requireJwt from '../component/auth/requireJwt';
+import passport from 'passport';
+import { logger } from '../utils/logger/logger';
+import { ExtractJwt } from 'passport-jwt';
+import axios from 'axios';
+import { register } from 'module';
 const router = express.Router();
+
+// Passport JWT Strategy
+const opts = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env.JWT_SECRET // This is not used for Google tokens, but kept for JWT strategy
+};
+
+// Middleware to validate Google access token
+const validateGoogleToken = async (req, res, next) => {
+  
+    logger.info('isAuthenticated:'+req.isAuthenticated())
+    if(req.isAuthenticated()){
+        next()
+    }else{
+        res.send('unauthorized')
+    }
+
+};
 
 /**
  * @swagger
@@ -24,7 +48,7 @@ const router = express.Router();
  *                     type: string
  *                     example: John Doe
  */
-router.get('/user/all', (req, res, next) => UserController.getInstance().getAllUsers(req, res, next));
+router.get('/all', validateGoogleToken, (req, res, next) => UserController.getInstance().getAllUsers(req, res, next));
 
 /**
  * @swagger
@@ -41,7 +65,7 @@ router.get('/user/all', (req, res, next) => UserController.getInstance().getAllU
  *               items:
  *                 type: error
  */
-router.get('/user/error', (req, res, next) => UserController.getInstance().getError(req, res, next));
+router.get('/error', (req, res, next) => UserController.getInstance().getError(req, res, next));
 
 
 export default router

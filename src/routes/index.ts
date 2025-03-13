@@ -1,5 +1,6 @@
 import express from 'express';
-import testRouter from './test'
+import userRouter from './user'
+import authRouter from './auth'
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 const router = express.Router()
@@ -21,8 +22,22 @@ const swaggerOptions = {
     apis: ['./src/routes/*'], // files containing annotations as above
 };
 
-//test endpoints
-router.use('/', testRouter)
+  /**
+ * @swagger
+ * /api/main:
+ *   get:
+ *     summary: logoumaint
+ *     responses:
+ *       200:
+ *         description: main
+ *          
+ */
+router.use('/main', (req: express.Request, res: express.Response, next:express.NextFunction) => {
+    res.send("welcome on the page" + req.user)
+})
+router.use('/user', userRouter)
+//auth
+router.use('/auth', authRouter)
 //swagger
 router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swaggerOptions)));
 export default router

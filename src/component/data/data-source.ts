@@ -3,7 +3,6 @@ import {CommandFailedEvent, CommandStartedEvent, CommandSucceededEvent} from 'mo
 import  mongoose from "mongoose";
 
 import * as dotenv from "dotenv";
-import TypeORMLoggerClass from "../../utils/logger/typeOrmLogger";
 import { logger, LoggerClass } from "../../utils/logger/logger";
 
 dotenv.config();
@@ -15,7 +14,7 @@ export async function init() {
     logger.info('mongo connection string: ' + connectionString)
 
     mongoose.connection.on('commandStarted',(data: CommandStartedEvent)=>{
-        logger.info("[db][commandStarted]"+LoggerClass.objectToString(data.command))
+        logger.info("[db][commandStarted]"+JSON.stringify(data.command))
     })
 
     mongoose.connection.on('commandFailed',(data: CommandFailedEvent)=>{
