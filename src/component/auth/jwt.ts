@@ -1,8 +1,8 @@
 import { Strategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 import express , { Request, Response, NextFunction } from "express";
 import { UserModel } from '../../entities/User.schema'; // mock user class
-import bcrypt from 'bcrypt';
 import { logger, LoggerClass } from '../../utils/logger/logger';
+import { Logger } from 'winston';
 
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -25,7 +25,7 @@ async function verify(payload: any, done: VerifiedCallback) {
 
     // try to find a User with the `id` in the JWT payload.
     const user = await UserModel.findOne({
-            id: payload.id,
+        googleId: payload.id,
     });
 
     // bad path: User is not found.
@@ -33,10 +33,14 @@ async function verify(payload: any, done: VerifiedCallback) {
         return done(null, false);
     }
 
+
+
+    const isMatch = user.jwtSecureCode === payload.jwtSecureCode
+    logger.info('isMatches: '+isMatch+' '+LoggerClass.objectToString([user.jwtSecureCode, payload.jwtSecureCode]))
     // compare User's jwtSecureCode with the JWT's `jwtSecureCode` that the 
     // request has.
     // bad path: bad JWT, it sucks.
-    if (!bcrypt.compareSync(user.jwtSecureCode, payload.jwtSecureCode)) {
+    if (!isMatch) {
         return done(null, false);
     }
 

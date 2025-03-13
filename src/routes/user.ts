@@ -48,7 +48,7 @@ const validateGoogleToken = async (req, res, next) => {
  *                     type: string
  *                     example: John Doe
  */
-router.get('/all', validateGoogleToken, (req, res, next) => UserController.getInstance().getAllUsers(req, res, next));
+router.get('/all', requireJwt, (req, res, next) => UserController.getInstance().getAllUsers(req, res, next));
 
 /**
  * @swagger

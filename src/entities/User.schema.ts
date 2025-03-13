@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import jwt from 'jsonwebtoken';
 import { User } from '../types/User'
 import { logger, LoggerClass } from '../utils/logger/logger';
 
@@ -28,8 +29,24 @@ const UserSchema = new mongoose.Schema({
   }, 
   accessToken: {
     type: String
-  }
+  },
+
+ 
 
 })
+
+
+UserSchema.methods.generateJWT = function () {
+  const token = jwt.sign(
+    {
+      expiresIn: '12h',
+      id: this.googleId,
+      email: this.email,
+      jwtSecureCode:this.jwtSecureCode
+    },
+    process.env.JWT_SECRET
+  );
+  return token;
+};
 
 export const UserModel = mongoose.model<User>('User', UserSchema)

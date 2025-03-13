@@ -31,7 +31,7 @@ router.get('/', passport.authenticate('google', { scope: ['profile', 'email'] })
  *         description: auth user via google
  *          
  */
-router.get('/callback', passport.authenticate('google', { scope: ['profile', 'email']  }), (req: any, res: any) => {
+router.get('/callback', passport.authenticate('google', { scope: ['profile', 'email'], session:false  }), (req: any, res: Response) => {
     // try {
     //   // we can use req.user because the GoogleStrategy that we've 
     //   // implemented in `google.ts` attaches the user
@@ -48,7 +48,12 @@ router.get('/callback', passport.authenticate('google', { scope: ['profile', 'em
   //     user: user // User info here
   // });
 
-  res.redirect('/api/user/all')
+  const token = req.user.generateJWT();
+  res.location('/api/user/all')
+    res.setHeader('Authorization', 'Bearer '+token)
+
+
+  res.status(302).end()
   });
 
   /**
