@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
-import jwt from 'jsonwebtoken';
 import { User } from '../types/User'
-import { logger, LoggerClass } from '../utils/logger/logger';
+import { hashValue } from '../utils/Crypt'
+import jwt from 'jsonwebtoken'
 
 const UserSchema = new mongoose.Schema({
   id: {
@@ -26,27 +26,19 @@ const UserSchema = new mongoose.Schema({
   jwtSecureCode: {
     required: true,
     type: String
-  }, 
-  accessToken: {
-    type: String
-  },
-
- 
-
+  }
 })
 
-
-UserSchema.methods.generateJWT = function () {
-  const token = jwt.sign(
-    {
+UserSchema.methods = {
+  generateJWT: async function (jwtSecret) {
+    const jwtData = {
       expiresIn: '12h',
-      id: this.googleId,
+      id: this.id,
       email: this.email,
-      jwtSecureCode:this.jwtSecureCode
-    },
-    process.env.JWT_SECRET
-  );
-  return token;
-};
+      jwtSecureCode: await hashValue(this.jwtSecureCode)
+    }
+    return jwt.sign(jwtData, jwtSecret)
+  }
+}
 
 export const UserModel = mongoose.model<User>('User', UserSchema)

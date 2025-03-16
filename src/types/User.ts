@@ -6,4 +6,5 @@ export interface User{
     profileId:string,
     jwtSecureCode:string,
     accessToken:string
+    generateJWT:()=>string 
 }

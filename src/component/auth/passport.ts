@@ -1,18 +1,24 @@
-// passport.ts
+import dotenv from 'dotenv';
+import express, { Application } from 'express';
 import passport from 'passport';
-import googleStrategy from './google';
-import jwtStrategy from './jwt';
+import googleStrategy from './googleStrategy';
+import jwtStrategy from './jwtStrategy';
+import app from '../../index';
+import session from 'express-session';
 
-// initialize passport with Google and JWT strategies
+dotenv.config();
+const { JWT_SECRET: jwtSecret } = process.env
+
 passport.use('google', googleStrategy);
 passport.use('jwt', jwtStrategy);
 
-// 🚀 Serialize user into session  
-passport.serializeUser((user, done) => {
-    done(null, user);
-});
-passport.deserializeUser((user, done) => {
-    done(null, user);
-});
+export const requireJwt = passport.authenticate('jwt', { session: false});
+export function initPassport(app:Application){
+    app.use(session({ secret: jwtSecret, resave: false, saveUninitialized: false, }));
+    app.use(passport.initialize())
+}
+
 
 export default passport;
+
+

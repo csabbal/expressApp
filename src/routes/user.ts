@@ -1,36 +1,15 @@
 import express from 'express';
 import { UserController } from '../controllers/userController';
-import requireJwt from '../component/auth/requireJwt';
-import passport from 'passport';
-import { logger } from '../utils/logger/logger';
-import { ExtractJwt } from 'passport-jwt';
-import axios from 'axios';
-import { register } from 'module';
+import {requireJwt} from '../component/auth/passport';
 const router = express.Router();
-
-// Passport JWT Strategy
-const opts = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET // This is not used for Google tokens, but kept for JWT strategy
-};
-
-// Middleware to validate Google access token
-const validateGoogleToken = async (req, res, next) => {
-  
-    logger.info('isAuthenticated:'+req.isAuthenticated())
-    if(req.isAuthenticated()){
-        next()
-    }else{
-        res.send('unauthorized')
-    }
-
-};
 
 /**
  * @swagger
  * /api/user/all:
  *   get:
  *     summary: Retrieve a list of users
+ *     security:
+ *        - BearerAuth: [] 
  *     responses:
  *       200:
  *         description: A list of users

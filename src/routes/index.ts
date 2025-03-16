@@ -3,11 +3,23 @@ import userRouter from './user'
 import authRouter from './auth'
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
-const router = express.Router()
+
+//initiate the router
+export const router = express.Router()
 // Swagger setup
+
+/** 
+* @swagger
+* components:
+*   securitySchemes:
+*     BearerAuth:
+*       type: http
+*       scheme: bearer
+*       bearerFormat: JWT
+*/
 const swaggerOptions = {
     swaggerDefinition: {
-        myapi: '3.0.0',
+        openapi: '3.0.0',
         info: {
             title: 'Express Node Fundamentals',
             version: '0.0.1',
@@ -22,6 +34,7 @@ const swaggerOptions = {
     apis: ['./src/routes/*'], // files containing annotations as above
 };
 
+
   /**
  * @swagger
  * /api/main:
@@ -29,7 +42,7 @@ const swaggerOptions = {
  *     summary: logoumaint
  *     responses:
  *       200:
- *         description: main
+ *         description: welcome page
  *          
  */
 router.use('/main', (req: express.Request, res: express.Response, next:express.NextFunction) => {

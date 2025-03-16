@@ -1,41 +1,37 @@
-import "reflect-metadata";
-import { init } from './component/data/data-source';
+import { initDataSource } from './component/data/index';
 import express, { Application } from 'express';
-import session from 'express-session';
 import dotenv from 'dotenv';
 import router from './routes/index'
 import AsyncLocalStorageClass from './utils/asyncLocalStorage/asyncLocalStorage';
-import { LoggerClass } from './utils/logger/logger';
+import { LoggerClass, logger } from './utils/logger/logger';
 import { errorHandlerMiddleware } from './utils/error/Error';
-import passport from "./component/auth/passport";
+import {initPassport} from './component/auth/passport'
 
-
-
-//For env File 
 dotenv.config();
+const { PORT: port } = process.env
 
-const app: Application = express();
-const port = process.env.PORT || 8000;
+// init express application
+const app: Application = express()
 
-app.use(session({  
-  secret: process.env.JWT_SECRET,  
-  resave: false,  
-  saveUninitialized: false,  
-}));  
-app.use(passport.initialize());  
-app.use(passport.session());
+// init Passport to authentication
+initPassport(app)
 
-
+// add the middlewares
 app.use(AsyncLocalStorageClass.requestIdMiddleware)
 app.use((req, res, next) => LoggerClass.getInstance().logMiddleware(req, res, next))
+
+// add the routes
 app.use('/api', router)
+
+// add the global error handling
 app.use(errorHandlerMiddleware)
 
-await init()
+// init the data source
+await initDataSource()
 
-
+// start the application
 app.listen(port, () => {
-  console.log(`Server is running at https://localhost:${port}`);
+  logger.info(`Server is running at https://localhost:${port}`);
 });
 
 export default app

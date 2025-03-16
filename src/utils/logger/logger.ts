@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 import DailyLogRotate from 'winston-daily-rotate-file'
 import LocalStorageClass from '../asyncLocalStorage/asyncLocalStorage'
 import _ from 'lodash'
-import { safeStringify } from '../helper';
+import { safeStringify } from '../StringManupilation';
 
 export type LoggerType = Logger
 
