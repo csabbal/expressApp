@@ -1,6 +1,6 @@
 import { Strategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
 import { checkValue } from '../../utils/Crypt'
-import { logger, LoggerClass } from '../../utils/logger/logger';
+import { loggedMethod, logger, LoggerClass } from '../../utils/logger/logger';
 import userRepository from '../../repositories/User.repository';
 
 const options = {
@@ -25,7 +25,9 @@ async function verify(payload: any, done: VerifiedCallback) {
     const user = await userRepository.findOne({ id: payload.id })
     if (!user) successfulVerification = false
 
-    const isMatch = checkValue(user.jwtSecureCode, payload.jwtSecureCode)
+    const isMatch = user.jwtSecureCode === payload.jwtSecureCode
+    //const isMatch = checkValue(user.jwtSecureCode, payload.jwtSecureCode)
+    logger.info('[jwt verify] checkValue ' + LoggerClass.objectToString([user.jwtSecureCode, payload.jwtSecureCode, isMatch]))
     if (!isMatch) successfulVerification = false
 
     if (!successfulVerification) {

@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { User, UserEntity } from '../types/User'
 import { hashValue } from '../utils/Crypt'
 import jwt from 'jsonwebtoken'
+import { logger } from '../utils/logger/logger'
 
 const UserSchema = new mongoose.Schema({
   id: {

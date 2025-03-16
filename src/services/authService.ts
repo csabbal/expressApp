@@ -1,5 +1,5 @@
 import { User } from "../types/User";
-import { loggedMethod, logger, LoggerClass } from "../utils/logger/logger";
+import { loggedMethod} from "../utils/logger/logger";
 import dotenv from 'dotenv';
 dotenv.config();
 const { JWT_SECRET: jwtSecret } = process.env

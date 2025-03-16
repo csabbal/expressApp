@@ -28,4 +28,5 @@ export class AuthController {
             res.redirect('http://localhost:8080');
         });
     }
+    
 }

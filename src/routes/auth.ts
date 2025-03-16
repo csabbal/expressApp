@@ -1,14 +1,27 @@
 
 import express from 'express';
-import passport from 'passport';
 import {AuthController} from '../controllers/authController'
-import {requireGoogleAuth} from '../providers/auth/passport';
+import {requireGoogleAuth, requireLocalAuth} from '../providers/auth/passport';
 const router = express.Router();
 const authController = AuthController.getInstance()
 
+
+
 /**
  * @swagger
- * /api/auth:
+ * /api/auth/local:
+ *   post:
+ *     summary: auth users
+ *     responses:
+ *       200:
+ *         description: auth user via local
+ *          
+ */
+router.post('/local', requireLocalAuth, (req, res, next) => authController.authCallback(req, res, next));
+
+/**
+ * @swagger
+ * /api/auth/google:
  *   get:
  *     summary: auth users
  *     responses:
@@ -20,7 +33,7 @@ router.get('/google', requireGoogleAuth);
 
 /**
  * @swagger
- * /api/auth/callback:
+ * /api/auth/google/callback:
  *   get:
  *     summary: callback after auth
  *     responses:
