@@ -1,5 +1,4 @@
-import { User, UserEntity } from "../types/User";
-import  {UserModel} from '../entities/User.schema'
+import { UserEntity } from "../types/User";
 import { loggedMethod } from "../utils/logger/logger";
 import userRepository from "../repositories/User.repository";
 

@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import { UserEntity } from '../types/User'
 import { UserModel } from '../entities/User.schema'
 
-class UserRepository {
+export class UserRepository {
 
     constructor(protected userModel: mongoose.Model<UserEntity>) { }
 

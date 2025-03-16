@@ -7,6 +7,7 @@ export interface UserEntity{
     name:string,
     googleId?:string,
     fullName:string,
+    password?:string,
     email:string,
     profileId?:string,
     jwtSecureCode:string,

@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { CommandFailedEvent, CommandStartedEvent, CommandSucceededEvent } from 'mongodb'
 import mongoose from "mongoose";
 import { logger, LoggerClass } from "../../utils/logger/logger";
-import { DataSource } from "../data/DataSource";
+import { DataSource } from "./DataSource";
 
 export default class MongoDataSource extends DataSource {
 

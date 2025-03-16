@@ -1,6 +1,6 @@
 import express from 'express';
 import { UserController } from '../controllers/userController';
-import {requireJwt} from '../component/auth/passport';
+import {requireJwt} from '../providers/auth/passport';
 const router = express.Router();
 
 /**

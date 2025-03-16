@@ -1,11 +1,11 @@
-import { initDataSource } from './component/data/index';
+import { initDataSource } from './providers/data/index';
 import express, { Application } from 'express';
 import dotenv from 'dotenv';
 import router from './routes/index'
 import AsyncLocalStorageClass from './utils/asyncLocalStorage/asyncLocalStorage';
 import { LoggerClass, logger } from './utils/logger/logger';
 import { errorHandlerMiddleware } from './utils/error/Error';
-import {initPassport} from './component/auth/passport'
+import {initPassport} from './providers/auth/passport'
 
 dotenv.config();
 const { PORT: port } = process.env
