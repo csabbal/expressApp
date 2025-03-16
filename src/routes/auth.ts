@@ -2,9 +2,10 @@
 import express from 'express';
 import passport from 'passport';
 import {AuthController} from '../controllers/authController'
+import {requireGoogleAuth} from '../providers/auth/passport';
 const router = express.Router();
 const authController = AuthController.getInstance()
-const googleOptions = { scope: ['profile', 'email'], session: false }
+
 /**
  * @swagger
  * /api/auth:
@@ -15,7 +16,7 @@ const googleOptions = { scope: ['profile', 'email'], session: false }
  *         description: auth user via google
  *          
  */
-router.get('/', passport.authenticate('google', googleOptions));
+router.get('/google', requireGoogleAuth);
 
 /**
  * @swagger
@@ -27,7 +28,7 @@ router.get('/', passport.authenticate('google', googleOptions));
  *         description: auth user via google
  *          
  */
-router.get('/callback', passport.authenticate('google', googleOptions), (req, res, next) => authController.authCallback(req, res, next));
+router.get('/google/callback', requireGoogleAuth, (req, res, next) => authController.authCallback(req, res, next));
 
 /**
 * @swagger
