@@ -1,8 +1,7 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
+import { User } from '../types/User';
 import { AuthService } from '../services/authService';
 import { loggedMethod, logger } from '../utils/logger/logger';
-import { BadRequestError } from '../utils/error/Error';
-
 export class AuthController {
     protected static _instance: AuthController;
 
@@ -16,16 +15,17 @@ export class AuthController {
     }
 
     @loggedMethod('[AuthController]')
-    public async auth(req: express.Request, res: express.Response, next: express.NextFunction) {
-        try {
-            await this.authService.auth();
-            res.json({success:true});
-        } catch (e) {
-            next(e)
-        }
+    public async authCallback(req: Request, res: Response, next: express.NextFunction) {
+        const user = req.user as User;
+        const token = await this.authService.callback(user)
+        res.json(token)
     }
 
     @loggedMethod('[AuthController]')
-    public async authCallback(req: express.Request, res: express.Response, next: express.NextFunction) {
+    public async logout(req: express.Request, res: express.Response, next: express.NextFunction) {
+        req.logout(function (err) {
+            if (err) { return next(err); }
+            res.redirect('http://localhost:8080');
+        });
     }
 }

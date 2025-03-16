@@ -1,6 +1,7 @@
-import { User } from "../types/User";
+import { User, UserEntity } from "../types/User";
 import  {UserModel} from '../entities/User.schema'
 import { loggedMethod } from "../utils/logger/logger";
+import userRepository from "../repositories/User.repository";
 
 export class UserService {
     protected static _instance: UserService;
@@ -12,8 +13,8 @@ export class UserService {
         return this._instance
     }
     @loggedMethod('[UserService]')
-    public async getAllUsers(): Promise<User[]> {
-        const users = await UserModel.find()
+    public async getAllUsers(): Promise<UserEntity[]> {
+        const users = await userRepository.find()
         return users
     }
     @loggedMethod('[UserService]')

@@ -35,7 +35,7 @@ const swaggerOptions = {
 };
 
 
-  /**
+/**
  * @swagger
  * /api/main:
  *   get:

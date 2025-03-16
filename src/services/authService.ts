@@ -1,12 +1,8 @@
 import { User } from "../types/User";
-import  {UserModel} from '../entities/User.schema'
 import { loggedMethod, logger, LoggerClass } from "../utils/logger/logger";
-
-const options = {
-    clientID: process.env.GOOGLE_CLIENT_ID || '',
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-    callbackURL: `${process.env.BE_BASE_URL}/api/auth/callback`,
-  };
+import dotenv from 'dotenv';
+dotenv.config();
+const { JWT_SECRET: jwtSecret } = process.env
 
 export class AuthService {
     protected static _instance: AuthService;
@@ -17,13 +13,10 @@ export class AuthService {
         }
         return this._instance
     }
+    
     @loggedMethod('[AuthService]')
-    public async auth(): Promise<void> {
-        logger.info('params'+LoggerClass.objectToString(options))
-    }
-
-    @loggedMethod('[AuthService]')
-    public async callback(data:{ id: string, jwtSecureCode: string }): Promise<void> {
-        logger.info('auth ok '+LoggerClass.objectToString(data))
+    public async callback(user:User): Promise<{token:string}> {
+        const token = await user.generateJWT(jwtSecret);
+        return {token}
     }
 }

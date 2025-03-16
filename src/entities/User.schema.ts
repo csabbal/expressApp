@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { User } from '../types/User'
+import { User, UserEntity } from '../types/User'
 import { hashValue } from '../utils/Crypt'
 import jwt from 'jsonwebtoken'
 
@@ -41,4 +41,4 @@ UserSchema.methods = {
   }
 }
 
-export const UserModel = mongoose.model<User>('User', UserSchema)
+export const UserModel = mongoose.model<UserEntity>('User', UserSchema)

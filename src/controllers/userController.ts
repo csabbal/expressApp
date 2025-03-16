@@ -1,8 +1,7 @@
 import express from 'express';
 import { UserService } from '../services/userService';
-import { User } from '../types/User';
-import { loggedMethod, logger } from '../utils/logger/logger';
-import { BadRequestError } from '../utils/error/Error';
+import { UserEntity } from '../types/User';
+import { loggedMethod } from '../utils/logger/logger';
 
 export class UserController {
     protected static _instance: UserController;
@@ -19,7 +18,7 @@ export class UserController {
     @loggedMethod('[UserController]')
     public async getAllUsers(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
-            const users: User[] = await this.userService.getAllUsers();
+            const users: UserEntity[] = await this.userService.getAllUsers();
             res.json(users);
         } catch (e) {
             next(e)

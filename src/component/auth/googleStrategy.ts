@@ -1,7 +1,8 @@
-import { UserModel } from "../../entities/User.schema";
 import { v4 as uuidv4 } from 'uuid'
 import { logger, LoggerClass } from "../../utils/logger/logger";
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import UserRepository from "../../repositories/User.repository";
+import { UserEntity } from "../../types/User";
 
 
 const options = {
@@ -15,7 +16,7 @@ const authCallback = async (accessToken, refreshToken, profile, done) => {
   try {
     logger.info('search existing user based on profile id: ' + LoggerClass.objectToString(profile.id))
 
-    let user = await UserModel.findOne({ googleId: profile.id, });
+    let user = await UserRepository.findOne({ googleId: profile.id, });
 
     if (!user) {
       const newUser = {
@@ -25,9 +26,9 @@ const authCallback = async (accessToken, refreshToken, profile, done) => {
         email: profile.emails?.[0]?.value,
         fullName: profile.name.givenName + " " + profile.name.familyName,
         jwtSecureCode: uuidv4()
-      }
+      } as UserEntity
       logger.info('create User' + LoggerClass.objectToString(newUser))
-      user = await UserModel.create(newUser);
+      user = await UserRepository.create(newUser)
     }
 
     logger.info('profile' + LoggerClass.objectToString(profile))

@@ -1,12 +1,10 @@
-import dotenv from 'dotenv';
-import express, { Response } from 'express';
-import passport from 'passport';
-import { User } from '../types/User';
-import { logger } from '../utils/logger/logger';
-const router = express.Router();
-dotenv.config();
-const { JWT_SECRET: jwtSecret } = process.env
 
+import express from 'express';
+import passport from 'passport';
+import {AuthController} from '../controllers/authController'
+const router = express.Router();
+const authController = AuthController.getInstance()
+const googleOptions = { scope: ['profile', 'email'], session: false }
 /**
  * @swagger
  * /api/auth:
@@ -17,7 +15,7 @@ const { JWT_SECRET: jwtSecret } = process.env
  *         description: auth user via google
  *          
  */
-router.get('/', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/', passport.authenticate('google', googleOptions));
 
 /**
  * @swagger
@@ -29,12 +27,7 @@ router.get('/', passport.authenticate('google', { scope: ['profile', 'email'] })
  *         description: auth user via google
  *          
  */
-router.get('/callback', passport.authenticate('google', { scope: ['profile', 'email'], session: false }), async (req: any, res: Response) => {
-  const user = req.user as User;
-  const token = await req.user.generateJWT(jwtSecret);
-  logger.info('callback user ' + JSON.stringify(user))
-  res.json({token})
-});
+router.get('/callback', passport.authenticate('google', googleOptions), (req, res, next) => authController.authCallback(req, res, next));
 
 /**
 * @swagger
@@ -46,12 +39,7 @@ router.get('/callback', passport.authenticate('google', { scope: ['profile', 'em
 *         description: user logged out
 *          
 */
-router.post('/logout', function (req, res, next) {
-  req.logout(function (err) {
-    if (err) { return next(err); }
-    res.redirect('http://localhost:8080');
-  });
-});
+router.post('/logout', authController.logout);
 
 
 export default router

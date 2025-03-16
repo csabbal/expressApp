@@ -1,5 +1,4 @@
 import express, { } from 'express'
-import { logger } from '../logger/logger'
 export class BadRequestError extends Error {
     readonly publicMessage: string
 
@@ -38,7 +37,6 @@ export class ServerError extends Error {
         })
     }
 }
-
 
 export async function errorHandlerMiddleware(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
     const errStatus = err.statusCode || 500;
