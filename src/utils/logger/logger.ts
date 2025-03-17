@@ -53,32 +53,31 @@ export class LoggerClass {
             format: this.format,
             transports: [
                 new transports.Console(),
-                new transports.File({ filename: './logs/'+this.level+'.log' }),
-                this.getLogRotateTransport(this.level),
+                this.getDailyLogrotate('debug'),
+                this.getDailyLogrotate('info'),
+                this.getDailyLogrotate('error')
             ]
         })
     }
 
-    getLogRotateTransport(level: string) {
-        return new DailyLogRotate({
-            dirname: './logs',
-            filename: `${level}%DATE%.log`,
+    getDailyLogrotate(level:string){
+        return  new DailyLogRotate({
+            filename: './logs/'+level+'-%DATE%.log',
             format: this.format,
             datePattern: 'YYYYMMDD',
             zippedArchive: true,
             maxFiles: '30d',
             maxSize: '200m',
             auditFile: `./logs/.audit.json`,
-            createSymlink: true,
-            symlinkName: `./logs/${level}.log`
+            level: level, 
         })
     }
 
     logMiddleware(req: Request, res: Response, next: NextFunction) {
         const start = Date.now();
-        const { method, url,body } = req;
+        const { method, url, body } = req;
         this.logger.info(`--> ${method} url: ${url} `);
-        if(method==='POST') this.logger.info(`--> ${method} body:${LoggerClass.objectToString(body)}`);
+        if (method === 'POST') this.logger.info(`--> ${method} body:${LoggerClass.objectToString(body)}`);
         res.on('finish', () => {
             const duration = Date.now() - start;
             const { statusCode } = res;
@@ -92,7 +91,8 @@ export class LoggerClass {
             const targetMethod = descriptor.value
             descriptor.value = function (...args: any[]) {
                 const withArgs = args?.length > 0 ? `is called with arguments ${safeStringify(args)}` : 'is called'
-                logger.info(`${context} [${propertyKey}] ${withArgs}`)
+                logger.debug(`${context} [${propertyKey}] ${withArgs}`)
+                logger.info(`${context} [${propertyKey}]`)
                 _.isUndefined(info) ?? logger.info(`${context} [${propertyKey}] ${info}`)
                 return targetMethod.apply(this, args)
             }

@@ -1,4 +1,5 @@
 import express, { } from 'express'
+import { logger } from '../logger/logger'
 export class BadRequestError extends Error {
     readonly publicMessage: string
 
@@ -42,7 +43,7 @@ export async function errorHandlerMiddleware(err: any, req: express.Request, res
     const errStatus = err.statusCode || 500;
     const errMsg = err.message || 'Something went wrong';
     const errStack = err.stack
-
+logger.error('[erorrHandlerMiddleware] '+errMsg)
     if (err instanceof BadRequestError) {
         err.sendJSONResponse(res)
     }else{
