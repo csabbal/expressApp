@@ -76,8 +76,9 @@ export class LoggerClass {
 
     logMiddleware(req: Request, res: Response, next: NextFunction) {
         const start = Date.now();
-        const { method, url } = req;
-        this.logger.info(`--> ${method} ${url}`);
+        const { method, url,body } = req;
+        this.logger.info(`--> ${method} url: ${url} `);
+        if(method==='POST') this.logger.info(`--> ${method} body:${LoggerClass.objectToString(body)}`);
         res.on('finish', () => {
             const duration = Date.now() - start;
             const { statusCode } = res;

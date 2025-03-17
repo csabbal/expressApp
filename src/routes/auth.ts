@@ -17,7 +17,7 @@ const authController = AuthController.getInstance()
  *         description: auth user via local
  *          
  */
-router.post('/local', requireLocalAuth, (req, res, next) => authController.authCallback(req, res, next));
+router.post('/local', requireLocalAuth, authController.authCallback.bind(authController));
 
 /**
  * @swagger
@@ -41,7 +41,7 @@ router.get('/google', requireGoogleAuth);
  *         description: auth user via google
  *          
  */
-router.get('/google/callback', requireGoogleAuth, (req, res, next) => authController.authCallback(req, res, next));
+router.get('/google/callback', requireGoogleAuth, authController.authCallback.bind(authController));
 
 /**
 * @swagger

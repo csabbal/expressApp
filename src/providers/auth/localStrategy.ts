@@ -1,18 +1,24 @@
-import  { Strategy }  from 'passport-local';
+import { Strategy } from 'passport-local';
+import {Request} from 'express'
 import AuthStrategy from './authStrategy';
 import userRepository from '../../repositories/User.repository';
 import { logger, LoggerClass } from '../../utils/logger/logger';
 import { UserEntity } from '../../types/User';
 import md5 from 'md5'
+const options = {
+  username: 'username', // Field name for username
+  password: 'password'  // Field name for password
+}
 class CustomLocalStrategy extends AuthStrategy {
 
-  async checkExistingUserByProfile(profile:{username: string,password:string}): Promise<UserEntity> {
-    return await this.userRepository.findOne({ name: profile.username, password:md5(profile.password) })
+  async checkExistingUserByProfile(profile: { username: string, password: string }): Promise<UserEntity> {
+    return await this.userRepository.findOne({ name: profile.username, password: md5(profile.password) })
   }
 
   getAuthCallBack() {
     return async (username: string, password: string, done: any) => {
-      const profile = {username, password}
+      logger.info('search existing user based on profile')
+      const profile = { username, password }
       try {
         logger.info('search existing user based on profile: ' + LoggerClass.objectToString(profile))
         const user = await this.checkExistingUserByProfile(profile)
@@ -30,4 +36,4 @@ class CustomLocalStrategy extends AuthStrategy {
 
 }
 
-export default new CustomLocalStrategy({}, userRepository).getStrategy()
+export default new CustomLocalStrategy(options, userRepository).getStrategy()

@@ -14,13 +14,15 @@ const googleOptions = { scope: ['profile', 'email'], session: false }
 export const requireGoogleAuth = passport.authenticate('google', googleOptions)
 
 passport.use('local', localStrategy);
-const localOptions = { failureRedirect: '/login',failWithError:true }
+const localOptions = {
+    failureRedirect: '/login',    // Redirect on failure
+}
 export const requireLocalAuth = passport.authenticate('local', localOptions)
 
 passport.use('jwt', jwtStrategy);
-export const requireJwt = passport.authenticate('jwt', { session: false});
+export const requireJwt = passport.authenticate('jwt', { session: false });
 
-export function initPassport(app:Application){
+export function initPassport(app: Application) {
     app.use(session({ secret: jwtSecret, resave: false, saveUninitialized: false, }));
     app.use(passport.initialize())
 }

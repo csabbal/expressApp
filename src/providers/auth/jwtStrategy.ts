@@ -9,29 +9,10 @@ import jwt from 'jsonwebtoken'
 import { UserEntity } from '../../types/User';
 import { PermissionEntity } from '../../types/Permission';
 import userPermissionsRepository from '../../repositories/UserPermissions.repository';
-import { AnyBulkWriteOperation } from 'mongoose';
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_SECRET || 'test',
 };
-
-/**
- * @param payload given data
- * @param done 
- * @returns returns of the verifiedCallback function
- */
-async function verifyCallback(payload: any, done: VerifiedCallback) {
-    try {
-        const user = await verifyUser(payload)
-        return done(null, user)
-    }
-    catch (e) {
-        logger.debug('[auth] problem occured during the verification process')
-        return done(null, false);
-
-    }
-}
-
 
 /**
  * We have to validate the taken payload in more steps
@@ -39,7 +20,6 @@ async function verifyCallback(payload: any, done: VerifiedCallback) {
  * 2. step: checking the user exists or not based on the id
  * 3. step: checking the given jwtSecureCode is the same what belongs to the user
  * @param payload given data
- * @param done 
  * @returns returns of the verifiedCallback function
  */
 async function verifyUser(payload: any) {
@@ -76,13 +56,8 @@ export  function verifyPrivileges(neededPrivileges: { component: string, privile
             else{
                 res.status(403).json('forbidden')
             }
-        
     }
-   
 }
-
-
-
 
 export async function generateJWT(user: UserEntity, permissions: PermissionEntity[], jwtSecret: string) {
     const jwtData = {
@@ -93,6 +68,23 @@ export async function generateJWT(user: UserEntity, permissions: PermissionEntit
         jwtSecureCode: await hashValue(user.jwtSecureCode)
     }
     return jwt.sign(jwtData, jwtSecret)
+}
+
+/**
+ * @param payload given data
+ * @param done callback which will be called after the checking user
+ * @returns returns of the verifiedCallback function
+ */
+async function verifyCallback(payload: any, done: VerifiedCallback) {
+    try {
+        const user = await verifyUser(payload)
+        return done(null, user)
+    }
+    catch (e) {
+        logger.debug('[auth] problem occured during the verification process')
+        return done(null, false);
+
+    }
 }
 
 export default new Strategy(options, verifyCallback);

@@ -1,4 +1,4 @@
-import mongoose, { Model } from 'mongoose'
+import mongoose from 'mongoose'
 import type { UserPermissionsEntity } from '../types/Permission'
 import { PermissionSchema } from './Permissions.schema'
 
