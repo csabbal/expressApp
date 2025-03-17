@@ -1,5 +1,13 @@
 export interface PermissionEntity{
     id:string,
-    userId:string,
-    rights:string[]
+    component:string,
+    privilege:string
 }
+
+export interface UserPermissionsEntity{
+    id:string,
+    userId:string,
+    permissions:PermissionEntity[]
+}
+
+export type PermissionEntityArray = PermissionEntity[]

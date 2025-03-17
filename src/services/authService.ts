@@ -1,7 +1,7 @@
 import { loggedMethod} from "../utils/logger/logger";
 import { generateJWT } from '../providers/auth/jwtStrategy'
 import dotenv from 'dotenv';
-import permissionRepository from "../repositories/Permisssion.repository";
+import userPermissionsRepository from "../repositories/UserPermissions.repository";
 import { permission } from "process";
 import { UserEntity } from "../types/User";
 dotenv.config();
@@ -19,9 +19,9 @@ export class AuthService {
     
     @loggedMethod('[AuthService]')
     public async callback(user:UserEntity): Promise<{token:string}> {
-        const permissions = (await permissionRepository.findOne({userId:user.id}))
-        const rights = permissions ? permissions.rights : [] 
-        const token = await generateJWT(user,rights,jwtSecret);
+        const userPermissions = (await userPermissionsRepository.findOne({userId:user.id}))
+        const permissions = userPermissions ? userPermissions.permissions : [] 
+        const token = await generateJWT(user,permissions,jwtSecret);
         return {token}
     }
 }

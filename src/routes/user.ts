@@ -1,6 +1,7 @@
 import express from 'express';
 import { UserController } from '../controllers/userController';
-import {requireJwt} from '../providers/auth/passport';
+import { requireJwt } from '../providers/auth/passport';
+import { verifyPrivileges } from '../providers/auth/jwtStrategy';
 const router = express.Router();
 const userController = UserController.getInstance()
 
@@ -28,7 +29,7 @@ const userController = UserController.getInstance()
  *                     type: string
  *                     example: John Doe
  */
-router.get('/all', requireJwt, (req, res, next) => userController.getAllUsers(req, res, next));
+router.get('/all', requireJwt, verifyPrivileges([{component:'users', privilege:'read'}]), userController.getAllUsers.bind(userController));
 
 /**
  * @swagger
@@ -45,7 +46,7 @@ router.get('/all', requireJwt, (req, res, next) => userController.getAllUsers(re
  *               items:
  *                 type: error
  */
-router.get('/error', (req, res, next) => userController.getError(req, res, next));
+router.get('/error', userController.getError.bind(userController));
 
 
 export default router

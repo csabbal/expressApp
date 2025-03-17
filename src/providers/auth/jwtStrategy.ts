@@ -1,14 +1,37 @@
 import { Strategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
+import { Request, Response,  NextFunction } from 'express'
+import { AppRequest } from '../../types/CustomExpress'
 import { checkValue } from '../../utils/Crypt'
-import { loggedMethod, logger, LoggerClass } from '../../utils/logger/logger';
+import { logger, LoggerClass } from '../../utils/logger/logger';
 import userRepository from '../../repositories/User.repository';
 import { hashValue } from '../../utils/Crypt'
 import jwt from 'jsonwebtoken'
 import { UserEntity } from '../../types/User';
+import { PermissionEntity } from '../../types/Permission';
+import userPermissionsRepository from '../../repositories/UserPermissions.repository';
+import { AnyBulkWriteOperation } from 'mongoose';
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_SECRET || 'test',
 };
+
+/**
+ * @param payload given data
+ * @param done 
+ * @returns returns of the verifiedCallback function
+ */
+async function verifyCallback(payload: any, done: VerifiedCallback) {
+    try {
+        const user = await verifyUser(payload)
+        return done(null, user)
+    }
+    catch (e) {
+        logger.debug('[auth] problem occured during the verification process')
+        return done(null, false);
+
+    }
+}
+
 
 /**
  * We have to validate the taken payload in more steps
@@ -19,7 +42,7 @@ const options = {
  * @param done 
  * @returns returns of the verifiedCallback function
  */
-async function verify(payload: any, done: VerifiedCallback) {
+async function verifyUser(payload: any) {
     try {
         logger.debug('[jwt verify] ' + LoggerClass.objectToString(payload))
         if (!payload?.id || !payload?.jwtSecureCode) throw new Error('unauthorized')
@@ -31,26 +54,45 @@ async function verify(payload: any, done: VerifiedCallback) {
         logger.debug('[jwt verify] checkValue ' + LoggerClass.objectToString([user.jwtSecureCode, payload.jwtSecureCode, isMatch]))
         if (!isMatch) throw new Error('unauthorized')
 
-        logger.debug('[auth] user got authenticated: ' + user.id)
-        return done(null, user);
+        return user
     }
     catch (e) {
-        logger.debug('[auth] problem occured during the verification process')
-        return done(null, false);
-       
+        return false
+
     }
 }
 
+export  function verifyPrivileges(neededPrivileges: { component: string, privilege: string }[]):any {
 
-export async function generateJWT(user:UserEntity,rights:string[],jwtSecret:string) {
+    return async function(req: Request, res:Response, next:NextFunction):Promise<void>{
+        const appRequest = req as AppRequest
+        if (!appRequest.user) throw new Error('forbidden')
+            const user = appRequest.user
+            const userPermissions = (await userPermissionsRepository.findOne({userId:user.id}))?.permissions ?? []
+            const isGranted = neededPrivileges.every(neededPriv=>userPermissions.some(it=>[neededPriv.component,'all'].includes(it.component) && neededPriv.privilege === it.privilege))
+            if(isGranted){
+                next()
+            }
+            else{
+                res.status(403).json('forbidden')
+            }
+        
+    }
+   
+}
+
+
+
+
+export async function generateJWT(user: UserEntity, permissions: PermissionEntity[], jwtSecret: string) {
     const jwtData = {
-      expiresIn: '12h',
-      id: user.id,
-      email: user.email,
-      rights:rights,
-      jwtSecureCode: await hashValue(user.jwtSecureCode)
+        expiresIn: '12h',
+        id: user.id,
+        email: user.email,
+        permissions: permissions,
+        jwtSecureCode: await hashValue(user.jwtSecureCode)
     }
     return jwt.sign(jwtData, jwtSecret)
-  }
+}
 
-export default new Strategy(options, verify);
+export default new Strategy(options, verifyCallback);

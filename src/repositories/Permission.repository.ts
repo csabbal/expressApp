@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { PermissionEntity } from '../types/Permission'
-import { PermissionModel } from '../entities/Permission.schema'
+import { PermissionModel } from '../entities/Permissions.schema'
 
 export class PermissionRepository {
 

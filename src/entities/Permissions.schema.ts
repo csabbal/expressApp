@@ -1,18 +1,18 @@
 import mongoose from 'mongoose'
 import { PermissionEntity } from '../types/Permission'
 
-const PermissionSchema = new mongoose.Schema({
+export const PermissionSchema = new mongoose.Schema({
   id: {
     required: true,
     type: String
   },
-  userId: {
+  component: {
     required: true,
     type: String
   },
-  rights: {
+  privilege: {
     required: true,
-    type: Array
+    type: String
   }
 })
 
