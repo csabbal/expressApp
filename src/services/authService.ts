@@ -1,6 +1,9 @@
-import { User } from "../types/User";
 import { loggedMethod} from "../utils/logger/logger";
+import { generateJWT } from '../providers/auth/jwtStrategy'
 import dotenv from 'dotenv';
+import permissionRepository from "../repositories/Permisssion.repository";
+import { permission } from "process";
+import { UserEntity } from "../types/User";
 dotenv.config();
 const { JWT_SECRET: jwtSecret } = process.env
 
@@ -15,8 +18,10 @@ export class AuthService {
     }
     
     @loggedMethod('[AuthService]')
-    public async callback(user:User): Promise<{token:string}> {
-        const token = await user.generateJWT(jwtSecret);
+    public async callback(user:UserEntity): Promise<{token:string}> {
+        const permissions = (await permissionRepository.findOne({userId:user.id}))
+        const rights = permissions ? permissions.rights : [] 
+        const token = await generateJWT(user,rights,jwtSecret);
         return {token}
     }
 }

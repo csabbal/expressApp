@@ -1,8 +1,5 @@
 import mongoose from 'mongoose'
-import { User, UserEntity } from '../types/User'
-import { hashValue } from '../utils/Crypt'
-import jwt from 'jsonwebtoken'
-import { logger } from '../utils/logger/logger'
+import {UserEntity } from '../types/User'
 
 const UserSchema = new mongoose.Schema({
   id: {
@@ -29,17 +26,5 @@ const UserSchema = new mongoose.Schema({
     type: String
   }
 })
-
-UserSchema.methods = {
-  generateJWT: async function (jwtSecret) {
-    const jwtData = {
-      expiresIn: '12h',
-      id: this.id,
-      email: this.email,
-      jwtSecureCode: await hashValue(this.jwtSecureCode)
-    }
-    return jwt.sign(jwtData, jwtSecret)
-  }
-}
 
 export const UserModel = mongoose.model<UserEntity>('User', UserSchema)

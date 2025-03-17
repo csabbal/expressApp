@@ -7,7 +7,7 @@ export class UserRepository {
     constructor(protected userModel: mongoose.Model<UserEntity>) { }
 
     async find(data?: Partial<UserEntity>):Promise<UserEntity[]> {
-        return await UserModel.find(data)
+        return await UserModel.find(data).select('id name')
     }
     async findOne(data: Partial<UserEntity>):Promise<UserEntity> {
         return await UserModel.findOne(data)

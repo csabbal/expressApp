@@ -10,7 +10,7 @@ export type LoggerType = Logger
 
 export class LoggerClass {
     static _instance: LoggerClass
-    level = 'info'
+    level = 'debug'
     logger: any
     constructor() {
         this.init()
@@ -53,8 +53,8 @@ export class LoggerClass {
             format: this.format,
             transports: [
                 new transports.Console(),
-                new transports.File({ filename: './logs/info.log' }),
-                this.getLogRotateTransport('info'),
+                new transports.File({ filename: './logs/'+this.level+'.log' }),
+                this.getLogRotateTransport(this.level),
             ]
         })
     }
@@ -70,7 +70,7 @@ export class LoggerClass {
             maxSize: '200m',
             auditFile: `./logs/.audit.json`,
             createSymlink: true,
-            symlinkName: `./logs/info.log`
+            symlinkName: `./logs/${level}.log`
         })
     }
 

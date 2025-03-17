@@ -20,7 +20,6 @@ export const requireLocalAuth = passport.authenticate('local', localOptions)
 passport.use('jwt', jwtStrategy);
 export const requireJwt = passport.authenticate('jwt', { session: false});
 
-
 export function initPassport(app:Application){
     app.use(session({ secret: jwtSecret, resave: false, saveUninitialized: false, }));
     app.use(passport.initialize())

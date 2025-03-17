@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
-import { User } from '../types/User';
 import { AuthService } from '../services/authService';
 import { loggedMethod, logger } from '../utils/logger/logger';
+import { UserEntity } from '../types/User';
 export class AuthController {
     protected static _instance: AuthController;
 
@@ -16,7 +16,7 @@ export class AuthController {
 
     @loggedMethod('[AuthController]')
     public async authCallback(req: Request, res: Response, next: express.NextFunction) {
-        const user = req.user as User;
+        const user = req.user as UserEntity;
         const token = await this.authService.callback(user)
         res.json(token)
     }
