@@ -1,6 +1,10 @@
 import { DatabaseProperties } from "../../types/Database"
 import { logger, LoggerClass } from "../../utils/logger/logger"
 
+/**
+ *  This class is the base of the any DataSource in the database
+ *  in an ideal case it must be initialized only one time
+ */
 export abstract class DataSource {
     protected connectionString:string
     constructor(protected data:DatabaseProperties) {

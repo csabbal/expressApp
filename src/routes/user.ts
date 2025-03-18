@@ -2,7 +2,11 @@ import express from 'express';
 import { UserController } from '../controllers/userController';
 import { requireJwt } from '../providers/auth/passport';
 import { verifyPrivileges } from '../providers/auth/jwtStrategy';
+
+// get the current router instance
 const router = express.Router();
+
+// get the current user controller instance
 const userController = UserController.getInstance()
 
 /**
@@ -30,23 +34,6 @@ const userController = UserController.getInstance()
  *                     example: John Doe
  */
 router.get('/all', requireJwt, verifyPrivileges([{component:'users', privilege:'read'}]), userController.getAllUsers.bind(userController));
-
-/**
- * @swagger
- * /api/user/error:
- *   get:
- *     summary: Retrieve n error
- *     responses:
- *       200:
- *         description: An error tester method
- *         content:
- *           application/json:
- *             schema:
- *               type: error
- *               items:
- *                 type: error
- */
-router.get('/error', userController.getError.bind(userController));
 
 
 export default router

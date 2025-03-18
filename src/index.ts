@@ -7,7 +7,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import router from './routes/index'
 import AsyncLocalStorageClass from './utils/asyncLocalStorage/asyncLocalStorage';
-import { LoggerClass, logger } from './utils/logger/logger';
+import { loggerInstance, logger } from './utils/logger/logger';
 import { errorHandlerMiddleware } from './utils/error/Error';
 import {initPassport} from './providers/auth/passport'
 
@@ -29,7 +29,7 @@ initPassport(app)
 
 // add the middlewares
 app.use(AsyncLocalStorageClass.requestIdMiddleware)
-app.use(LoggerClass.getInstance().logMiddleware.bind(LoggerClass.getInstance()))
+app.use(loggerInstance.logMiddleware.bind(loggerInstance))
 
 // add the routes
 app.use('/api', router)

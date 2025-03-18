@@ -14,6 +14,12 @@ export class AuthController {
         return this._instance
     }
 
+    /**
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     * @param {NextFunction} next 
+     */
     @loggedMethod('[AuthController]')
     public async authCallback(req: Request, res: Response, next: express.NextFunction) {
         const user = req.user as UserEntity;
@@ -21,6 +27,12 @@ export class AuthController {
         res.json(token)
     }
 
+    /**
+     * 
+     * @param {Request} req 
+     * @param {Response} res 
+     * @param {NextFunction} next 
+     */
     @loggedMethod('[AuthController]')
     public async logout(req: express.Request, res: express.Response, next: express.NextFunction) {
         req.logout(function (err) {

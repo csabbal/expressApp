@@ -15,7 +15,7 @@ const options = {
 };
 
 /**
- * We have to validate the taken payload in more steps
+ * This function is to validate the taken payload in more steps
  * 1. step: checking the payload 
  * 2. step: checking the user exists or not based on the id
  * 3. step: checking the given jwtSecureCode is the same what belongs to the user
@@ -42,6 +42,11 @@ async function verifyUser(payload: any) {
     }
 }
 
+/**
+ * This function returns with a middleware which can check whether the given user's permissions allowes the user to reach the given endpoint or not
+ * @param {{ component: string, privilege: string }[]} neededPrivileges 
+ * @returns 
+ */
 export  function verifyPrivileges(neededPrivileges: { component: string, privilege: string }[]):any {
 
     return async function(req: Request, res:Response, next:NextFunction):Promise<void>{
@@ -59,6 +64,14 @@ export  function verifyPrivileges(neededPrivileges: { component: string, privile
     }
 }
 
+/**
+ * This function is about to generate json web token (with this token the application is able to indentify the user who sent the request)
+ * 
+ * @param {UserEntity }user 
+ * @param {PermsiisionEntity} permissions 
+ * @param {String} jwtSecret 
+ * @returns 
+ */
 export async function generateJWT(user: UserEntity, permissions: PermissionEntity[], jwtSecret: string) {
     const jwtData = {
         expiresIn: '12h',
@@ -71,8 +84,12 @@ export async function generateJWT(user: UserEntity, permissions: PermissionEntit
 }
 
 /**
+ * This function is able to identify the user with the verifyUser function
+ * if the verification was succesful it call the verifedCallback function to handle the user
+ * otherwise it hanlde the error occured
+ * 
  * @param payload given data
- * @param done callback which will be called after the checking user
+ * @param {VerifiedCallback} done callback which will be called after the checking user
  * @returns returns of the verifiedCallback function
  */
 async function verifyCallback(payload: any, done: VerifiedCallback) {

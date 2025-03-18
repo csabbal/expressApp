@@ -4,6 +4,13 @@ import mongoose from "mongoose";
 import { logger, LoggerClass } from "../../utils/logger/logger";
 import { DataSource } from "./DataSource";
 
+/**
+ * This class is to take care about:
+ * the initialize of the MongoDataSource,  
+ * creating the connectionString
+ * make the connection to the database
+ * the proper logging
+ */
 export default class MongoDataSource extends DataSource {
 
     setLogging() {

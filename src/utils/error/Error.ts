@@ -1,5 +1,9 @@
 import express, { } from 'express'
 import { logger } from '../logger/logger'
+
+/**
+ * BadRequestError class will be instantiated if the error which occured is caused by the fault of the client
+ */
 export class BadRequestError extends Error {
     readonly publicMessage: string
 
@@ -20,11 +24,14 @@ export class BadRequestError extends Error {
     }
 }
 
+/**
+ *  This class will be instantiated if the problem is regardless from the client
+ */
 export class ServerError extends Error {
 
     constructor(message: string, stack?: string) {
         super(message)
-        this.name = 'BadRequestError'
+        this.name = 'ServerError'
         this.stack = stack
     }
 
@@ -39,6 +46,13 @@ export class ServerError extends Error {
     }
 }
 
+/**
+ * This middleare take care about any error which occured in the system will be handled based on its type 
+ * @param {Error} err an error which occured in the system 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {NextFunction} next 
+ */
 export async function errorHandlerMiddleware(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
     const errStatus = err.statusCode || 500;
     const errMsg = err.message || 'Something went wrong';

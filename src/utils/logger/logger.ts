@@ -6,34 +6,46 @@ import LocalStorageClass from '../asyncLocalStorage/asyncLocalStorage'
 import _ from 'lodash'
 import { safeStringify } from '../StringManupilation';
 
-export type LoggerType = Logger
-
 export class LoggerClass {
     static _instance: LoggerClass
-    level = 'debug'
     logger: any
-    constructor() {
+    constructor(protected level:string) {
         this.init()
     }
 
-    printFunction = ({ timestamp, level, message }) => {
+    /**
+     * this function will be called when the logger a log note is about to be written to anywhere
+     * @param {timeStamp:string,level:string,message:string} param0 
+     * @returns {string} // the log notes
+     */
+    printFunction({ timestamp, level, message }){
         const requestId = LocalStorageClass.getRequestId()
         return `${timestamp} ${level} (${requestId}): ${message}`
     }
 
+    // here the class define the format what it will use during writing the log either to console or a file
     format = format.combine(
         format.colorize(),
         format.timestamp(),
         format.printf(this.printFunction.bind(this))
     )
 
-    static getInstance(): LoggerClass {
+    /**
+     * this function is needed to the class can work as a singleton
+     * @returns {LoggerClass}
+     */
+    static getInstance(level:string): LoggerClass {
         if (!this._instance) {
-            this._instance = new LoggerClass()
+            this._instance = new LoggerClass(level)
         }
         return this._instance
     }
 
+    /**
+     * This function is to make a readable expression from object (it is useful if you want to write something to the log)
+     * @param obj 
+     * @returns 
+     */
     public static objectToString(obj: any): string {
         if (typeof obj === 'undefined') return 'undefined'
         let str = ''
@@ -46,20 +58,27 @@ export class LoggerClass {
         return str
     }
 
-
+    /**
+     * This function initializes the logger object what is about to use for logging based on the given level and format
+     */
     init() {
         this.logger = createLogger({
             level: this.level,
             format: this.format,
             transports: [
                 new transports.Console(),
-                this.getDailyLogrotate('debug'),
-                this.getDailyLogrotate('info'),
+                this.getDailyLogrotate(this.level),
                 this.getDailyLogrotate('error')
             ]
         })
     }
 
+    /**
+     * It is a helper function to create dayly log rotate.
+     * This function uses the format, th log level and determine some global logging parameters
+     * @param level 
+     * @returns 
+     */
     getDailyLogrotate(level:string){
         return  new DailyLogRotate({
             filename: './logs/'+level+'-%DATE%.log',
@@ -73,6 +92,12 @@ export class LoggerClass {
         })
     }
 
+    /**
+     * this middleware is about to create a kind of access log
+     * @param {Request} req 
+     * @param {Response} res 
+     * @param {NextFunction} next 
+     */
     logMiddleware(req: Request, res: Response, next: NextFunction) {
         const start = Date.now();
         const { method, url, body } = req;
@@ -86,6 +111,12 @@ export class LoggerClass {
         next()
     }
 
+    /**
+     * This function returns with a decorator function in order for logging the circumstances of the decorated method
+     * @param {String} context generally it contains the class (and functions name) 
+     * @param {String} info is optional 
+     * @returns {Function} the decorator function
+     */
     loggedMethod(context: string, info?: string) {
         return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
             const targetMethod = descriptor.value
@@ -101,9 +132,11 @@ export class LoggerClass {
     }
 }
 
-
-export const loggedMethod = LoggerClass.getInstance().loggedMethod
-export const logger = LoggerClass.getInstance().logger
-export const logMiddleware = LoggerClass.getInstance().logMiddleware
+// create the logger instance what the app use to log everything
+const {LOG_LEVEL:level} = process.env
+export const loggerInstance = LoggerClass.getInstance(level)
+export const loggedMethod = loggerInstance.loggedMethod
+export const logger = loggerInstance.logger
+export const logMiddleware = loggerInstance.logMiddleware
 
 

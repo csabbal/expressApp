@@ -1,12 +1,17 @@
-import express from 'express';
+import express from 'express'
+import dotenv from 'dotenv'
 import userRouter from './user'
 import authRouter from './auth'
-import swaggerUi from 'swagger-ui-express';
-import swaggerJsDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express'
+import swaggerJsDoc from 'swagger-jsdoc'
+import * as packageJson from '../../package.json'
+
+dotenv.config()
+const{ BASE_PROTOCOL:protocol, BASE_URL: url, PORT: port} = process.env
+const {name, version, description} = packageJson
 
 //initiate the router
 export const router = express.Router()
-// Swagger setup
 
 /** 
 * @swagger
@@ -21,36 +26,26 @@ const swaggerOptions = {
     swaggerDefinition: {
         openapi: '3.0.0',
         info: {
-            title: 'Express Node Fundamentals',
-            version: '0.0.1',
-            description: 'API documentation',
+            title: name,
+            version: version,
+            description: description,
         },
         servers: [
             {
-                url: 'http://localhost:8000',
+                url: `${protocol}://${url}:${port}`,
             },
         ],
     },
-    apis: ['./src/routes/*'], // files containing annotations as above
+    apis: ['./src/routes/*'],
 };
 
-
-/**
- * @swagger
- * /api/main:
- *   get:
- *     summary: logoumaint
- *     responses:
- *       200:
- *         description: welcome page
- *          
- */
-router.use('/main', (req: express.Request, res: express.Response, next:express.NextFunction) => {
-    res.send("welcome on the page" + req.user)
-})
-router.use('/user', userRouter)
-//auth
-router.use('/auth', authRouter)
-//swagger
+// add endpoint in order for swagger's working
 router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swaggerOptions)));
+
+// added user endpoints
+router.use('/user', userRouter)
+// added auth endpoints
+router.use('/auth', authRouter)
+
+// exports the router which was setup
 export default router

@@ -2,6 +2,9 @@ import mongoose from 'mongoose'
 import { UserPermissionsEntity } from '../types/Permission'
 import { UserPermissionsModel } from '../entities/UserPermissions.schema'
 
+/**
+ * This class is to take care about the handling of user permissions in the database
+ */
 export class UserPermissionsRepository {
 
     constructor(protected userModel: mongoose.Model<UserPermissionsEntity>) { }

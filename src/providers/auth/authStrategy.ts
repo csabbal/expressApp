@@ -5,10 +5,18 @@ import { UserRepository } from "../../repositories/User.repository";
 import { UserEntity } from "../../types/User";
 import { Strategy } from 'passport-oauth2';
 
+/**
+ *  this class is for creating new users and performing an authentication strategy
+ */
 export default abstract class AuthStrategy {
 
     constructor(protected options:any, protected userRepository:UserRepository){}
 
+    /**
+     * Create a new user based on the given profile data
+     * @param profile 
+     * @returns {Prmoise<UserEntity>} the created user
+     */
     async createNewUserFromAuthUser(profile: any): Promise<UserEntity> {
         const newUser = {
             id: uuidv4(),
@@ -22,10 +30,20 @@ export default abstract class AuthStrategy {
         return await this.userRepository.create(newUser)
     }
 
+    /**
+     * checking if the user is existing or not based on the given profile data
+     * @param profile 
+     * @returns {Prmoise<UserEntity>} the existing user or null
+     */
     async checkExistingUserByProfile(profile: any): Promise<UserEntity> {
         return await this.userRepository.findOne({ googleId: profile.id, })
     }
 
+    /**
+     * The callback function what can be called when a given authentication is finished and it returned profile data
+     * This function call the auth strategy callback function which sets the new user or handlex the error occured
+     * @returns void
+     */
     getAuthCallBack() {
         return async(_accessToken: unknown, _refreshToken: unknown, profile: any, done: any) => {
             try {
@@ -38,6 +56,10 @@ export default abstract class AuthStrategy {
         }
     }
 
+    /**
+     * return back the actual authentication strategy
+     * @returns {Strategy}
+     */
     getStrategy():any{
         return new Strategy(this.options, this.getAuthCallBack.bind(this));
     }

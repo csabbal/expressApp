@@ -2,10 +2,12 @@
 import express from 'express';
 import {AuthController} from '../controllers/authController'
 import {requireGoogleAuth, requireLocalAuth} from '../providers/auth/passport';
+
+// get the current router instance
 const router = express.Router();
+
+// get the current authController instance
 const authController = AuthController.getInstance()
-
-
 
 /**
  * @swagger
@@ -14,8 +16,7 @@ const authController = AuthController.getInstance()
  *     summary: auth users
  *     responses:
  *       200:
- *         description: auth user via local
- *          
+ *         description: auth user via local      
  */
 router.post('/local', requireLocalAuth, authController.authCallback.bind(authController));
 
@@ -26,8 +27,7 @@ router.post('/local', requireLocalAuth, authController.authCallback.bind(authCon
  *     summary: auth users
  *     responses:
  *       200:
- *         description: auth user via google
- *          
+ *         description: auth user via google         
  */
 router.get('/google', requireGoogleAuth);
 
@@ -38,8 +38,7 @@ router.get('/google', requireGoogleAuth);
  *     summary: callback after auth
  *     responses:
  *       200:
- *         description: auth user via google
- *          
+ *         description: auth user via google        
  */
 router.get('/google/callback', requireGoogleAuth, authController.authCallback.bind(authController));
 
@@ -50,8 +49,7 @@ router.get('/google/callback', requireGoogleAuth, authController.authCallback.bi
 *     summary: logout
 *     responses:
 *       200:
-*         description: user logged out
-*          
+*         description: user logged out        
 */
 router.post('/logout', authController.logout);
 

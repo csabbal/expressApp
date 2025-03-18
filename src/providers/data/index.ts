@@ -5,6 +5,9 @@ import { DatabaseProperties } from "../../types/Database";
 dotenv.config();
 const { DB_TYPE: type, DB_HOST: host, DB_PORT: port, DB_USERNAME: user, DB_PASSWORD: password, DB_DATABASE: database, NODE_ENV: env } = process.env;
 
+/**
+ * This factory class is to take care about the creation of DataSources 
+ */
 class DataSourceFactory {
 
     constructor(protected data: DatabaseProperties) {}

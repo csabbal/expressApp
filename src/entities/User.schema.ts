@@ -1,6 +1,9 @@
 import mongoose from 'mongoose'
 import {UserEntity } from '../types/User'
 
+/**
+ * Initialization a mongoose schema to store the user
+ */
 const UserSchema = new mongoose.Schema({
   id: {
     required: true,
