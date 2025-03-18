@@ -14,9 +14,30 @@ const authController = AuthController.getInstance()
  * /api/auth/local:
  *   post:
  *     summary: auth users
+ *    
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *             username:
+ *               type: string
+ *               example: admin
+ *             password:
+ *               type: string
+ *               example: admin
  *     responses:
- *       200:
- *         description: auth user via local      
+ *       "200":
+ *         description: the authentication was successful via local strategy 
+ *         content:
+ *          application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: the token is to identify the user    
  */
 router.post('/local', requireLocalAuth, authController.authCallback.bind(authController));
 
@@ -24,10 +45,11 @@ router.post('/local', requireLocalAuth, authController.authCallback.bind(authCon
  * @swagger
  * /api/auth/google:
  *   get:
- *     summary: auth users
+ *     summary: Initiate Google authentication
+ *     description: Redirects the user to Google for authentication.
  *     responses:
- *       200:
- *         description: auth user via google         
+ *       302:
+ *         description: Redirects to Google authentication page
  */
 router.get('/google', requireGoogleAuth);
 
@@ -35,10 +57,13 @@ router.get('/google', requireGoogleAuth);
  * @swagger
  * /api/auth/google/callback:
  *   get:
- *     summary: callback after auth
+ *     summary: Google authentication callback
+ *     description: Handles the callback from Google after authentication.
  *     responses:
  *       200:
- *         description: auth user via google        
+ *         description: Successful authentication and redirect
+ *       401:
+ *         description: Unauthorized
  */
 router.get('/google/callback', requireGoogleAuth, authController.authCallback.bind(authController));
 

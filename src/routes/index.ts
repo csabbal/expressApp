@@ -7,8 +7,8 @@ import swaggerJsDoc from 'swagger-jsdoc'
 import * as packageJson from '../../package.json'
 
 dotenv.config()
-const{ BASE_PROTOCOL:protocol, BASE_URL: url, PORT: port} = process.env
-const {name, version, description} = packageJson
+const { PROTOCOL: protocol, URL: url, PORT: port, GOOGLE_CLIENT_ID: clientId, GOOGLE_CLIENT_SECRET: clientSecret } = process.env
+const { name, version, description } = packageJson
 
 //initiate the router
 export const router = express.Router()
@@ -35,6 +35,24 @@ const swaggerOptions = {
                 url: `${protocol}://${url}:${port}`,
             },
         ],
+        components: {
+            securitySchemes: {
+                googleAuth: {
+                    type: 'oauth2',
+                    flows: {
+                        authorizationCode: {
+                            clientId: clientId,
+                            clientSecret: clientSecret,
+                            authorizationUrl: 'https://localhost:8000/api/auth/google',
+                            scopes: {
+                                'profile': 'Access your profile information',
+                                'email': 'Access your email address',
+                            },
+                        },
+                    },
+                },
+            },
+        },
     },
     apis: ['./src/routes/*'],
 };
