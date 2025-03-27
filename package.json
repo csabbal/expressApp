@@ -8,6 +8,7 @@
     "start:dev": "NODE_ENV=development  webpack",
     "run:dev": "NODE_ENV=development nodemon build/index.js",
     "debug:dev": "NODE_ENV=development nodemon --inspect build/index.js",
+    "test:coverage": "nyc npm test",
     "test": "TS_NODE_PROJECT=tsconfig.test.json node --loader ts-node/register ./node_modules/.bin/mocha src/**/*.spec.ts",
     "test:watch": "TS_NODE_PROJECT=tsconfig.test.json node --loader ts-node/register ./node_modules/.bin/mocha  --watch --watch-files  src/**/*.spec.ts --watch-ignore node_modules ",
     "typedoc": "typedoc --entryPointStrategy Expand src"
@@ -54,6 +55,7 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@types/chai": "^5.2.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
@@ -73,6 +75,7 @@
     "i": "^0.3.7",
     "mocha": "^11.1.0",
     "npm": "^11.2.0",
+    "nyc": "^17.1.0",
     "supertest": "^7.1.0",
     "ts-node-dev": "^2.0.0",
     "typedoc": "^0.27.9",
