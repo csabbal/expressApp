@@ -8,7 +8,6 @@ import { UserEntity } from '../types/User';
  */
 export class AuthController {
     protected static _instance: AuthController;
-
     constructor(private authService: AuthService) { }
 
     /**
@@ -17,7 +16,7 @@ export class AuthController {
      */
     static getInstance(): AuthController {
         if (!this._instance) {
-            this._instance = new AuthController(new AuthService())
+            this._instance = new AuthController(AuthService.getInstance())
         }
         return this._instance
     }

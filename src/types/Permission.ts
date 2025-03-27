@@ -1,3 +1,5 @@
+import { UserEntity } from "./User"
+
 export interface PermissionEntity{
     id:string,
     component:string,
@@ -9,5 +11,7 @@ export interface UserPermissionsEntity{
     userId:string,
     permissions:PermissionEntity[]
 }
+
+export type GenerateJwt = (user: UserEntity, permissions: PermissionEntity[], jwtSecret: string) => Promise<string>
 
 export type PermissionEntityArray = PermissionEntity[]
