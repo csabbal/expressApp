@@ -1,18 +1,14 @@
-import { loggedMethod, logger } from "../utils/logger/logger";
-import { generateJWT } from '../providers/auth/jwtStrategy'
-import dotenv from 'dotenv';
+import { loggedMethod } from "../utils/logger/logger";
+import { jwtStrategyInstance } from '../providers/auth/jwtStrategy'
 import userPermissionsRepository, { UserPermissionsRepository } from "../repositories/UserPermissions.repository";
 import { UserEntity } from "../types/User";
 import { GenerateJwt } from "../types/Permission";
-dotenv.config();
-const { JWT_SECRET: jwtSecret } = process.env
 
 export class AuthService {
     protected static _instance: AuthService;
     constructor(
         protected userPermissionRepository:UserPermissionsRepository,
-        protected generateJWT: GenerateJwt,
-        protected jwtSecret:string
+        protected generateJWT: GenerateJwt
     ){}
     /**
      * This function take care about that this class can work as a singleton
@@ -20,7 +16,9 @@ export class AuthService {
      */
     static getInstance() {
         if (!this._instance) {
-            this._instance = new AuthService(userPermissionsRepository, generateJWT, jwtSecret)
+            this._instance = new AuthService(
+                userPermissionsRepository,
+                jwtStrategyInstance.generateJWT.bind(jwtStrategyInstance))
         }
         return this._instance
     }
@@ -36,7 +34,7 @@ export class AuthService {
     public async callback(user:UserEntity): Promise<{token:string}> {
         const userPermissions = (await this.userPermissionRepository.findOne({userId:user.id}))
         const permissions = userPermissions ? userPermissions.permissions : [] 
-        const token = await this.generateJWT(user,permissions,this.jwtSecret);
+        const token = await this.generateJWT(user,permissions);
         return {token}
     }
 }

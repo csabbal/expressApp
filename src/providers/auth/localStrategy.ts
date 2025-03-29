@@ -1,5 +1,4 @@
-import { Strategy } from 'passport-local';
-import {Request} from 'express'
+import passport from 'passport-local';
 import AuthStrategy from './authStrategy';
 import userRepository from '../../repositories/User.repository';
 import { logger, LoggerClass } from '../../utils/logger/logger';
@@ -12,7 +11,7 @@ const options = {
 /**
  * This class is descentor of authstrategy class, is to perform the local authentication
  */
-class CustomLocalStrategy extends AuthStrategy {
+export class CustomLocalStrategy extends AuthStrategy {
 
   async checkExistingUserByProfile(profile: { username: string, password: string }): Promise<UserEntity> {
     return await this.userRepository.findOne({ name: profile.username, password: md5(profile.password) })
@@ -37,10 +36,6 @@ class CustomLocalStrategy extends AuthStrategy {
     }
   }
 
-  getStrategy() {
-    return new Strategy(this.options, this.getAuthCallBack());
-  }
-
 }
 
-export default new CustomLocalStrategy(options, userRepository).getStrategy()
+export default new CustomLocalStrategy(options, userRepository, passport).getStrategy()

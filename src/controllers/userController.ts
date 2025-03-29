@@ -13,7 +13,7 @@ export class UserController {
 
     static getInstance(): UserController {
         if (!this._instance) {
-            this._instance = new UserController(new UserService())
+            this._instance = new UserController(UserService.getInstance())
         }
         return this._instance
     }

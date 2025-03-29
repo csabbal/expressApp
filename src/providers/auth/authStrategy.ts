@@ -1,16 +1,15 @@
 import { v4 as uuidv4 } from 'uuid'
 import { logger, LoggerClass } from "../../utils/logger/logger";
-import { _StrategyOptionsBase, Strategy as GoogleStrategy, StrategyOptions } from 'passport-google-oauth20';
+import { _StrategyOptionsBase } from 'passport-google-oauth20';
 import { UserRepository } from "../../repositories/User.repository";
 import { UserEntity } from "../../types/User";
-import { Strategy } from 'passport-oauth2';
 
 /**
  *  this class is for creating new users and performing an authentication strategy
  */
 export default abstract class AuthStrategy {
 
-    constructor(protected options:any, protected userRepository:UserRepository){}
+    constructor(protected options:any, protected userRepository:UserRepository,protected passport: any){}
 
     /**
      * Create a new user based on the given profile data
@@ -23,7 +22,7 @@ export default abstract class AuthStrategy {
             name: profile.displayName,
             googleId: profile.id,
             email: profile.emails?.[0]?.value,
-            fullName: profile.name.givenName + " " + profile.name.familyName,
+            fullName: profile.name && profile.name.givenName + " " + profile.name.familyName,
             jwtSecureCode: uuidv4()
         } as UserEntity
         logger.info('create User' + LoggerClass.objectToString(newUser))
@@ -36,7 +35,7 @@ export default abstract class AuthStrategy {
      * @returns {Prmoise<UserEntity>} the existing user or null
      */
     async checkExistingUserByProfile(profile: any): Promise<UserEntity> {
-        return await this.userRepository.findOne({ googleId: profile.id, })
+        return await this.userRepository.findOne({ googleId: profile.id })
     }
 
     /**
@@ -61,7 +60,7 @@ export default abstract class AuthStrategy {
      * @returns {Strategy}
      */
     getStrategy():any{
-        return new Strategy(this.options, this.getAuthCallBack.bind(this));
+        return new this.passport.Strategy(this.options, this.getAuthCallBack.bind(this)());
     }
 
 

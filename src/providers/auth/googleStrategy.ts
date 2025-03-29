@@ -1,4 +1,4 @@
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import passport from 'passport-google-oauth20';
 import AuthStrategy from './authStrategy';
 import userRepository  from '../../repositories/User.repository';
 
@@ -13,12 +13,5 @@ const options = {
 /**
  * This class is descentor of authstrategy class, is to perform the Google authentication
  */
-class CustomGoogleStrategy extends AuthStrategy {
-
-  getStrategy() {
-    return new GoogleStrategy(this.options, this.getAuthCallBack());
-  }
-
-}
-
-export default new CustomGoogleStrategy(options,userRepository).getStrategy()
+export class CustomGoogleStrategy extends AuthStrategy {}
+export default new CustomGoogleStrategy(options,userRepository, passport).getStrategy()

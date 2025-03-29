@@ -1,9 +1,12 @@
 import { UserEntity } from "./User"
 
-export interface PermissionEntity{
-    id:string,
+export interface Permission{
     component:string,
     privilege:string
+}
+
+export interface PermissionEntity extends Permission{
+    id:string,
 }
 
 export interface UserPermissionsEntity{
@@ -12,6 +15,6 @@ export interface UserPermissionsEntity{
     permissions:PermissionEntity[]
 }
 
-export type GenerateJwt = (user: UserEntity, permissions: PermissionEntity[], jwtSecret: string) => Promise<string>
+export type GenerateJwt = (user: UserEntity, permissions: PermissionEntity[]) => Promise<string>
 
 export type PermissionEntityArray = PermissionEntity[]

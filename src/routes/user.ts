@@ -1,13 +1,14 @@
 import express from 'express';
 import { UserController } from '../controllers/userController';
 import { requireJwt } from '../providers/auth/passport';
-import { verifyPrivileges } from '../providers/auth/jwtStrategy';
+import { jwtStrategyInstance } from '../providers/auth/jwtStrategy';
 
 // get the current router instance
 const router = express.Router();
 
 // get the current user controller instance
 const userController = UserController.getInstance()
+const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyInstance)
 
 /**
  * @swagger

@@ -1,10 +1,10 @@
 import { UserEntity } from "../types/User";
 import { loggedMethod } from "../utils/logger/logger";
-import userRepository from "../repositories/User.repository";
+import userRepository, {UserRepository} from "../repositories/User.repository";
 
 export class UserService {
     protected static _instance: UserService;
-    constructor(){}
+    constructor(protected userRepository:UserRepository){}
 
     /**
      * getInstance function provides that this class work as a singleton
@@ -12,7 +12,7 @@ export class UserService {
      */
     static getInstance() {
         if (!this._instance) {
-            this._instance = new UserService()
+            this._instance = new UserService(userRepository)
         }
         return this._instance
     }
@@ -22,7 +22,7 @@ export class UserService {
      */
     @loggedMethod('[UserService]')
     public async getAllUsers(): Promise<UserEntity[]> {
-        const users = await userRepository.find()
+        const users = await this.userRepository.find()
         return users
     }
 }
