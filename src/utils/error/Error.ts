@@ -54,8 +54,8 @@ export class ServerError extends Error {
  * @param {NextFunction} next 
  */
 export async function errorHandlerMiddleware(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
-    const errStatus = err.statusCode || 500;
-    const errMsg = err.message || 'Something went wrong';
+    const errStatus = err.statusCode || 500
+    const errMsg = err.message || 'Something went wrong'
     const errStack = err.stack
 logger.error('[erorrHandlerMiddleware] '+errMsg)
     if (err instanceof BadRequestError) {

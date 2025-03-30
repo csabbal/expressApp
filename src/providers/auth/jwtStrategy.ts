@@ -1,16 +1,16 @@
-import { NextFunction, Request, Response } from 'express';
-import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
-import passport, { ExtractJwt, VerifiedCallback } from 'passport-jwt';
-import { userRepository, userPermissionsRepository } from '../../repositories/index';
-import { AppRequest } from '../../types/CustomExpress';
-import { Permission, PermissionEntity } from '../../types/Permission';
-import { UserEntity } from '../../types/User';
-import crypt from '../../utils/Crypt';
-import { logger, LoggerClass } from '../../utils/logger/logger';
-import AuthStrategy from './authStrategy';
-import { IUserPermissionsRepository, IUserRepository } from '../../repositories/type';
-dotenv.config();
+import { NextFunction, Request, Response } from 'express'
+import dotenv from 'dotenv'
+import jwt from 'jsonwebtoken'
+import passport, { ExtractJwt, VerifiedCallback } from 'passport-jwt'
+import { userRepository, userPermissionsRepository } from '../../repositories/index'
+import { AppRequest } from '../../types/CustomExpress'
+import { Permission, PermissionEntity } from '../../types/Permission'
+import { UserEntity } from '../../types/User'
+import crypt from '../../utils/Crypt'
+import { logger, LoggerClass } from '../../utils/logger/logger'
+import AuthStrategy from './authStrategy'
+import { IUserPermissionsRepository, IUserRepository } from '../../repositories/type'
+dotenv.config()
 const { JWT_SECRET: jwtSecret } = process.env
 export class JWTStrategy extends AuthStrategy {
     constructor(
@@ -113,7 +113,7 @@ export class JWTStrategy extends AuthStrategy {
             }
             catch (e) {
                 logger.debug('[auth] problem occured during the verification process')
-                return done(e, false);
+                return done(e, false)
 
             }
         }
@@ -123,7 +123,7 @@ export class JWTStrategy extends AuthStrategy {
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_SECRET || 'test',
-};
+}
 
 export const jwtStrategyInstance = new JWTStrategy(options, userRepository, userPermissionsRepository, passport, jwt, crypt,jwtSecret)
 export default jwtStrategyInstance.getStrategy()

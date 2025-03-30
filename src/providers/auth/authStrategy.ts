@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
-import { logger, LoggerClass } from "../../utils/logger/logger";
-import { _StrategyOptionsBase } from 'passport-google-oauth20';
-import { UserEntity } from "../../types/User";
-import { IUserRepository } from '../../repositories/type';
+import { logger, LoggerClass } from "../../utils/logger/logger"
+import { _StrategyOptionsBase } from 'passport-google-oauth20'
+import { UserEntity } from "../../types/User"
+import { IUserRepository } from '../../repositories/type'
 
 /**
  *  this class is for creating new users and performing an authentication strategy
@@ -48,9 +48,9 @@ export default abstract class AuthStrategy {
             try {
                 logger.info('search existing user based on profile: ' + LoggerClass.objectToString(profile))
                 const user = await this.checkExistingUserByProfile(profile) ?? await this.createNewUserFromAuthUser(profile)
-                return done(null, user);
+                return done(null, user)
             } catch (error) {
-                return done(error as Error);
+                return done(error as Error)
             }
         }
     }
@@ -60,7 +60,7 @@ export default abstract class AuthStrategy {
      * @returns {Strategy}
      */
     getStrategy():any{
-        return new this.passport.Strategy(this.options, this.getAuthCallBack.bind(this)());
+        return new this.passport.Strategy(this.options, this.getAuthCallBack.bind(this)())
     }
 
 

@@ -1,10 +1,10 @@
-import { UserEntity } from "../types/User";
-import { loggedMethod } from "../utils/logger/logger";
-import { userRepository } from "../repositories";
-import { IUserRepository } from "../repositories/type";
+import { UserEntity } from "../types/User"
+import { loggedMethod } from "../utils/logger/logger"
+import { userRepository } from "../repositories"
+import { IUserRepository } from "../repositories/type"
 
 export class UserService {
-    protected static _instance: UserService;
+    protected static _instance: UserService
     constructor(protected userRepository:IUserRepository){}
 
     /**

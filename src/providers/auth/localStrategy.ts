@@ -1,8 +1,8 @@
-import passport from 'passport-local';
-import AuthStrategy from './authStrategy';
-import { userRepository } from '../../repositories';
-import { logger, LoggerClass } from '../../utils/logger/logger';
-import { UserEntity } from '../../types/User';
+import passport from 'passport-local'
+import AuthStrategy from './authStrategy'
+import { userRepository } from '../../repositories'
+import { logger, LoggerClass } from '../../utils/logger/logger'
+import { UserEntity } from '../../types/User'
 import md5 from 'md5'
 const options = {
   username: 'username', // Field name for username
@@ -28,10 +28,10 @@ export class CustomLocalStrategy extends AuthStrategy {
       try {
         logger.info('search existing user based on profile: ' + LoggerClass.objectToString(profile))
         const user = await this.checkExistingUserByProfile(profile)
-        return done(null, user);
+        return done(null, user)
       } catch (error) {
         logger.error('the user does not exist ' + LoggerClass.objectToString(profile))
-        return done(error as Error);
+        return done(error as Error)
       }
     }
   }

@@ -8,9 +8,9 @@ export class Crypt {
    * @returns a hash
    */
   async hashValue(value: string) {
-    const saltRounds = 10;
-    const hashedValue = await bcrypt.hash(value, saltRounds);
-    return hashedValue;
+    const saltRounds = 10
+    const hashedValue = await bcrypt.hash(value, saltRounds)
+    return hashedValue
   }
 
   /**
@@ -20,8 +20,8 @@ export class Crypt {
    * @returns {Boolean}
    */
   async checkValue(originalValue: string, hashedValue: string) {
-    const match = await bcrypt.compare(originalValue, hashedValue);
-    return match;
+    const match = await bcrypt.compare(originalValue, hashedValue)
+    return match
   }
 
 }

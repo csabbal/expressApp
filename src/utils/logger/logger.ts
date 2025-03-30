@@ -1,15 +1,15 @@
 import { createLogger, format, transports, Logger } from 'winston'
 import { stringify } from 'flatted'
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express'
 import DailyLogRotate from 'winston-daily-rotate-file'
 import LocalStorageClass from '../asyncLocalStorage/asyncLocalStorage'
 import _ from 'lodash'
-import { safeStringify } from '../StringManupilation';
+import { safeStringify } from '../StringManupilation'
 
 export class LoggerClass {
     static _instance: LoggerClass
     logger: any
-    constructor(protected level:string) {
+    constructor(protected level: string) {
         this.init()
     }
 
@@ -18,7 +18,7 @@ export class LoggerClass {
      * @param {timeStamp:string,level:string,message:string} param0 
      * @returns {string} // the log notes
      */
-    printFunction({ timestamp, level, message }){
+    printFunction({ timestamp, level, message }) {
         const requestId = LocalStorageClass.getRequestId()
         return `${timestamp} ${level} (${requestId}): ${message}`
     }
@@ -34,7 +34,7 @@ export class LoggerClass {
      * this function is needed to the class can work as a singleton
      * @returns {LoggerClass}
      */
-    static getInstance(level:string): LoggerClass {
+    static getInstance(level: string): LoggerClass {
         if (!this._instance) {
             this._instance = new LoggerClass(level)
         }
@@ -79,16 +79,16 @@ export class LoggerClass {
      * @param level 
      * @returns 
      */
-    getDailyLogrotate(level:string){
-        return  new DailyLogRotate({
-            filename: './logs/'+level+'-%DATE%.log',
+    getDailyLogrotate(level: string) {
+        return new DailyLogRotate({
+            filename: './logs/' + level + '-%DATE%.log',
             format: this.format,
             datePattern: 'YYYYMMDD',
             zippedArchive: true,
             maxFiles: '30d',
             maxSize: '200m',
             auditFile: `./logs/.audit.json`,
-            level: level, 
+            level: level,
         })
     }
 
@@ -99,15 +99,15 @@ export class LoggerClass {
      * @param {NextFunction} next 
      */
     logMiddleware(req: Request, res: Response, next: NextFunction) {
-        const start = Date.now();
-        const { method, url, body } = req;
-        this.logger.info(`--> ${method} url: ${url} `);
-        if (method === 'POST') this.logger.info(`--> ${method} body:${LoggerClass.objectToString(body)}`);
+        const start = Date.now()
+        const { method, url, body } = req
+        this.logger.info(`--> ${method} url: ${url} `)
+        if (method === 'POST') this.logger.info(`--> ${method} body:${LoggerClass.objectToString(body)}`)
         res.on('finish', () => {
-            const duration = Date.now() - start;
-            const { statusCode } = res;
-            this.logger.info(`<-- ${method} ${url} ${statusCode} - ${duration}ms`);
-        });
+            const duration = Date.now() - start
+            const { statusCode } = res
+            this.logger.info(`<-- ${method} ${url} ${statusCode} - ${duration}ms`)
+        })
         next()
     }
 
@@ -128,12 +128,12 @@ export class LoggerClass {
                 return targetMethod.apply(this, args)
             }
             return descriptor
-        };
+        }
     }
 }
 
 // create the logger instance what the app use to log everything
-const {LOG_LEVEL:level} = process.env
+const { LOG_LEVEL: level } = process.env
 export const loggerInstance = LoggerClass.getInstance(level)
 export const loggedMethod = loggerInstance.loggedMethod
 export const logger = loggerInstance.logger

@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import sinon, { SinonSandbox, SinonStub } from 'sinon'
-import { addPassportToAppFunction, initPassport } from './passport';
+import { addPassportToAppFunction, initPassport } from './passport'
 
 let sandbox: SinonSandbox
 

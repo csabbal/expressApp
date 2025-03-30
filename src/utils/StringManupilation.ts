@@ -4,14 +4,14 @@
  * @returns {String}
  */
 export function safeStringify(obj: any):string {
-    const seen = new WeakSet();
+    const seen = new WeakSet()
     return JSON.stringify(obj, (key, value) => {
         if (typeof value === "object" && value !== null) {
             if (seen.has(value)) {
-                return;
+                return
             }
-            seen.add(value);
+            seen.add(value)
         }
-        return value;
-    });
+        return value
+    })
 }

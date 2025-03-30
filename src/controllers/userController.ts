@@ -1,13 +1,13 @@
-import express from 'express';
-import { UserService } from '../services/userService';
-import { UserEntity } from '../types/User';
-import { loggedMethod } from '../utils/logger/logger';
+import express from 'express'
+import { UserService } from '../services/userService'
+import { UserEntity } from '../types/User'
+import { loggedMethod } from '../utils/logger/logger'
 
 /**
  * This class is about to provides all requests of the user related endpoints via user service 
  */
 export class UserController {
-    protected static _instance: UserController;
+    protected static _instance: UserController
 
     constructor(private userService: UserService) { }
 
@@ -27,8 +27,8 @@ export class UserController {
     @loggedMethod('[UserController]')
     public async getAllUsers(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
-            const users: UserEntity[] = await this.userService.getAllUsers();
-            res.json(users);
+            const users: UserEntity[] = await this.userService.getAllUsers()
+            res.json(users)
         } catch (e) {
             next(e)
         }

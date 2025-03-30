@@ -1,13 +1,13 @@
-import dotenv from 'dotenv';
-import { PermissionModel } from "../entities/Permissions.schema";
-import { UserModel } from "../entities/User.schema";
-import { UserPermissionsModel } from "../entities/UserPermissions.schema";
-import { PermissionRepository } from "./Permission.repository";
-import { UserRepository } from "./User.repository";
-import { UserPermissionsRepository } from "./UserPermissions.repository";
-import { IRepositories } from "./type";
-dotenv.config();
-const { DB_TYPE: type } = process.env;
+import dotenv from 'dotenv'
+import { PermissionModel } from "../entities/Permissions.schema"
+import { UserModel } from "../entities/User.schema"
+import { UserPermissionsModel } from "../entities/UserPermissions.schema"
+import { PermissionRepository } from "./Permission.repository"
+import { UserRepository } from "./User.repository"
+import { UserPermissionsRepository } from "./UserPermissions.repository"
+import { IRepositories } from "./type"
+dotenv.config()
+const { DB_TYPE: type } = process.env
 
 
 export class RepositoryFactory {

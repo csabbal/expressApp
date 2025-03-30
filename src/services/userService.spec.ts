@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import sinon, { SinonSandbox, SinonSpy, SinonStub } from 'sinon'
-import { loggerInstance } from "../utils/logger/logger";
+import { loggerInstance } from "../utils/logger/logger"
 import { UserService } from './userService'
-import { UserRepository } from '../repositories/User.repository';
+import { UserRepository } from '../repositories/User.repository'
 
 let sandbox: SinonSandbox
 

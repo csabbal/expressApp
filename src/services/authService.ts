@@ -1,12 +1,12 @@
-import { loggedMethod } from "../utils/logger/logger";
+import { loggedMethod } from "../utils/logger/logger"
 import { jwtStrategyInstance } from '../providers/auth/jwtStrategy'
-import { userPermissionsRepository } from "../repositories";
-import { UserEntity } from "../types/User";
-import { GenerateJwt } from "../types/Permission";
-import { IUserPermissionsRepository } from "../repositories/type";
+import { userPermissionsRepository } from "../repositories"
+import { UserEntity } from "../types/User"
+import { GenerateJwt } from "../types/Permission"
+import { IUserPermissionsRepository } from "../repositories/type"
 
 export class AuthService {
-    protected static _instance: AuthService;
+    protected static _instance: AuthService
     constructor(
         protected userPermissionRepository:IUserPermissionsRepository,
         protected generateJWT: GenerateJwt
@@ -35,7 +35,7 @@ export class AuthService {
     public async callback(user:UserEntity): Promise<{token:string}> {
         const userPermissions = (await this.userPermissionRepository.findOne({userId:user.id}))
         const permissions = userPermissions ? userPermissions.permissions : [] 
-        const token = await this.generateJWT(user,permissions);
+        const token = await this.generateJWT(user,permissions)
         return {token}
     }
 }

@@ -1,8 +1,8 @@
-import "reflect-metadata";
+import "reflect-metadata"
 import { CommandFailedEvent, CommandStartedEvent, CommandSucceededEvent } from 'mongodb'
 
-import { logger, LoggerClass } from "../../utils/logger/logger";
-import { DataSource } from "./DataSource";
+import { logger, LoggerClass } from "../../utils/logger/logger"
+import { DataSource } from "./DataSource"
 
 /**
  * This class is to take care about:

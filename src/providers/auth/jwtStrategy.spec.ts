@@ -42,7 +42,7 @@ describe('AuthStrategy', () => {
     let oauth2: {
         Strategy: SinonStub
     }
-    let jwtSecret = 'secret'
+    const jwtSecret = 'secret'
     beforeEach(() => {
         sandbox = sinon.createSandbox()
         oauth2 = { Strategy: sandbox.stub() }

@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import sinon, { SinonSandbox, SinonSpy, SinonStub } from 'sinon'
-import { loggerInstance } from "../utils/logger/logger";
+import { loggerInstance } from "../utils/logger/logger"
 import { AuthService } from './authService'
-import { UserPermissionsRepository } from '../repositories/UserPermissions.repository';
+import { UserPermissionsRepository } from '../repositories/UserPermissions.repository'
 
 let sandbox: SinonSandbox
 
@@ -16,7 +16,7 @@ describe('AuthService', () => {
         password: 'testpassword',
         jwtSecureCode: 'test'
     }
-    let userPermissions = { userId: 1, permissions: ['read'] }
+    const userPermissions = { userId: 1, permissions: ['read'] }
     let generateJWT: SinonStub
     let loggerSpy: SinonSpy
     let authServiceInstance: AuthService

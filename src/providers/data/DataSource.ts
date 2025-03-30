@@ -1,6 +1,6 @@
 import { DatabaseProperties } from "../../types/Database"
 import { logger, LoggerClass } from "../../utils/logger/logger"
-import {Mongoose} from "mongoose";
+import {Mongoose} from "mongoose"
 
 /**
  *  This class is the base of the any DataSource in the database

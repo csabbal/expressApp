@@ -1,10 +1,10 @@
 
-import express from 'express';
+import express from 'express'
 import {AuthController} from '../controllers/authController'
-import {requireGoogleAuth, requireLocalAuth} from '../providers/auth/passport';
+import {requireGoogleAuth, requireLocalAuth} from '../providers/auth/passport'
 
 // get the current router instance
-const router = express.Router();
+const router = express.Router()
 
 // get the current authController instance
 const authController = AuthController.getInstance()
@@ -39,7 +39,7 @@ const authController = AuthController.getInstance()
  *                 type: string
  *                 description: the token is to identify the user    
  */
-router.post('/local', requireLocalAuth, authController.authCallback.bind(authController));
+router.post('/local', requireLocalAuth, authController.authCallback.bind(authController))
 
 /**
  * @swagger
@@ -51,7 +51,7 @@ router.post('/local', requireLocalAuth, authController.authCallback.bind(authCon
  *       302:
  *         description: Redirects to Google authentication page
  */
-router.get('/google', requireGoogleAuth);
+router.get('/google', requireGoogleAuth)
 
 /**
  * @swagger
@@ -65,7 +65,7 @@ router.get('/google', requireGoogleAuth);
  *       401:
  *         description: Unauthorized
  */
-router.get('/google/callback', requireGoogleAuth, authController.authCallback.bind(authController));
+router.get('/google/callback', requireGoogleAuth, authController.authCallback.bind(authController))
 
 /**
 * @swagger
@@ -76,7 +76,7 @@ router.get('/google/callback', requireGoogleAuth, authController.authCallback.bi
 *       200:
 *         description: user logged out        
 */
-router.post('/logout', authController.logout);
+router.post('/logout', authController.logout)
 
 
 export default router

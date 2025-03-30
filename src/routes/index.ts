@@ -55,10 +55,10 @@ const swaggerOptions = {
         },
     },
     apis: ['./src/routes/*'],
-};
+}
 
 // add endpoint in order for swagger's working
-router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swaggerOptions)));
+router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swaggerOptions)))
 
 // added user endpoints
 router.use('/user', userRouter)

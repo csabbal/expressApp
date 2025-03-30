@@ -1,7 +1,7 @@
-import "reflect-metadata";
+import "reflect-metadata"
 import MongoDataSource from './MongoDataSource'
-import { DatabaseProperties } from "../../types/Database";
-import mongoose, {Mongoose} from "mongoose";
+import { DatabaseProperties } from "../../types/Database"
+import mongoose, {Mongoose} from "mongoose"
 /**
  * This factory class is to take care about the creation of DataSources 
  */
