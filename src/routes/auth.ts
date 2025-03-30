@@ -41,30 +41,8 @@ const authController = AuthController.getInstance()
  */
 router.post('/local', requireLocalAuth, authController.authCallback.bind(authController))
 
-/**
- * @swagger
- * /api/auth/google:
- *   get:
- *     summary: Initiate Google authentication
- *     description: Redirects the user to Google for authentication.
- *     responses:
- *       302:
- *         description: Redirects to Google authentication page
- */
 router.get('/google', requireGoogleAuth)
 
-/**
- * @swagger
- * /api/auth/google/callback:
- *   get:
- *     summary: Google authentication callback
- *     description: Handles the callback from Google after authentication.
- *     responses:
- *       200:
- *         description: Successful authentication and redirect
- *       401:
- *         description: Unauthorized
- */
 router.get('/google/callback', requireGoogleAuth, authController.authCallback.bind(authController))
 
 /**
