@@ -11,7 +11,8 @@
     "test:coverage": "nyc npm test",
     "test": "TS_NODE_PROJECT=tsconfig.test.json node --loader ts-node/register ./node_modules/.bin/mocha src/**/*.spec.ts",
     "test:watch": "TS_NODE_PROJECT=tsconfig.test.json node --loader ts-node/register ./node_modules/.bin/mocha  --watch --watch-files  src/**/*.spec.ts --watch-ignore node_modules ",
-    "typedoc": "typedoc --entryPointStrategy Expand src"
+    "typedoc": "typedoc --entryPointStrategy Expand src",
+    "lint":"eslint"
   },
   "author": "csabbal",
   "license": "ISC",
@@ -26,7 +27,6 @@
     "cookie-session": "^2.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "eslint": "^9.22.0",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
     "flatted": "^3.3.3",
@@ -72,6 +72,8 @@
     "@types/uuid": "^10.0.0",
     "@types/winston": "^2.4.4",
     "chai": "^5.2.0",
+    "eslint": "^9.23.0",
+    "globals": "^16.0.0",
     "i": "^0.3.7",
     "mocha": "^11.1.0",
     "npm": "^11.2.0",
@@ -80,6 +82,7 @@
     "ts-node-dev": "^2.0.0",
     "typedoc": "^0.27.9",
     "typescript": "^5.7.3",
+    "typescript-eslint": "^8.28.0",
     "webpack": "^5.98.0",
     "webpack-cli": "^6.0.1"
   }
