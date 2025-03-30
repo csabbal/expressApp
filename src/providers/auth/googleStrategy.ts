@@ -1,6 +1,8 @@
 import passport from 'passport-google-oauth20';
 import AuthStrategy from './authStrategy';
 import userRepository  from '../../repositories/User.repository';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // parameters for google authentication
 const options = {

@@ -9,10 +9,11 @@ import router from './routes/index'
 import AsyncLocalStorageClass from './utils/asyncLocalStorage/asyncLocalStorage';
 import { loggerInstance, logger } from './utils/logger/logger';
 import { errorHandlerMiddleware } from './utils/error/Error';
-import {initPassport} from './providers/auth/passport'
+import { addPassportToAppFunction } from './providers/auth/passport'
 
 dotenv.config();
-const { PORT: port } = process.env
+const { PORT: appPort } = process.env
+const { DB_TYPE: type, DB_HOST: host, DB_PORT: port, DB_USERNAME: user, DB_PASSWORD: password, DB_DATABASE: database } = process.env;
 
 const options = {
   key: fs.readFileSync('keys/server.key'), 
@@ -25,7 +26,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 // init Passport to authentication
-initPassport(app)
+addPassportToAppFunction(app)
 
 // add the middlewares
 app.use(AsyncLocalStorageClass.requestIdMiddleware)
@@ -38,11 +39,11 @@ app.use('/api', router)
 app.use(errorHandlerMiddleware)
 
 // init the data source
-await initDataSource()
+await initDataSource({type, host, port, user, password, database})
 
 // start the application
-https.createServer(options,app).listen(port,() => {
-  logger.info(`Server is running  at https://localhost:${port}`);
+https.createServer(options,app).listen(appPort,() => {
+  logger.info(`Server is running  at https://localhost:${appPort}`);
 });
 
 export default app

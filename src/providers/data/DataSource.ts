@@ -1,5 +1,6 @@
 import { DatabaseProperties } from "../../types/Database"
 import { logger, LoggerClass } from "../../utils/logger/logger"
+import {Mongoose} from "mongoose";
 
 /**
  *  This class is the base of the any DataSource in the database
@@ -7,7 +8,7 @@ import { logger, LoggerClass } from "../../utils/logger/logger"
  */
 export abstract class DataSource {
     protected connectionString:string
-    constructor(protected data:DatabaseProperties) {
+    constructor(protected data:DatabaseProperties, protected ODM: Mongoose) {
         logger.info(this.data.type+' connection string: ' + LoggerClass.objectToString(data))
     }
 

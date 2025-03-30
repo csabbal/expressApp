@@ -1,29 +1,25 @@
 import "reflect-metadata";
-import * as dotenv from "dotenv";
 import MongoDataSource from './MongoDataSource'
 import { DatabaseProperties } from "../../types/Database";
-dotenv.config();
-const { DB_TYPE: type, DB_HOST: host, DB_PORT: port, DB_USERNAME: user, DB_PASSWORD: password, DB_DATABASE: database, NODE_ENV: env } = process.env;
-
+import mongoose, {Mongoose} from "mongoose";
 /**
  * This factory class is to take care about the creation of DataSources 
  */
-class DataSourceFactory {
+export class DataSourceFactory {
 
-    constructor(protected data: DatabaseProperties) {}
+    constructor(protected data: DatabaseProperties, protected ODM: Mongoose) {}
 
     create() {
         switch (this.data.type) {
             case 'mongo':
-                return new MongoDataSource(this.data)
+                return new MongoDataSource(this.data, this.ODM)
             default:
-                throw new Error('database type is needed')
+                throw new Error('database type is unknown')
         }
     }
 }
-
-export async function initDataSource() {
-    const dataSourceFactory = new DataSourceFactory({ type, host, port, user, password, database })
+export async function initDataSource(data: DatabaseProperties) {
+    const dataSourceFactory = new DataSourceFactory(data,mongoose)
     const dataSoruce = dataSourceFactory.create()
     await dataSoruce.buildDataSource()
 }

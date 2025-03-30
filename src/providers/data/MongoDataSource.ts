@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { CommandFailedEvent, CommandStartedEvent, CommandSucceededEvent } from 'mongodb'
-import mongoose from "mongoose";
+
 import { logger, LoggerClass } from "../../utils/logger/logger";
 import { DataSource } from "./DataSource";
 
@@ -14,15 +14,15 @@ import { DataSource } from "./DataSource";
 export default class MongoDataSource extends DataSource {
 
     setLogging() {
-        mongoose.connection.on('commandStarted', (data: CommandStartedEvent) => {
+        this.ODM.connection.on('commandStarted', (data: CommandStartedEvent) => {
             logger.info("[db][commandStarted]" + JSON.stringify(data.command))
         })
 
-        mongoose.connection.on('commandFailed', (data: CommandFailedEvent) => {
+        this.ODM.connection.on('commandFailed', (data: CommandFailedEvent) => {
             logger.info("[db][commandFailed]" + LoggerClass.objectToString(data.failure))
         })
 
-        mongoose.connection.on('commandSucceeded', (data: CommandSucceededEvent) => {
+        this.ODM.connection.on('commandSucceeded', (data: CommandSucceededEvent) => {
             logger.info("[db][commandSucceeded]" + LoggerClass.objectToString(data.reply))
         })
     }
@@ -32,7 +32,7 @@ export default class MongoDataSource extends DataSource {
     }
 
     async connectoToDatabase() {
-        await mongoose.connect(this.connectionString, { monitorCommands: true, serverMonitoringMode: 'auto' })
+        await this.ODM.connect(this.connectionString, { monitorCommands: true, serverMonitoringMode: 'auto' })
     }
 }
 
