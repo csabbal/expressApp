@@ -4,11 +4,10 @@ import { loggerInstance } from '../../utils/logger/logger'
 import AuthStrategy from './authStrategy'
 import { UserRepository } from '../../repositories/User.repository'
 
-let sandbox: SinonSandbox
-
 class TestAuthStrategyClass extends AuthStrategy { }
 
 describe('AuthStrategy', () => {
+    let sandbox: SinonSandbox
     let loggerSpy: SinonSpy
     let authStrategyInstance: AuthStrategy
     let userRepository: { create: SinonStub, findOne: SinonStub }
