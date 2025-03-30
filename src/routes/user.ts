@@ -34,7 +34,11 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *                     type: string
  *                     example: John Doe
  */
-router.get('/all', requireJwt, verifyPrivileges([{component:'users', privilege:'read'}]), userController.getAllUsers.bind(userController))
+router.get('/all',
+    requireJwt,
+    verifyPrivileges([{ component: 'users', privilege: 'read' }]),
+    userController.getAllUsers.bind(userController)
+)
 
 
 export default router

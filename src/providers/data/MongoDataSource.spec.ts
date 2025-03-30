@@ -1,8 +1,8 @@
 import { expect } from 'chai'
+import mongoose from 'mongoose'
 import sinon, { SinonSandbox, SinonSpy } from 'sinon'
 import { logger } from '../../utils/logger/logger'
 import MongoDataSource from './MongoDataSource'
-import mongoose from 'mongoose'
 
 describe('MongoDataSource', () => {
     let sandbox: SinonSandbox
@@ -37,7 +37,10 @@ describe('MongoDataSource', () => {
             const connectStub = sandbox.stub((datasource as any).ODM, 'connect').resolves()
             datasource.setConnectionString()
             await datasource.connectoToDatabase()
-            expect(connectStub.calledWith((datasource as any).connectionString, { monitorCommands: true, serverMonitoringMode: 'auto' })).to.be.true
+            expect(connectStub.calledWith(
+                (datasource as any).connectionString,
+                { monitorCommands: true, serverMonitoringMode: 'auto' })
+            ).to.be.true
         })
     })
 
@@ -53,7 +56,7 @@ describe('MongoDataSource', () => {
             expect(commandStartedStub.calledWith('commandFailed')).to.be.true
         })
         describe('logging', () => {
-            const expectedCommand = 'test'
+            const expectedCommand = JSON.stringify('test')
             let ODM: any
             let logInfoStub: SinonSpy
             beforeEach(()=>{
@@ -63,20 +66,20 @@ describe('MongoDataSource', () => {
             })
             it('should be called in order to make log notes via logger if commandStarted happens', async () => {
                 ODM.connection.emit('commandStarted', { command: expectedCommand })
-                ODM.connection.on('commandStarted', (data: any) => {
-                    expect(logInfoStub.args[0][0]).deep.equal(`[db][commandStarted]${JSON.stringify(expectedCommand)}`)
+                ODM.connection.on('commandStarted', (_data: any) => {
+                    expect(logInfoStub.args[0][0]).deep.equal(`[db][commandStarted]${expectedCommand}`)
                 })
             })
             it('should be called in order to make log notes via logger if commandFailed happens', async () => {
                 ODM.connection.emit('commandFailed', { command: expectedCommand })
-                ODM.connection.on('commandFailed', (data: any) => {
-                    expect(logInfoStub.args[0][0]).deep.equal(`[db][commandFailed]${JSON.stringify(expectedCommand)}`)
+                ODM.connection.on('commandFailed', (_data: any) => {
+                    expect(logInfoStub.args[0][0]).deep.equal(`[db][commandFailed]${expectedCommand}`)
                 })
             })
             it('should be called in order to make log notes via logger if commandSucceeded happens', async () => {
                 ODM.connection.emit('commandSucceeded', { command: expectedCommand })
-                ODM.connection.on('commandSucceeded', (data: any) => {
-                    expect(logInfoStub.args[0][0]).deep.equal(`[db][commandSucceeded]${JSON.stringify(expectedCommand)}`)
+                ODM.connection.on('commandSucceeded', (_data: any) => {
+                    expect(logInfoStub.args[0][0]).deep.equal(`[db][commandSucceeded]${expectedCommand}`)
                 })
             })
         })

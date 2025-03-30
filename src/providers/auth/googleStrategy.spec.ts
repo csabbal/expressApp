@@ -1,13 +1,11 @@
 import { expect } from 'chai'
-import sinon, { SinonSandbox, SinonSpy, SinonStub } from 'sinon'
-import { loggerInstance } from '../../utils/logger/logger'
-import { CustomGoogleStrategy } from './googleStrategy'
+import sinon, { SinonSandbox, SinonStub } from 'sinon'
 import { UserRepository } from '../../repositories/User.repository'
+import { CustomGoogleStrategy } from './googleStrategy'
 
 let sandbox: SinonSandbox
 
 describe('GoogleStrategy', () => {
-    let loggerSpy: SinonSpy
     let authStrategyInstance: CustomGoogleStrategy
     const options = {
         clientID: 'clientId',
@@ -22,7 +20,6 @@ describe('GoogleStrategy', () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox()
         oauth2 = { Strategy: sandbox.stub() }
-        loggerSpy = sandbox.spy(loggerInstance.logger, 'info')
         authStrategyInstance = new CustomGoogleStrategy(options, {} as unknown as UserRepository, oauth2)
     })
     afterEach(() => {

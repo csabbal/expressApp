@@ -7,7 +7,6 @@ import { UserPermissionsRepository } from '../repositories/UserPermissions.repos
 let sandbox: SinonSandbox
 
 describe('AuthService', () => {
-    const jwtSecret = 'jwtSecret'
     const mockUser = {
         id: '1',
         name: 'John Doe',
@@ -49,7 +48,7 @@ describe('AuthService', () => {
             expect(loggerSpy.calledOnce).to.be.true
         })
 
-        it('should call generateJwt with empty array if the userpermission find doesnt return with results', async () => {
+        it('should call generateJwt with empty array if the searching doesnt return with results', async () => {
             userPermissionRepository = { findOne: sandbox.stub().resolves(null) } as any
             authServiceInstance = new AuthService(
                 userPermissionRepository as unknown as UserPermissionsRepository,
@@ -76,7 +75,7 @@ describe('AuthService', () => {
             it('should be called with the given user as a parameter', async () => {
                 expect(generateJWT.args[0][0]).deep.equals(mockUser)
             })
-            it('should be called with permission of the return value of the userPermission search if its exsisting', async () => {
+            it('should be called with permission of the return value of the searching if its exsisting', async () => {
                 expect(generateJWT.args[0][1]).deep.equals(userPermissions.permissions)
             })
         })

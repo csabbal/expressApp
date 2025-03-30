@@ -1,9 +1,8 @@
 import { expect } from 'chai'
-import sinon, { SinonSandbox, SinonSpy, SinonStub } from 'sinon'
+import sinon, { SinonSandbox, SinonStub } from 'sinon'
 import { UserRepository } from '../../repositories/User.repository'
 import { UserPermissionsRepository } from '../../repositories/UserPermissions.repository'
 import { Permission } from '../../types/Permission'
-import { loggerInstance } from '../../utils/logger/logger'
 import { JWTStrategy } from './jwtStrategy'
 
 let sandbox: SinonSandbox
@@ -86,7 +85,7 @@ describe('AuthStrategy', () => {
             const result = await jwtStrategyInstance.verifyUser(profile)
             expect(result).deep.equals(mockUser)
         })
-        it('should call crypt checkValue with jwtsecurecode of user returned by repository and the one contained by payload', async () => {
+        it('should call checkValue with jwtsecurecode of user returned and the one contained by payload', async () => {
             crypt.checkValue.resolves(true)
             await jwtStrategyInstance.verifyUser(profile)
             expect(crypt.checkValue.calledOnce).to.be.true
@@ -123,7 +122,7 @@ describe('AuthStrategy', () => {
             expect(userPermissionsRepository.findOne.calledOnce).to.be.true
         })
 
-        it('should return a function which calls next if the current user privileges meet the requirments', async () => {
+        it('should return a function which calls next if the user privileges meet the requirments', async () => {
             const result = await jwtStrategyInstance.verifyPrivileges(neededPrivileges)
             await result(req, mockResponse, next)
             expect(next.calledOnce).to.be.true
@@ -159,7 +158,7 @@ describe('AuthStrategy', () => {
     describe('getAuthCallBack', () => {
         const payload = { id: mockUser.id }
         let verifyStub: SinonStub
-        let result = async (payload: any, done: any) => { }
+        let result = async (_payload: any, _done: any) => { }
         let callbackFunction: SinonStub
         beforeEach(() => {
             verifyStub = sandbox.stub(jwtStrategyInstance, 'verifyUser').resolves(mockUser)

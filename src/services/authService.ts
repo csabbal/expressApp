@@ -3,7 +3,7 @@ import { jwtStrategyInstance } from '../providers/auth/jwtStrategy'
 import { userPermissionsRepository } from "../repositories"
 import { UserEntity } from "../types/User"
 import { GenerateJwt } from "../types/Permission"
-import { IUserPermissionsRepository } from "../repositories/type"
+import { IUserPermissionsRepository } from "../types/repositories"
 
 export class AuthService {
     protected static _instance: AuthService

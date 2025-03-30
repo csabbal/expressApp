@@ -40,4 +40,11 @@ export default defineConfig([
       "@typescript-eslint/no-unused-expressions": "off",
     },
   },
+   // Specific configuration for test files
+   {
+    files: ["**/types/*.ts"],
+    rules: {
+      "@typescript-eslint/no-empty-object-type": "off",
+    },
+  },
 ]);

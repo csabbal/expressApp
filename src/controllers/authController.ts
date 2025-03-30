@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import { AuthService } from '../services/authService'
-import { loggedMethod, logger } from '../utils/logger/logger'
 import { UserEntity } from '../types/User'
+import { loggedMethod } from '../utils/logger/logger'
 
 /**
  * This class is about to provides all requests of the authentication related endpoints via auth service 
@@ -28,7 +28,7 @@ export class AuthController {
      * @param {NextFunction} next 
      */
     @loggedMethod('[AuthController]')
-    public async authCallback(req: Request, res: Response, next: express.NextFunction) {
+    public async authCallback(req: Request, res: Response) {
         const user = req.user as UserEntity
         const token = await this.authService.callback(user)
         res.json(token)
@@ -47,5 +47,5 @@ export class AuthController {
             res.redirect('http://localhost:8080')
         })
     }
-    
+
 }

@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
+import { IUserRepository } from '../types/repositories'
 import { UserEntity } from '../types/User'
-import { UserModel } from '../entities/User.schema'
-import { IUserRepository } from './type'
 
 /**
  * This class is to take care about the handling of users in the database

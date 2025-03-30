@@ -1,14 +1,12 @@
 import { expect } from 'chai'
-import sinon, { SinonSandbox, SinonSpy, SinonStub } from 'sinon'
-import { loggerInstance } from '../../utils/logger/logger'
-import { CustomLocalStrategy } from './localStrategy'
-import { UserRepository } from '../../repositories/User.repository'
 import md5 from 'md5'
+import sinon, { SinonSandbox, SinonStub } from 'sinon'
+import { UserRepository } from '../../repositories/User.repository'
+import { CustomLocalStrategy } from './localStrategy'
 
 let sandbox: SinonSandbox
 
 describe('LocalStrategy', () => {
-    let loggerSpy: SinonSpy
     let authStrategyInstance: CustomLocalStrategy
     const options = {
         username: 'username', // Field name for username
@@ -32,7 +30,6 @@ describe('LocalStrategy', () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox()
         oauth2 = { Strategy: sandbox.stub() }
-        loggerSpy = sandbox.spy(loggerInstance.logger, 'info')
         userRepository = {
             create: sandbox.stub().resolves(mockUser),
             findOne: sandbox.stub().resolves(mockUser)
@@ -46,7 +43,10 @@ describe('LocalStrategy', () => {
         it('should find the user in the repository, based on the given profile id', async () => {
             await authStrategyInstance.checkExistingUserByProfile(profile)
             expect(userRepository.findOne.calledOnce).to.be.true
-            expect(userRepository.findOne.args[0][0]).deep.equals({ name: profile.username, password: md5(profile.password) })
+            expect(userRepository.findOne.args[0][0]).deep.equals({
+                name: profile.username,
+                password: md5(profile.password)
+            })
         })
     })
     describe('getAuthCallBack', () => {

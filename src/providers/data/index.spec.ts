@@ -1,9 +1,9 @@
 import { expect } from 'chai'
-import sinon, { SinonSandbox, SinonSpy, SinonStub} from 'sinon'
+import mongoose from 'mongoose'
+import sinon, { SinonSandbox, SinonStub } from 'sinon'
+import { DatabaseProperties } from '../../types/Database'
 import { DataSourceFactory, initDataSource } from './index'
 import MongoDataSource from './MongoDataSource'
-import mongoose from 'mongoose'
-import { DatabaseProperties } from '../../types/Database'
 
 describe('DataSourceFactory', () => {
     let sandbox: SinonSandbox

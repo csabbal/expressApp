@@ -1,15 +1,15 @@
-import { NextFunction, Request, Response } from 'express'
 import dotenv from 'dotenv'
+import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import passport, { ExtractJwt, VerifiedCallback } from 'passport-jwt'
-import { userRepository, userPermissionsRepository } from '../../repositories/index'
+import { userPermissionsRepository, userRepository } from '../../repositories/index'
+import { IUserPermissionsRepository, IUserRepository } from '../../types/repositories'
 import { AppRequest } from '../../types/CustomExpress'
 import { Permission, PermissionEntity } from '../../types/Permission'
 import { UserEntity } from '../../types/User'
 import crypt from '../../utils/Crypt'
 import { logger, LoggerClass } from '../../utils/logger/logger'
 import AuthStrategy from './authStrategy'
-import { IUserPermissionsRepository, IUserRepository } from '../../repositories/type'
 dotenv.config()
 const { JWT_SECRET: jwtSecret } = process.env
 export class JWTStrategy extends AuthStrategy {
@@ -20,7 +20,7 @@ export class JWTStrategy extends AuthStrategy {
         protected passport: any = passport,
         protected jwtHandler: any,
         protected crypt: any,
-        protected jwtSecret:string
+        protected jwtSecret: string
     ) {
         super(options, userRepository, passport)
     }
@@ -42,17 +42,20 @@ export class JWTStrategy extends AuthStrategy {
             if (!user) throw new Error('unauthorized')
 
             const isMatch = this.crypt.checkValue(user.jwtSecureCode, payload.jwtSecureCode)
-            logger.debug('[jwt verify] checkValue ' + LoggerClass.objectToString([user.jwtSecureCode, payload.jwtSecureCode, isMatch]))
+            const toBeLoggedData = LoggerClass.objectToString([user.jwtSecureCode, payload.jwtSecureCode, isMatch])
+            logger.debug('[jwt verify] checkValue ' + toBeLoggedData)
             if (!isMatch) throw new Error('unauthorized')
             return user
         }
         catch (e) {
+            logger.error('[jwt verify] error' + e.message)
             return false
         }
     }
 
     /**
-     * This function returns with a middleware which can check whether the given user's permissions allowes the user to reach the given endpoint or not
+     * This function returns with a middleware which can check whether the given user's permissions
+     * allowes the user to reach the given endpoint or not
      * @param {Permission[]} neededPrivileges 
      * @returns 
      */
@@ -61,8 +64,14 @@ export class JWTStrategy extends AuthStrategy {
             const appRequest = req as AppRequest
             if (!appRequest.user) throw new Error('forbidden')
             const user = appRequest.user
-            const userPermissions = (await this.userPermissionsRepository.findOne({ userId: user.id }))?.permissions ?? []
-            const isGranted = neededPrivileges.every(neededPriv => userPermissions.some(it => [neededPriv.component, 'all'].includes(it.component) && neededPriv.privilege === it.privilege))
+            const userPermissionsData = await this.userPermissionsRepository.findOne({ userId: user.id })
+            const userPermissions = userPermissionsData?.permissions ?? []
+            const isGranted = neededPrivileges.every(
+                neededPriv => userPermissions.some(
+                    (it: PermissionEntity) =>
+                        [neededPriv.component, 'all'].includes(it.component) && neededPriv.privilege === it.privilege
+                )
+            )
             if (isGranted) {
                 next()
             }
@@ -73,7 +82,8 @@ export class JWTStrategy extends AuthStrategy {
     }
 
     /**
-     * This function is about to generate json web token (with this token the application is able to indentify the user who sent the request)
+     * This function is about to generate json web token
+     * (with this token the application is able to indentify the user who sent the request)
      * 
      * @param {UserEntity }user 
      * @param {PermsiisionEntity} permissions 
@@ -125,6 +135,14 @@ const options = {
     secretOrKey: process.env.JWT_SECRET || 'test',
 }
 
-export const jwtStrategyInstance = new JWTStrategy(options, userRepository, userPermissionsRepository, passport, jwt, crypt,jwtSecret)
+export const jwtStrategyInstance = new JWTStrategy(
+    options,
+    userRepository,
+    userPermissionsRepository,
+    passport,
+    jwt,
+    crypt,
+    jwtSecret
+)
 export default jwtStrategyInstance.getStrategy()
 

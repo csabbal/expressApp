@@ -1,9 +1,9 @@
-import { createLogger, format, transports, Logger } from 'winston'
+import { NextFunction, Request, Response } from 'express'
 import { stringify } from 'flatted'
-import { Request, Response, NextFunction } from 'express'
+import _ from 'lodash'
+import { createLogger, format, transports } from 'winston'
 import DailyLogRotate from 'winston-daily-rotate-file'
 import LocalStorageClass from '../asyncLocalStorage/asyncLocalStorage'
-import _ from 'lodash'
 import { safeStringify } from '../StringManupilation'
 
 export class LoggerClass {
@@ -42,7 +42,8 @@ export class LoggerClass {
     }
 
     /**
-     * This function is to make a readable expression from object (it is useful if you want to write something to the log)
+     * This function is to make a readable expression from object
+     * (it is useful if you want to write something to the log)
      * @param obj 
      * @returns 
      */
@@ -52,6 +53,7 @@ export class LoggerClass {
         try {
             str = stringify(obj)
         } catch (e) {
+            logger.error('Error in stringify the object: '+ e.message)
             str = obj
         }
 
@@ -124,7 +126,7 @@ export class LoggerClass {
                 const withArgs = args?.length > 0 ? `is called with arguments ${safeStringify(args)}` : 'is called'
                 logger.debug(`${context} [${propertyKey}] ${withArgs}`)
                 logger.info(`${context} [${propertyKey}]`)
-                _.isUndefined(info) ?? logger.info(`${context} [${propertyKey}] ${info}`)
+                if(_.isUndefined(info)) logger.info(`${context} [${propertyKey}] ${info}`)
                 return targetMethod.apply(this, args)
             }
             return descriptor

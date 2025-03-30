@@ -1,7 +1,7 @@
 import { UserEntity } from "../types/User"
 import { loggedMethod } from "../utils/logger/logger"
 import { userRepository } from "../repositories"
-import { IUserRepository } from "../repositories/type"
+import { IUserRepository } from "../types/repositories"
 
 export class UserService {
     protected static _instance: UserService

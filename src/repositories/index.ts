@@ -5,7 +5,7 @@ import { UserPermissionsModel } from "../entities/UserPermissions.schema"
 import { PermissionRepository } from "./Permission.repository"
 import { UserRepository } from "./User.repository"
 import { UserPermissionsRepository } from "./UserPermissions.repository"
-import { IRepositories } from "./type"
+import { IRepositories } from "../types/repositories"
 dotenv.config()
 const { DB_TYPE: type } = process.env
 

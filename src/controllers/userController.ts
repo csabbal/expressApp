@@ -19,7 +19,8 @@ export class UserController {
     }
 
     /**
-     * This controller method has only one task is to call userService getAllUsers function in order for fetching all users form the user repository
+     * This controller method has only one task is to call userService getAllUsers function
+     * in order for fetching all users form the user repository
      * @param {Request} req 
      * @param {Response} res 
      * @param {NextFunction} next 

@@ -62,9 +62,8 @@ describe('AuthStrategy', () => {
         })
 
         describe('userRepository create', () => {
-            let result = {}
             beforeEach(async () => {
-                result = await authStrategyInstance.createNewUserFromAuthUser(profile)
+                await authStrategyInstance.createNewUserFromAuthUser(profile)
             })
             it('should be called a mapped profile data', async () => {
                 const paramsOfCreate = userRepository.create.args[0][0]
@@ -87,7 +86,7 @@ describe('AuthStrategy', () => {
     describe('getAuthCallBack', () => {
         let callBackFunction: (_accessToken: unknown, _refreshToken: unknown, profile: any, done: any) => Promise<any>
         beforeEach(() => {
-            authStrategyInstance = new TestAuthStrategyClass(options, userRepository as unknown as UserRepository, oauth2)
+            authStrategyInstance = new TestAuthStrategyClass(options, userRepository as any as UserRepository, oauth2)
             callBackFunction = authStrategyInstance.getAuthCallBack()
         })
         describe('the callback function returned ', async () => {
@@ -130,9 +129,10 @@ describe('AuthStrategy', () => {
         })
 
         it('should instantiate a new Strategy instance with getAuthCallBack method as second attribute', async () => {
+            const expectedCallback = authStrategyInstance.getAuthCallBack.bind(authStrategyInstance)().toString()
             const callback = oauth2.Strategy.args[0][1]
             expect(typeof callback).to.equal('function')
-            expect(authStrategyInstance.getAuthCallBack.bind(authStrategyInstance)().toString()).equal(callback.toString())
+            expect(expectedCallback).equal(callback.toString())
         })
 
     })

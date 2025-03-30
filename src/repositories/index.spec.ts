@@ -1,8 +1,8 @@
 import { expect } from 'chai'
-import sinon, { SinonSandbox, SinonSpy, SinonStub} from 'sinon'
-import {RepositoryFactory} from './index'
-import { UserRepository } from './User.repository'
+import sinon, { SinonSandbox } from 'sinon'
+import { RepositoryFactory } from './index'
 import { PermissionRepository } from './Permission.repository'
+import { UserRepository } from './User.repository'
 import { UserPermissionsRepository } from './UserPermissions.repository'
 
 

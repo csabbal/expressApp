@@ -7,7 +7,13 @@ import swaggerJsDoc from 'swagger-jsdoc'
 import * as packageJson from '../../package.json'
 
 dotenv.config()
-const { PROTOCOL: protocol, URL: url, PORT: port, GOOGLE_CLIENT_ID: clientId, GOOGLE_CLIENT_SECRET: clientSecret } = process.env
+const {
+    PROTOCOL: protocol,
+    URL: url,
+    PORT: port,
+    GOOGLE_CLIENT_ID: clientId,
+    GOOGLE_CLIENT_SECRET: clientSecret,
+} = process.env
 const { name, version, description } = packageJson
 
 //initiate the router

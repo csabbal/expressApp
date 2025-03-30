@@ -13,7 +13,14 @@ import { addPassportToAppFunction } from './providers/auth/passport'
 
 dotenv.config()
 const { PORT: appPort } = process.env
-const { DB_TYPE: type, DB_HOST: host, DB_PORT: port, DB_USERNAME: user, DB_PASSWORD: password, DB_DATABASE: database } = process.env
+const {
+  DB_TYPE: type,
+  DB_HOST: host,
+  DB_PORT: port,
+  DB_USERNAME: user,
+  DB_PASSWORD: password,
+  DB_DATABASE: database
+} = process.env
 
 const options = {
   key: fs.readFileSync('keys/server.key'), 

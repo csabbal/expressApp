@@ -53,7 +53,7 @@ export class ServerError extends Error {
  * @param {Response} res 
  * @param {NextFunction} next 
  */
-export async function errorHandlerMiddleware(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+export async function errorHandlerMiddleware(err: any, req: express.Request, res: express.Response) {
     const errStatus = err.statusCode || 500
     const errMsg = err.message || 'Something went wrong'
     const errStack = err.stack
