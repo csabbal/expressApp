@@ -1,15 +1,15 @@
 import { v4 as uuidv4 } from 'uuid'
 import { logger, LoggerClass } from "../../utils/logger/logger";
 import { _StrategyOptionsBase } from 'passport-google-oauth20';
-import { UserRepository } from "../../repositories/User.repository";
 import { UserEntity } from "../../types/User";
+import { IUserRepository } from '../../repositories/type';
 
 /**
  *  this class is for creating new users and performing an authentication strategy
  */
 export default abstract class AuthStrategy {
 
-    constructor(protected options:any, protected userRepository:UserRepository,protected passport: any){}
+    constructor(protected options:any, protected userRepository:IUserRepository,protected passport: any){}
 
     /**
      * Create a new user based on the given profile data

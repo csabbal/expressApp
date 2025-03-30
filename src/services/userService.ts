@@ -1,10 +1,11 @@
 import { UserEntity } from "../types/User";
 import { loggedMethod } from "../utils/logger/logger";
-import userRepository, {UserRepository} from "../repositories/User.repository";
+import { userRepository } from "../repositories";
+import { IUserRepository } from "../repositories/type";
 
 export class UserService {
     protected static _instance: UserService;
-    constructor(protected userRepository:UserRepository){}
+    constructor(protected userRepository:IUserRepository){}
 
     /**
      * getInstance function provides that this class work as a singleton

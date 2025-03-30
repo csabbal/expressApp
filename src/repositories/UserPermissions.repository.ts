@@ -7,21 +7,18 @@ import { UserPermissionsModel } from '../entities/UserPermissions.schema'
  */
 export class UserPermissionsRepository {
 
-    constructor(protected userModel: mongoose.Model<UserPermissionsEntity>) { }
+    constructor(protected userPermissionsModel: mongoose.Model<UserPermissionsEntity>) { }
 
     async find(data?: Partial<UserPermissionsEntity>):Promise<UserPermissionsEntity[]> {
-        return await UserPermissionsModel.find(data)
+        return await this.userPermissionsModel.find(data)
     }
     async findOne(data: Partial<UserPermissionsEntity>):Promise<UserPermissionsEntity> {
-        return await UserPermissionsModel.findOne(data)
+        return await this.userPermissionsModel.findOne(data)
     }
 
     async create(data: UserPermissionsEntity):Promise<UserPermissionsEntity> {
-        return await UserPermissionsModel.create(data)
+        return await this.userPermissionsModel.create(data)
     }
 }
-
-const userPermissionsRepository = new UserPermissionsRepository(UserPermissionsModel)
-export default userPermissionsRepository
 
 

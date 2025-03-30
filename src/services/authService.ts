@@ -1,13 +1,14 @@
 import { loggedMethod } from "../utils/logger/logger";
 import { jwtStrategyInstance } from '../providers/auth/jwtStrategy'
-import userPermissionsRepository, { UserPermissionsRepository } from "../repositories/UserPermissions.repository";
+import { userPermissionsRepository } from "../repositories";
 import { UserEntity } from "../types/User";
 import { GenerateJwt } from "../types/Permission";
+import { IUserPermissionsRepository } from "../repositories/type";
 
 export class AuthService {
     protected static _instance: AuthService;
     constructor(
-        protected userPermissionRepository:UserPermissionsRepository,
+        protected userPermissionRepository:IUserPermissionsRepository,
         protected generateJWT: GenerateJwt
     ){}
     /**

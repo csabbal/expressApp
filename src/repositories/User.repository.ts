@@ -1,27 +1,25 @@
 import mongoose from 'mongoose'
 import { UserEntity } from '../types/User'
 import { UserModel } from '../entities/User.schema'
+import { IUserRepository } from './type'
 
 /**
  * This class is to take care about the handling of users in the database
  */
-export class UserRepository {
+export class UserRepository implements IUserRepository {
 
     constructor(protected userModel: mongoose.Model<UserEntity>) { }
 
     async find(data?: Partial<UserEntity>):Promise<UserEntity[]> {
-        return await UserModel.find(data).select('id name')
+        return await this.userModel.find(data).select('id name')
     }
     async findOne(data: Partial<UserEntity>):Promise<UserEntity> {
-        return await UserModel.findOne(data)
+        return await this.userModel.findOne(data)
     }
 
     async create(data: UserEntity):Promise<UserEntity> {
-        return await UserModel.create(data)
+        return await this.userModel.create(data)
     }
 }
-
-const userRepository = new UserRepository(UserModel)
-export default userRepository
 
 

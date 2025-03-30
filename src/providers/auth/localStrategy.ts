@@ -1,6 +1,6 @@
 import passport from 'passport-local';
 import AuthStrategy from './authStrategy';
-import userRepository from '../../repositories/User.repository';
+import { userRepository } from '../../repositories';
 import { logger, LoggerClass } from '../../utils/logger/logger';
 import { UserEntity } from '../../types/User';
 import md5 from 'md5'

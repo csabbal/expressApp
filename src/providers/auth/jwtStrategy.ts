@@ -2,21 +2,21 @@ import { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import passport, { ExtractJwt, VerifiedCallback } from 'passport-jwt';
-import userRepository, { UserRepository } from '../../repositories/User.repository';
-import userPermissionsRepository, { UserPermissionsRepository } from '../../repositories/UserPermissions.repository';
+import { userRepository, userPermissionsRepository } from '../../repositories/index';
 import { AppRequest } from '../../types/CustomExpress';
 import { Permission, PermissionEntity } from '../../types/Permission';
 import { UserEntity } from '../../types/User';
 import crypt from '../../utils/Crypt';
 import { logger, LoggerClass } from '../../utils/logger/logger';
 import AuthStrategy from './authStrategy';
+import { IUserPermissionsRepository, IUserRepository } from '../../repositories/type';
 dotenv.config();
 const { JWT_SECRET: jwtSecret } = process.env
 export class JWTStrategy extends AuthStrategy {
     constructor(
         protected options: any,
-        protected userRepository: UserRepository,
-        protected userPermissionsRepository: UserPermissionsRepository,
+        protected userRepository: IUserRepository,
+        protected userPermissionsRepository: IUserPermissionsRepository,
         protected passport: any = passport,
         protected jwtHandler: any,
         protected crypt: any,
