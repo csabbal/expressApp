@@ -31,24 +31,25 @@ The application integrates these tools to provide a robust and secure authentica
 - **Sinon**: Library for creating spies, mocks, and stubs for testing.
 - **Chai**: Assertion library for behavior-driven development (BDD) and test-driven development (TDD).
 
+### Logging
+
+- **Winston**: The application uses Winston for logging, providing a flexible and extensible logging system.  
+- **Request Identification**: Each log entry includes a unique generated ID to trace and identify individual requests. This is achieved using **Async Local Storage**, which is part of the **async_hooks** module. This ensures that logs are tied to the specific request context.  
+This logging setup helps in debugging and monitoring the application's behavior effectively.
+
 ## How to Run
 
 1. Ensure you have Docker and Docker Compose installed on your system.
 2. Copy the `.env.sample` file and rename it to `.env` in the root directory. Update the environment variables as needed for your setup.
-3. Start the required services, including MongoDB, using Docker Compose:
+3. Start the required services, including MongoDB and the Express app, using Docker Compose:
     ```bash
     docker-compose up
     ```
-4. For development mode, use the provided npm scripts:
-    - To start the application in development mode:
-        ```bash
-        npm run start:dev
-        ```
-    - To run the application with hot-reloading:
-        ```bash
-        npm run run:dev
-        ```
-5. Access the application at `https://localhost:8000`. ( port depends on the env file)
+4. For development mode, use the following command to start the application with the development-specific configuration:
+    ```bash
+    docker compose -f docker-compose-development.yml up
+    ```
+5. Access the application at `https://localhost:8000`. (Port depends on the `.env` file configuration.)
 6. Explore the Swagger API documentation at `https://localhost:8000/api/doc` to try out the available endpoints.
 
 ## Authentication and Authorization

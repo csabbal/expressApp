@@ -13,12 +13,12 @@ services:
   express:
     build:
       dockerfile: Dockerfile
-      target: production
+      target: development
     volumes:
       - ./:/usr/src/app
     networks:
       - app_network
-    container_name: express
+    container_name: express-dev
     ports:
       - "8000:8000"
 networks:

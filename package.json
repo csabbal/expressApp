@@ -4,7 +4,7 @@
   "description": "very basic express ts app",
   "main": "index.ts",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --config webpack.config.js",
     "start:dev": "NODE_ENV=development  webpack",
     "run:dev": "NODE_ENV=development nodemon build/index.js",
     "debug:dev": "NODE_ENV=development nodemon --inspect build/index.js",
