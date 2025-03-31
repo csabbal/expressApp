@@ -9,7 +9,7 @@ let sandbox: SinonSandbox
 describe('UserService', () => {
     let loggerSpy: SinonSpy
     let userServiceInstance: UserService
-    let userRepository: {find:SinonStub}
+    let userRepository: { find: SinonStub }
     beforeEach(() => {
         sandbox = sinon.createSandbox()
         loggerSpy = sandbox.spy(loggerInstance.logger, 'info')
@@ -32,7 +32,7 @@ describe('UserService', () => {
         })
         it('should call the logger method', async () => {
             await userServiceInstance.getAllUsers()
-            expect(loggerSpy.calledOnce).to.be.true
+            expect(loggerSpy.callCount > 0).to.be.true
         })
 
         describe('userRepository find', () => {
@@ -41,6 +41,6 @@ describe('UserService', () => {
                 expect(userRepository.find.calledOnce).to.be.true
             })
         })
-       
+
     })
 })

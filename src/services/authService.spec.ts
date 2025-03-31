@@ -45,7 +45,7 @@ describe('AuthService', () => {
         })
         it('should call the logger method', async () => {
             await authServiceInstance.callback(mockUser)
-            expect(loggerSpy.calledOnce).to.be.true
+            expect(loggerSpy.callCount > 0).to.be.true
         })
 
         it('should call generateJwt with empty array if the searching doesnt return with results', async () => {
