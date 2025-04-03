@@ -1,23 +1,26 @@
+version: '3.8'
+
 services:
   mongo:
-    image: mongo:5.0
     networks:
       - app_network
+    build:
+      context: .
+      dockerfile: mongoDockerfile
     container_name: mongo
-    environment:
-        - MONGO_INITDB_ROOT_USERNAME=root
-        - MONGO_INITDB_ROOT_PASSWORD=password
-    restart: unless-stopped
     ports:
       - "27017:27017"
+    volumes:
+      - ./data/dump/mongo-init-dump:/docker-entrypoint-initdb.d/dump
+    restart: unless-stopped
   express:
+    networks:
+      - app_network
     build:
       dockerfile: Dockerfile
       target: production
     volumes:
       - ./:/usr/src/app
-    networks:
-      - app_network
     container_name: express
     ports:
       - "8000:8000"

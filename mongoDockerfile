@@ -1,0 +1,18 @@
+# Use the latest MongoDB image as the base
+FROM mongo:latest
+
+# Set environment variables for MongoDB root user
+ENV MONGO_INITDB_ROOT_USERNAME=root
+ENV MONGO_INITDB_ROOT_PASSWORD=password
+
+# Copy the initialization script into the container
+COPY ./data/init-mongo.sh /docker-entrypoint-initdb.d/init-mongo.sh
+
+# Copy the dump directory into the container
+COPY ./data/dump/mongo-init-dump /docker-entrypoint-initdb.d/dump
+
+# Ensure the script has execution permissions
+RUN chmod +x /docker-entrypoint-initdb.d/init-mongo.sh
+
+# Use the default MongoDB entrypoint
+CMD ["mongod", "--bind_ip_all"]
