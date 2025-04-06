@@ -51,7 +51,9 @@ export class LoggerClass {
         if (typeof obj === 'undefined') return 'undefined'
         let str = ''
         try {
-            str = stringify(obj)
+            const text = stringify(obj)
+            const length = text.length
+            str = length > 200 ? text.substring(0, 300) + '...' : text
         } catch (e) {
             logger.error('Error in stringify the object: '+ e.message)
             str = obj

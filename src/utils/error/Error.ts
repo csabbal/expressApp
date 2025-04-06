@@ -7,10 +7,10 @@ import { logger } from '../logger/logger'
 export class BadRequestError extends Error {
     readonly publicMessage: string
 
-    constructor(message: string, publicInformation: string, stack?: string) {
+    constructor(message: string, publicInformation?: string, stack?: string) {
         super(message)
         this.name = 'BadRequestError'
-        this.publicMessage = publicInformation
+        this.publicMessage = publicInformation ?? message
         this.stack = stack
     }
 
