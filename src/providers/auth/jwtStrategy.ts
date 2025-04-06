@@ -5,7 +5,7 @@ import passport, { ExtractJwt, VerifiedCallback } from 'passport-jwt'
 import { userPermissionsRepository, userRepository } from '../../repositories/index'
 import { IUserPermissionsRepository, IUserRepository } from '../../types/repositories'
 import { AppRequest } from '../../types/CustomExpress'
-import { Permission, PermissionEntity } from '../../types/Permission'
+import { Permission, PermissionEntity, UserPermissionsEntity } from '../../types/Permission'
 import { UserEntity } from '../../types/User'
 import crypt from '../../utils/Crypt'
 import { logger, LoggerClass } from '../../utils/logger/logger'
@@ -16,7 +16,7 @@ export class JWTStrategy extends AuthStrategy {
     constructor(
         protected options: any,
         protected userRepository: IUserRepository,
-        protected userPermissionsRepository: IUserPermissionsRepository,
+        protected userPermissionsRepository: IUserPermissionsRepository<UserPermissionsEntity>,
         protected passport: any = passport,
         protected jwtHandler: any,
         protected crypt: any,

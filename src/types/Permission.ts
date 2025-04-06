@@ -1,3 +1,4 @@
+import { IEntity } from "./repositories"
 import { UserEntity } from "./User"
 
 export interface Permission{
@@ -5,8 +6,9 @@ export interface Permission{
     privilege:string
 }
 
-export interface PermissionEntity extends Permission{
-    id:string,
+export interface PermissionEntity extends IEntity{
+    component:string,
+    privilege:string
 }
 
 export interface UserPermissionsEntity{

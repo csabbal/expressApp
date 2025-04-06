@@ -1,5 +1,6 @@
-export interface MovieEntity{
-    id: string,
+import { IEntity } from "./repositories"
+
+export interface MovieEntity extends IEntity{
     title: string,
     description: string,
     image: string,
@@ -8,4 +9,10 @@ export interface MovieEntity{
     genre: string,
     duration: string,
     director: string
+}
+
+export interface listRequestParams{
+    limit:number,
+    offset:number,
+    sort:string[]
 }
