@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import userRouter from './user'
 import authRouter from './auth'
+import movieRouter from './movie'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
 import * as packageJson from '../../package.json'
@@ -70,6 +71,8 @@ router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swaggerOptions
 router.use('/user', userRouter)
 // added auth endpoints
 router.use('/auth', authRouter)
+// added movie endpoints
+router.use('/movie', movieRouter)
 
 // exports the router which was setup
 export default router

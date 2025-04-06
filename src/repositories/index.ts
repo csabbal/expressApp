@@ -1,9 +1,11 @@
 import dotenv from 'dotenv'
 import { PermissionModel } from "../entities/Permissions.schema"
 import { UserModel } from "../entities/User.schema"
+import { MovieModel } from "../entities/Movie.schema"
 import { UserPermissionsModel } from "../entities/UserPermissions.schema"
 import { PermissionRepository } from "./Permission.repository"
 import { UserRepository } from "./User.repository"
+import { MovieRepository } from "./Movie.repository"
 import { UserPermissionsRepository } from "./UserPermissions.repository"
 import { IRepositories } from "../types/repositories"
 dotenv.config()
@@ -17,10 +19,10 @@ export class RepositoryFactory {
     create() {
         switch (this.type) {
             case 'mongo':
-                console.log('create mongo')
                 this.repositories.User = new UserRepository(UserModel)
                 this.repositories.Permission = new PermissionRepository(PermissionModel)
                 this.repositories.UserPermissions = new UserPermissionsRepository(UserPermissionsModel)
+                this.repositories.Movie = new MovieRepository(MovieModel)
                 break
             default:
                 throw new Error('database type is unknown')
@@ -38,3 +40,4 @@ const repositories = initRepositories(type)
 export const userRepository = repositories.User
 export const permissionRepository = repositories.Permission
 export const userPermissionsRepository = repositories.UserPermissions
+export const movieRepository = repositories.Movie
