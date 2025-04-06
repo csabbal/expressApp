@@ -1,4 +1,4 @@
-import express, { } from 'express'
+import express, { Request, Response, NextFunction } from 'express'
 import { logger } from '../logger/logger'
 
 /**
@@ -35,7 +35,7 @@ export class ServerError extends Error {
         this.stack = stack
     }
 
-    sendJSONResponse(res: express.Response, errStatus?:number) {
+    sendJSONResponse(res: express.Response | undefined, errStatus?: number) {
         const status = errStatus ?? 500
         res.status(status).json({
             success: false,
@@ -53,14 +53,14 @@ export class ServerError extends Error {
  * @param {Response} res 
  * @param {NextFunction} next 
  */
-export async function errorHandlerMiddleware(err: any, req: express.Request, res: express.Response) {
+export async function errorHandlerMiddleware(err: any, req: Request, res: Response, _next: NextFunction) {
     const errStatus = err.statusCode || 500
     const errMsg = err.message || 'Something went wrong'
     const errStack = err.stack
-logger.error('[erorrHandlerMiddleware] '+errMsg)
+    logger.error('[erorrHandlerMiddleware] ' + errMsg)
     if (err instanceof BadRequestError) {
         err.sendJSONResponse(res)
-    }else{
+    } else {
         const error = new ServerError(errMsg, errStack)
         error.sendJSONResponse(res, errStatus)
     }
