@@ -96,29 +96,36 @@ router.get('/all',
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                     example: 1
- *                   title:
- *                     type: string
- *                     example: Inception
- *                   director:
- *                     type: string
- *                     example: Christopher Nolan
- *                   releaseDate:
- *                     type: integer
- *                     example: 2010.07.16
- *                   genre:
- *                     type: string
- *                     example: Science Fiction
- *                   rating:
- *                     type: number
- *                     format: float
- *                     example: 8.8
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: number
+ *                   example: 100
+ *                   description: The total number of movies available
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       title:
+ *                         type: string
+ *                         example: Inception
+ *                       director:
+ *                         type: string
+ *                         example: Christopher Nolan
+ *                       releaseDate:
+ *                         type: integer
+ *                         example: 2010.07.16
+ *                       genre:
+ *                         type: string
+ *                         example: Science Fiction
+ *                       rating:
+ *                         type: number
+ *                         format: float
+ *                         example: 8.8
  */
 router.get('/list',
     requireJwt,

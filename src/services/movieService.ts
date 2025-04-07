@@ -35,10 +35,10 @@ export class MovieService {
      * @returns {MovieEntity[]} returns with all MovieEntity based on the options via movieRepository
     */
     @loggedMethod('[MovieService] getMovies')
-    public async getMovies(queryParams: listRequestParams): Promise<MovieEntity[]> {
+    public async getMovies(queryParams: listRequestParams): Promise<{ count: number, data: MovieEntity[] }> {
         const params = this.mapRequestParamToFind(queryParams)
-        const movies = await this.movieRepository.findWithParams(params)
-        return movies
+        const { count, data } = await this.movieRepository.findWithParams(params)
+        return { count, data }
     }
     /**
      * mapRequestParamToFind method is to map the request paramaters to the findOptions

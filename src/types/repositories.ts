@@ -21,7 +21,7 @@ export interface IRepository<T extends IEntity = IEntity> {
     find(data?: Partial<T>): Promise<T[]>
     findOne(data: Partial<T>): Promise<T>
     create(data: any): Promise<any>
-    findWithParams(data?: Partial<T> | FindOptions<T>): Promise<T[]>
+    findWithParams(data?: Partial<T> | FindOptions<T>): Promise<{count:number, data:T[]}>
 }
 
 export interface IUserRepository<T extends UserEntity=UserEntity> extends IRepository<T> {}

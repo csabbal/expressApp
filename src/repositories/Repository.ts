@@ -15,7 +15,7 @@ export class Repository<T extends IEntity = IEntity> implements IRepository {
         return await this.model.find(data)
     }
 
-    async findWithParams(data?: Partial<MovieEntity> | FindOptions<T>): Promise<T[]> {
+    async findWithParams(data?: Partial<MovieEntity> | FindOptions<T>): Promise<{count:number, data:T[]}> {
 
         const { limit, offset, sort, ...otherFindParams } = data as FindOptions<T>
         const query = this.model.find(otherFindParams)
@@ -31,8 +31,10 @@ export class Repository<T extends IEntity = IEntity> implements IRepository {
             }
             query.sort(sortOptions as any)
         }
-        return await query.exec()
-    }
+        const resultData = await query.exec()
+        const count = await this.model.countDocuments(otherFindParams)
+        return { count, data:resultData }
+    }        
 
     async findOne(data: Partial<T>): Promise<T> {
         return await this.model.findOne(data)

@@ -59,8 +59,8 @@ export class MovieController {
             if (!_.isArray(params.sort)) throw new BadRequestError('sort is not an array')
 
             // calling the movieService getMovies function with the querystring paramaters
-            const movies: MovieEntity[] = await this.movieService.getMovies(params)
-            res.json(movies)
+            const { count, data } = await this.movieService.getMovies(params)
+            res.json({ count, data })
         } catch (e) {
             next(e)
         }
