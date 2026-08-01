@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import userRouter from './user'
 import authRouter from './auth'
+import signupRouter from './signup'
 import movieRouter from './movie'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
@@ -70,6 +71,7 @@ router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swaggerOptions
 // [INFRASTRUCTURE] Keep these — required for auth to work
 router.use('/user', userRouter)
 router.use('/auth', authRouter)
+router.use('/signup', signupRouter)
 
 // ================================================================
 // [BUSINESS] Register your domain routes here.
