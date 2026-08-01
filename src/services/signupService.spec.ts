@@ -48,6 +48,15 @@ describe('SignupService', () => {
             expect(loggerSpy.callCount > 0).to.be.true
         })
 
+        it('should throw BadRequestError when username is a non-string value (NoSQL injection attempt)', async () => {
+            try {
+                await signupServiceInstance.signup({ ...validData, username: { $ne: null } } as any)
+                expect.fail('expected signup to throw')
+            } catch (e) {
+                expect(e).to.be.instanceOf(BadRequestError)
+            }
+        })
+
         it('should throw BadRequestError when username is missing', async () => {
             try {
                 await signupServiceInstance.signup({ ...validData, username: '' })

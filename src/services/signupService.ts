@@ -68,6 +68,9 @@ export class SignupService {
     }
 
     private validate(data: SignupRequestBody) {
+        if (typeof data.username !== 'string' || typeof data.email !== 'string' || typeof data.password !== 'string') {
+            throw new BadRequestError('username, email and password must be strings')
+        }
         if (!data.username) throw new BadRequestError('username is required')
         if (!data.email) throw new BadRequestError('email is required')
         if (!data.password) throw new BadRequestError('password is required')
