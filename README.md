@@ -1,7 +1,27 @@
 ## Overview
- 
-The main goal of the project is to create a solid fundamental of any type of application. It has to have well-separated units (routers,controllers, services, repositories, authorization) for possible improvement, during the development we have to keep the SOLID principles, it should be clean code.
-For detailed documentation of the project, please check the generated documentation under the docs folder.
+
+The main goal of this project is to be a reusable starting point for any business application. It provides a solid, pre-wired infrastructure layer — authentication, authorization, database access, logging, error handling, API documentation — so you can focus on building domain-specific features immediately without wiring up the plumbing each time.
+
+The architecture follows SOLID principles with well-separated units: routes → controllers → services → repositories. For detailed API documentation see the auto-generated Swagger at `/api/doc` or the `docs/` folder.
+
+### Using this as a template
+
+Three files act as the extension points for your own domain. Each one has clearly marked `[INFRASTRUCTURE]` sections (keep them) and `[BUSINESS]` / `[EXAMPLE]` sections (replace with your own entities):
+
+| File | What to do |
+|---|---|
+| `src/routes/index.ts` | Remove the movie route, register your own |
+| `src/repositories/index.ts` | Remove the movie repository, register your own |
+| `src/types/repositories.ts` | Remove the movie interface, add your own |
+
+The `Movie*` files (`src/entities/Movie.schema.ts`, `src/repositories/Movie.repository.ts`, `src/services/movieService.ts`, `src/controllers/movieController.ts`, `src/routes/movie.ts`, `src/types/Movie.ts`) are the example domain — delete them and follow the same pattern for your own entities.
+
+### AI agent skills
+
+Two Claude Code skills are available to automate this:
+
+- **`/add-resource`** — given an entity name and fields, generates all files (schema, repository, service, controller, route) and wires them up automatically
+- **`/bootstrap-express-app`** — creates a new project from this template, strips the movie example, and scaffolds your entities using `add-resource`
 
 ## Technologies Used
 
