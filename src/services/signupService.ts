@@ -33,21 +33,33 @@ export class SignupService {
 
     /**
      * signup method validates the given data, ensures the username/email are not
-     * already taken, then creates and returns the new user (without secrets)
+     * already taken, then delegates to createUser with the hashed password
      * @param {SignupRequestBody} data
      * @returns {Promise<CreatedUser>}
      */
-    @loggedMethod('[SignupService]')
     public async signup(data: SignupRequestBody): Promise<CreatedUser> {
         this.validate(data)
         await this.assertNotTaken(data.username, data.email)
+        const hashedPassword = md5(data.password)
+        return this.createUser(data.username, data.email, hashedPassword)
+    }
 
+    /**
+     * createUser method persists the new user with an already-hashed password
+     * and returns the created user without secrets
+     * @param {string} username
+     * @param {string} email
+     * @param {string} hashedPassword
+     * @returns {Promise<CreatedUser>}
+     */
+    @loggedMethod('[SignupService]')
+    private async createUser(username: string, email: string, hashedPassword: string): Promise<CreatedUser> {
         const newUser = {
             id: uuidv4(),
-            name: data.username,
-            email: data.email,
-            password: md5(data.password),
-            fullName: data.username,
+            name: username,
+            email: email,
+            password: hashedPassword,
+            fullName: username,
             jwtSecureCode: uuidv4()
         } as UserEntity
 
