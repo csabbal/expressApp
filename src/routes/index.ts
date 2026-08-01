@@ -67,12 +67,15 @@ const swaggerOptions = {
 // add endpoint in order for swagger's working
 router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swaggerOptions)))
 
-// added user endpoints
+// [INFRASTRUCTURE] Keep these — required for auth to work
 router.use('/user', userRouter)
-// added auth endpoints
 router.use('/auth', authRouter)
-// added movie endpoints
-router.use('/movie', movieRouter)
 
-// exports the router which was setup
+// ================================================================
+// [BUSINESS] Register your domain routes here.
+// When bootstrapping a new app: remove the movie import at the top
+// and the line below, then add your own routes following the same pattern.
+// ================================================================
+router.use('/movie', movieRouter) // [EXAMPLE]
+
 export default router

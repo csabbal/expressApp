@@ -19,10 +19,16 @@ export class RepositoryFactory {
     create() {
         switch (this.type) {
             case 'mongo':
+                // [INFRASTRUCTURE] Keep these — required for auth to work
                 this.repositories.User = new UserRepository(UserModel)
                 this.repositories.Permission = new PermissionRepository(PermissionModel)
                 this.repositories.UserPermissions = new UserPermissionsRepository(UserPermissionsModel)
-                this.repositories.Movie = new MovieRepository(MovieModel)
+
+                // ================================================================
+                // [BUSINESS] Register your domain repositories here.
+                // When bootstrapping a new app: remove the movie lines and add your own.
+                // ================================================================
+                this.repositories.Movie = new MovieRepository(MovieModel) // [EXAMPLE]
                 break
             default:
                 throw new Error('database type is unknown')
@@ -37,7 +43,10 @@ function initRepositories(type: string = 'mongo') {
 }
 const repositories = initRepositories(type)
 
+// [INFRASTRUCTURE] Keep these exports
 export const userRepository = repositories.User
 export const permissionRepository = repositories.Permission
 export const userPermissionsRepository = repositories.UserPermissions
+
+// [EXAMPLE] Remove and add your own domain repository exports
 export const movieRepository = repositories.Movie
