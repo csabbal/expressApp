@@ -25,6 +25,29 @@ export class BadRequestError extends Error {
 }
 
 /**
+ * ConflictError class will be instantiated when the request conflicts with existing state (e.g. duplicate unique field)
+ */
+export class ConflictError extends Error {
+    readonly publicMessage: string
+
+    constructor(message: string, publicInformation?: string, stack?: string) {
+        super(message)
+        this.name = 'ConflictError'
+        this.publicMessage = publicInformation ?? message
+        this.stack = stack
+    }
+
+    sendJSONResponse(res: express.Response) {
+        res.status(409).json({
+            success: false,
+            status: 409,
+            message: this.publicMessage,
+            stack: process.env.NODE_ENV === 'development' ? this.stack : {}
+        })
+    }
+}
+
+/**
  *  This class will be instantiated if the problem is regardless from the client
  */
 export class ServerError extends Error {
@@ -59,6 +82,8 @@ export async function errorHandlerMiddleware(err: any, req: Request, res: Respon
     const errStack = err.stack
     logger.error('[erorrHandlerMiddleware] ' + errMsg)
     if (err instanceof BadRequestError) {
+        err.sendJSONResponse(res)
+    } else if (err instanceof ConflictError) {
         err.sendJSONResponse(res)
     } else {
         const error = new ServerError(errMsg, errStack)
