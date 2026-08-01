@@ -24,4 +24,15 @@ describe('UserSchema', () => {
         expect(validationError.errors.jwtSecureCode).to.exist
         expect(validationError.errors.googleId).to.not.exist
     })
+
+    it('should persist a password when provided', () => {
+        const user = new UserModel({ ...baseUser, password: 'some-hash' })
+        expect(user.get('password')).to.equal('some-hash')
+    })
+
+    it('should not require a password', () => {
+        const user = new UserModel(baseUser)
+        const validationError = user.validateSync()
+        expect(validationError?.errors?.password).to.not.exist
+    })
 })

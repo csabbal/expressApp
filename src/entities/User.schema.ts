@@ -26,6 +26,9 @@ const UserSchema = new mongoose.Schema({
   jwtSecureCode: {
     required: true,
     type: String
+  },
+  password: {
+    type: String
   }
 })
 
