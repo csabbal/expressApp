@@ -39,18 +39,121 @@ This logging setup helps in debugging and monitoring the application's behavior 
 
 ## How to Run
 
-1. Ensure you have Docker and Docker Compose installed on your system.
-2. Copy the `.env.sample` file and rename it to `.env` in the root directory. Update the environment variables as needed for your setup.
-3. Start the required services, including MongoDB and the Express app, using Docker Compose:
-    ```bash
-    docker-compose up
-    ```
-4. For development mode, use the following command to start the application with the development-specific configuration:
-    ```bash
-    docker compose -f docker-compose-development.yml up
-    ```
-5. Access the application at `https://localhost:8000`. (Port depends on the `.env` file configuration.)
-6. Explore the Swagger API documentation at `https://localhost:8000/api/doc` to try out the available endpoints.
+### 1. Prerequisites
+
+- Docker and Docker Compose installed on your system.
+- A Google Cloud project with OAuth 2.0 credentials (Client ID and Client Secret). You can create them at [console.cloud.google.com](https://console.cloud.google.com) under **APIs & Services → Credentials**.
+
+### 2. Environment Setup
+
+Copy the sample env file and fill in your values:
+
+```bash
+cp .env.sample .env
+```
+
+Open `.env` and set your Google OAuth credentials:
+
+```env
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+```
+
+All other values in `.env.sample` are pre-configured with sensible defaults for local development.
+
+### 3. Running with Docker Compose (recommended for local development)
+
+```bash
+docker compose up
+```
+
+For development mode with hot reload:
+
+```bash
+docker compose -f docker-compose-development.yml up
+```
+
+### 4. Running with Docker Swarm (for production / multi-node deployments)
+
+Docker Swarm requires images to be pre-built and a Swarm to be initialized.
+
+```bash
+# Initialize Swarm (only needed once)
+docker swarm init
+
+# Build the images
+docker compose build
+
+# Deploy the stack
+docker stack deploy -c docker-compose.yml express-app
+```
+
+To tear down the stack:
+
+```bash
+docker stack rm express-app
+```
+
+> **Note:** Docker Swarm requires the network driver to be set to `overlay`. Switch it back to `bridge` when using `docker compose up`.
+
+### 5. Access the application
+
+- App: `https://localhost:8000`
+- Swagger API docs: `https://localhost:8000/api/doc`
+
+> The app uses a self-signed certificate, so your browser will show a security warning. Click **Advanced → Proceed** to continue.
+
+## Foundation Assessment
+
+This app is designed as a starting point for any business application. Below is an honest assessment of what general-purpose infrastructure is already built in, and what still needs to be added before it can be considered production-ready — independent of any business requirements.
+
+### ✅ Already implemented
+
+| Area | Details |
+|---|---|
+| **HTTPS** | TLS server with self-signed cert out of the box |
+| **Database** | MongoDB via Mongoose, abstracted behind a DataSource + Repository pattern |
+| **Repository base** | Generic `find`, `findOne`, `create`, `findWithParams` (limit, offset, sort) |
+| **Authentication** | Google OAuth 2.0, local (username + password), JWT — all via Passport |
+| **Authorization** | JWT-protected routes via `requireJwt` middleware |
+| **Permission system** | `Permission` and `UserPermissions` schemas for RBAC |
+| **Password hashing** | bcrypt via `Crypt` utility |
+| **Global error handling** | `BadRequestError` / `ServerError` classes + global middleware; stack hidden in production |
+| **Logging** | Winston with daily log rotation, request/response access log, per-request ID tracing via AsyncLocalStorage |
+| **Log decorator** | `@loggedMethod` decorator for method-level logging |
+| **API documentation** | Swagger / OpenAPI auto-generated at `/api/doc` |
+| **CORS** | Enabled globally |
+| **Layered architecture** | routes → controllers → services → repositories, SOLID-friendly |
+| **TypeScript** | Throughout, compiled via Webpack |
+| **Unit tests** | Mocha + Sinon + Chai, coverage reporting |
+| **Docker** | Compose for dev/prod, Dockerfile with multi-stage build, PM2 in production |
+| **Session handling** | `express-session` wired up |
+| **Environment config** | `dotenv` + `.env.sample` template |
+
+---
+
+### ❌ Not yet implemented (general, non-business-specific)
+
+These are infrastructure concerns that apply to virtually any production app and are not tied to business logic.
+
+| Area | What's missing | Suggested package |
+|---|---|---|
+| **Security headers** | No Helmet — app is exposed to XSS, clickjacking, MIME sniffing etc. | `helmet` |
+| **Rate limiting** | No protection against brute-force or DDoS on any endpoint | `express-rate-limit` |
+| **Input validation** | No schema validation on request bodies or query params | `zod` / `joi` |
+| **Request size limit** | `bodyParser` is set up but no max body size configured | `bodyParser({ limit: '10kb' })` |
+| **Graceful shutdown** | No `SIGTERM`/`SIGINT` handler — DB connections not closed on shutdown | Node `process.on(...)` |
+| **Health check endpoint** | No `/health` or `/api/health` endpoint for load balancers / monitoring | custom route |
+| **API versioning** | Routes live at `/api/...` with no version prefix (`/api/v1/`) | Express router prefix |
+| **Repository update/delete** | Base `Repository` only has `find`, `findOne`, `create` — no `update` or `delete` | extend `Repository.ts` |
+| **Pagination response envelope** | `findWithParams` supports limit/offset/sort but responses have no standard envelope (`{ data, total, page }`) | standardize in controller/service |
+| **Environment validation** | App starts silently even if required env vars are missing | `zod` / custom check at startup |
+| **Compression** | Responses are not gzip-compressed | `compression` |
+| **Request timeout** | No timeout on slow requests | `connect-timeout` |
+| **Integration / E2E tests** | Only unit tests exist — no tests that hit a real DB or HTTP layer | Mocha + Supertest |
+| **CI/CD pipeline** | No GitHub Actions or similar pipeline defined | GitHub Actions |
+
+---
 
 ## Authentication and Authorization
 
