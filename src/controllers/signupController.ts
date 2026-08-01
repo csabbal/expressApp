@@ -1,6 +1,5 @@
 import express from 'express'
 import { SignupService } from '../services/signupService'
-import { loggedMethod } from '../utils/logger/logger'
 
 /**
  * This class is about to provide the local signup endpoint via signup service
@@ -23,8 +22,11 @@ export class SignupController {
      * @param {Request} req
      * @param {Response} res
      * @param {NextFunction} next
+     *
+     * Note: intentionally NOT decorated with @loggedMethod — req.body contains
+     * the plaintext signup password, and the decorator logs safeStringify(args)
+     * at debug level, which would leak it.
      */
-    @loggedMethod('[SignupController]')
     public async signupLocal(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
             const createdUser = await this.signupService.signup(req.body)
