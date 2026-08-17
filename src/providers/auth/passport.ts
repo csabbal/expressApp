@@ -24,6 +24,9 @@ export function initPassport(passport: passport.PassportStatic) {
     // issued by the ../oauth OIDC provider — optional, only when configured
     let requireJwtStrategies: string | string[] = 'jwt'
     if (process.env.OIDC_ISSUER) {
+        if (!process.env.OIDC_AUDIENCE) {
+            throw new Error('OIDC_AUDIENCE must be set when OIDC_ISSUER is configured')
+        }
         passport.use('jwt-oidc', jwtOidcStrategy)
         requireJwtStrategies = ['jwt', 'jwt-oidc']
     }

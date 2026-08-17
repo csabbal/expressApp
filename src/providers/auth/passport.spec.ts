@@ -13,11 +13,14 @@ describe('passport', () => {
         authenticate: SinonStub
     } | any
     let originalOidcIssuer: string | undefined
+    let originalOidcAudience: string | undefined
 
     beforeEach(() => {
         sandbox = sinon.createSandbox()
         originalOidcIssuer = process.env.OIDC_ISSUER
+        originalOidcAudience = process.env.OIDC_AUDIENCE
         delete process.env.OIDC_ISSUER
+        delete process.env.OIDC_AUDIENCE
         app = {
             use: sandbox.stub(),
         } as any
@@ -33,6 +36,8 @@ describe('passport', () => {
         sandbox.restore()
         if (originalOidcIssuer === undefined) delete process.env.OIDC_ISSUER
         else process.env.OIDC_ISSUER = originalOidcIssuer
+        if (originalOidcAudience === undefined) delete process.env.OIDC_AUDIENCE
+        else process.env.OIDC_AUDIENCE = originalOidcAudience
     })
 
     describe('return function of the addPassport', () => {
@@ -71,6 +76,7 @@ describe('passport', () => {
         describe('when OIDC_ISSUER is set', () => {
             beforeEach(() => {
                 process.env.OIDC_ISSUER = 'http://localhost:3200/oidc'
+                process.env.OIDC_AUDIENCE = 'urn:oauth-provider:services'
             })
             it('should call the use method of app taken as parameter four times', () => {
                 initPassport(passport)
@@ -83,6 +89,15 @@ describe('passport', () => {
             it('should set jwt authentication to accept both strategies', () => {
                 initPassport(passport)
                 expect(passport.authenticate.args[2][0]).deep.equal(['jwt', 'jwt-oidc'])
+            })
+        })
+        describe('when OIDC_ISSUER is set without OIDC_AUDIENCE', () => {
+            beforeEach(() => {
+                process.env.OIDC_ISSUER = 'http://localhost:3200/oidc'
+            })
+            it('should throw an error requiring OIDC_AUDIENCE', () => {
+                expect(() => initPassport(passport))
+                    .to.throw('OIDC_AUDIENCE must be set when OIDC_ISSUER is configured')
             })
         })
     })

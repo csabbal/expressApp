@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt
 RUN mkdir -p ${APP_LOCATION}
 WORKDIR ${APP_LOCATION}
 COPY ./ ./
-RUN npm install
+RUN npm ci
 
 # ===========================
 # Testing Stage
@@ -21,7 +21,7 @@ RUN npm run lint && npm run test:coverage -- --verbose
 # ===========================
 FROM base AS development
 # Install all dependencies (including dev dependencies)
-RUN npm install
+RUN npm ci
 # Use a volume for the src folder
 VOLUME ["${APP_LOCATION}"]
 # Run both start:dev and run:dev commands
