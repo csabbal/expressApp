@@ -3,7 +3,7 @@ import AuthStrategy from './authStrategy'
 import { userRepository } from '../../repositories'
 import { logger, LoggerClass } from '../../utils/logger/logger'
 import { UserEntity } from '../../types/User'
-import md5 from 'md5'
+import crypt from '../../utils/Crypt'
 const options = {
   username: 'username', // Field name for username
   password: 'password'  // Field name for password
@@ -14,13 +14,16 @@ const options = {
 export class CustomLocalStrategy extends AuthStrategy {
 
   async checkExistingUserByProfile(profile: { username: string, password: string }): Promise<UserEntity> {
-    return await this.userRepository.findOne({ name: profile.username, password: md5(profile.password) })
+    const user = await this.userRepository.findOne({ name: profile.username })
+    if (!user?.password) return undefined
+    const isMatch = await crypt.checkValue(profile.password, user.password)
+    return isMatch ? user : undefined
   }
 
   /**
-   * this function is to check the actual user is existing or not, if not it will send error 
+   * this function is to check the actual user is existing or not, if not it will send error
    * otherwise call the successcallback and finishes the authentication process
-   * @returns 
+   * @returns
    */
   getAuthCallBack() {
     return async (username: string, password: string, done: any) => {

@@ -1,13 +1,14 @@
 import { expect } from 'chai'
-import md5 from 'md5'
 import sinon, { SinonSandbox, SinonStub } from 'sinon'
 import { UserRepository } from '../../repositories/User.repository'
 import { CustomLocalStrategy } from './localStrategy'
+import crypt from '../../utils/Crypt'
 
 let sandbox: SinonSandbox
 
 describe('LocalStrategy', () => {
     let authStrategyInstance: CustomLocalStrategy
+    let checkValueStub: SinonStub
     const options = {
         username: 'username', // Field name for username
         password: 'password'  // Field name for password
@@ -34,19 +35,35 @@ describe('LocalStrategy', () => {
             create: sandbox.stub().resolves(mockUser),
             findOne: sandbox.stub().resolves(mockUser)
         } as any
+        checkValueStub = sandbox.stub(crypt, 'checkValue').resolves(true)
         authStrategyInstance = new CustomLocalStrategy(options, userRepository as unknown as UserRepository, oauth2)
     })
     afterEach(() => {
         sandbox.restore()
     })
     describe('checkExistingUserByProfile', () => {
-        it('should find the user in the repository, based on the given profile id', async () => {
+        it('should find the user in the repository by username only', async () => {
             await authStrategyInstance.checkExistingUserByProfile(profile)
-            expect(userRepository.findOne.calledOnce).to.be.true
-            expect(userRepository.findOne.args[0][0]).deep.equals({
-                name: profile.username,
-                password: md5(profile.password)
-            })
+            expect(userRepository.findOne.calledOnceWith({ name: profile.username })).to.be.true
+        })
+        it('should compare the given password against the stored hash', async () => {
+            await authStrategyInstance.checkExistingUserByProfile(profile)
+            expect(checkValueStub.calledOnceWith(profile.password, mockUser.password)).to.be.true
+        })
+        it('should return the user when the password matches', async () => {
+            const result = await authStrategyInstance.checkExistingUserByProfile(profile)
+            expect(result).to.deep.equal(mockUser)
+        })
+        it('should return undefined when the password does not match', async () => {
+            checkValueStub.resolves(false)
+            const result = await authStrategyInstance.checkExistingUserByProfile(profile)
+            expect(result).to.be.undefined
+        })
+        it('should return undefined when no user is found, without calling crypt.checkValue', async () => {
+            userRepository.findOne.resolves(null)
+            const result = await authStrategyInstance.checkExistingUserByProfile(profile)
+            expect(result).to.be.undefined
+            expect(checkValueStub.called).to.be.false
         })
     })
     describe('getAuthCallBack', () => {
