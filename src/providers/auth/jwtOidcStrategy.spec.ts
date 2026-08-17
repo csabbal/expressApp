@@ -56,7 +56,8 @@ describe('JWTOidcStrategy', () => {
         let callbackFunction: SinonStub
 
         beforeEach(() => {
-            verifyStub = sandbox.stub(jwtOidcStrategyInstance, 'verifyUser').resolves({ id: payload.id, email: payload.email })
+            verifyStub = sandbox.stub(jwtOidcStrategyInstance, 'verifyUser')
+                .resolves({ id: payload.id, email: payload.email })
             callbackFunction = sandbox.stub()
             result = jwtOidcStrategyInstance.getAuthCallBack()
         })
