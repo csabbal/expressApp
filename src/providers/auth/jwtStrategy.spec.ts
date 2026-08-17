@@ -98,6 +98,11 @@ describe('AuthStrategy', () => {
             const expectedArgument = { id: mockUser.id }
             expect(userRepository.findOne.args[0][0]).deep.equals(expectedArgument)
         })
+        it('should return false when checkValue resolves false (jwtSecureCode mismatch)', async () => {
+            crypt.checkValue.resolves(false)
+            const result = await jwtStrategyInstance.verifyUser(profile)
+            expect(result).to.equal(false)
+        })
     })
     describe('verifyPrivileges', () => {
         let req = {}

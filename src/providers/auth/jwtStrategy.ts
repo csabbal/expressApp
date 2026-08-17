@@ -41,7 +41,7 @@ export class JWTStrategy extends AuthStrategy {
             const user = await this.userRepository.findOne({ id: payload.id })
             if (!user) throw new Error('unauthorized')
 
-            const isMatch = this.crypt.checkValue(user.jwtSecureCode, payload.jwtSecureCode)
+            const isMatch = await this.crypt.checkValue(user.jwtSecureCode, payload.jwtSecureCode)
             const toBeLoggedData = LoggerClass.objectToString([user.jwtSecureCode, payload.jwtSecureCode, isMatch])
             logger.debug('[jwt verify] checkValue ' + toBeLoggedData)
             if (!isMatch) throw new Error('unauthorized')
