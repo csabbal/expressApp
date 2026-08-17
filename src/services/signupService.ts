@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import md5 from 'md5'
+import crypt from '../utils/Crypt'
 import { UserEntity } from '../types/User'
 import { SignupRequestBody } from '../types/Signup'
 import { loggedMethod } from '../utils/logger/logger'
@@ -40,7 +40,7 @@ export class SignupService {
     public async signup(data: SignupRequestBody): Promise<CreatedUser> {
         this.validate(data)
         await this.assertNotTaken(data.username, data.email)
-        const hashedPassword = md5(data.password)
+        const hashedPassword = await crypt.hashValue(data.password)
         return this.createUser(data.username, data.email, hashedPassword)
     }
 

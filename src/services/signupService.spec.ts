@@ -1,23 +1,25 @@
 import { expect } from 'chai'
-import md5 from 'md5'
 import sinon, { SinonSandbox, SinonSpy, SinonStub } from 'sinon'
 import { loggerInstance } from '../utils/logger/logger'
 import { SignupService } from './signupService'
 import { UserRepository } from '../repositories/User.repository'
 import { BadRequestError, ConflictError } from '../utils/error/Error'
+import crypt from '../utils/Crypt'
 
 let sandbox: SinonSandbox
 
 describe('SignupService', () => {
     let loggerSpy: SinonSpy
+    let hashValueStub: SinonStub
     let signupServiceInstance: SignupService
     let userRepository: { findOne: SinonStub, create: SinonStub }
     const validData = { username: 'jdoe', email: 'jdoe@example.com', password: 'longenoughpw' }
+    const hashedPassword = 'bcrypt-hashed-password'
     const createdUser = {
         id: 'generated-id',
         name: 'jdoe',
         email: 'jdoe@example.com',
-        password: md5('longenoughpw'),
+        password: hashedPassword,
         fullName: 'jdoe',
         jwtSecureCode: 'generated-code'
     }
@@ -25,6 +27,7 @@ describe('SignupService', () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox()
         loggerSpy = sandbox.spy(loggerInstance.logger, 'info')
+        hashValueStub = sandbox.stub(crypt, 'hashValue').resolves(hashedPassword)
         userRepository = {
             findOne: sandbox.stub().resolves(null),
             create: sandbox.stub().resolves(createdUser)
@@ -125,12 +128,13 @@ describe('SignupService', () => {
         })
 
         describe('userRepository create', () => {
-            it('should be called with a user built from the request, password hashed with md5', async () => {
+            it('should be called with a user built from the request, password hashed via crypt.hashValue', async () => {
                 await signupServiceInstance.signup(validData)
+                expect(hashValueStub.calledOnceWith('longenoughpw')).to.be.true
                 const paramsOfCreate = userRepository.create.args[0][0]
                 expect(paramsOfCreate.name).to.equal('jdoe')
                 expect(paramsOfCreate.email).to.equal('jdoe@example.com')
-                expect(paramsOfCreate.password).to.equal(md5('longenoughpw'))
+                expect(paramsOfCreate.password).to.equal(hashedPassword)
                 expect(paramsOfCreate.fullName).to.equal('jdoe')
                 expect(paramsOfCreate.id).to.be.a('string').and.not.empty
                 expect(paramsOfCreate.jwtSecureCode).to.be.a('string').and.not.empty
