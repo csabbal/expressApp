@@ -12,9 +12,12 @@ describe('passport', () => {
         deserializeUser: SinonStub,
         authenticate: SinonStub
     } | any
+    let originalOidcIssuer: string | undefined
 
     beforeEach(() => {
         sandbox = sinon.createSandbox()
+        originalOidcIssuer = process.env.OIDC_ISSUER
+        delete process.env.OIDC_ISSUER
         app = {
             use: sandbox.stub(),
         } as any
@@ -28,6 +31,8 @@ describe('passport', () => {
     })
     afterEach(() => {
         sandbox.restore()
+        if (originalOidcIssuer === undefined) delete process.env.OIDC_ISSUER
+        else process.env.OIDC_ISSUER = originalOidcIssuer
     })
 
     describe('return function of the addPassport', () => {
@@ -37,10 +42,6 @@ describe('passport', () => {
         })
     })
     describe('initPassport', () => {
-        it('should call the use method of app taken as parameter three times', () => {
-            initPassport(passport)
-            expect(passport.use.callCount).equal(3)
-        })
         it('should set a function for serializeUser', () => {
             initPassport(passport)
             expect(passport.serializeUser.callCount).equal(1)
@@ -57,9 +58,32 @@ describe('passport', () => {
             initPassport(passport)
             expect(passport.authenticate.args[1][0]).equal('local')
         })
-        it('should set jwt authentication', () => {
-            initPassport(passport)
-            expect(passport.authenticate.args[2][0]).equal('jwt')
+        describe('when OIDC_ISSUER is not set', () => {
+            it('should call the use method of app taken as parameter three times', () => {
+                initPassport(passport)
+                expect(passport.use.callCount).equal(3)
+            })
+            it('should set jwt authentication only', () => {
+                initPassport(passport)
+                expect(passport.authenticate.args[2][0]).equal('jwt')
+            })
+        })
+        describe('when OIDC_ISSUER is set', () => {
+            beforeEach(() => {
+                process.env.OIDC_ISSUER = 'http://localhost:3200/oidc'
+            })
+            it('should call the use method of app taken as parameter four times', () => {
+                initPassport(passport)
+                expect(passport.use.callCount).equal(4)
+            })
+            it('should register the jwt-oidc strategy', () => {
+                initPassport(passport)
+                expect(passport.use.args[3][0]).equal('jwt-oidc')
+            })
+            it('should set jwt authentication to accept both strategies', () => {
+                initPassport(passport)
+                expect(passport.authenticate.args[2][0]).deep.equal(['jwt', 'jwt-oidc'])
+            })
         })
     })
 })

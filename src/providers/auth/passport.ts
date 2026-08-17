@@ -4,6 +4,7 @@ import passport from 'passport'
 import googleStrategy from './googleStrategy'
 import localStrategy from './localStrategy'
 import jwtStrategy from './jwtStrategy'
+import jwtOidcStrategy from './jwtOidcStrategy'
 import session from 'express-session'
 dotenv.config()
 
@@ -18,7 +19,15 @@ export function initPassport(passport: passport.PassportStatic) {
 
     // add the jwt strategy which the application use to identify the users
     passport.use('jwt', jwtStrategy)
-    const requireJwt = passport.authenticate('jwt', { session: false })
+
+    // add the oidc-jwt strategy which lets the app accept access tokens
+    // issued by the ../oauth OIDC provider — optional, only when configured
+    let requireJwtStrategies: string | string[] = 'jwt'
+    if (process.env.OIDC_ISSUER) {
+        passport.use('jwt-oidc', jwtOidcStrategy)
+        requireJwtStrategies = ['jwt', 'jwt-oidc']
+    }
+    const requireJwt = passport.authenticate(requireJwtStrategies, { session: false })
 
     // add function to serialize the user
     passport.serializeUser((user, done) => {
