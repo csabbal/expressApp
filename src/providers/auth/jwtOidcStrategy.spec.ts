@@ -57,7 +57,7 @@ describe('JWTOidcStrategy', () => {
 
         beforeEach(() => {
             verifyStub = sandbox.stub(jwtOidcStrategyInstance, 'verifyUser')
-                .resolves({ id: payload.id, email: payload.email })
+                .resolves({ id: payload.id, email: payload.email, permissions: payload.permissions })
             callbackFunction = sandbox.stub()
             result = jwtOidcStrategyInstance.getAuthCallBack()
         })

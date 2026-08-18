@@ -64,8 +64,11 @@ export class JWTStrategy extends AuthStrategy {
             const appRequest = req as AppRequest
             if (!appRequest.user) throw new Error('forbidden')
             const user = appRequest.user
-            const userPermissionsData = await this.userPermissionsRepository.findOne({ userId: user.id })
-            const userPermissions = userPermissionsData?.permissions ?? []
+            let  userPermissionsData = { permissions: (appRequest.user as any)?.permissions }
+            if(!userPermissionsData.permissions){
+                userPermissionsData = await this.userPermissionsRepository.findOne({ userId: user.id })
+            }
+            const userPermissions = (userPermissionsData as any)?.permissions ?? []
             const isGranted = neededPrivileges.every(
                 neededPriv => userPermissions.some(
                     (it: PermissionEntity) =>

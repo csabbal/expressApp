@@ -20,7 +20,7 @@ export class JWTOidcStrategy extends AuthStrategy {
         try {
             logger.debug('[jwt-oidc verify] ' + LoggerClass.objectToString(payload))
             if (!payload?.id) throw new Error('unauthorized')
-            return { id: payload.id, email: payload.email }
+            return { id: payload.id, email: payload.email, permissions: payload.permissions }
         }
         catch (e) {
             logger.error('[jwt-oidc verify] error' + e.message)
