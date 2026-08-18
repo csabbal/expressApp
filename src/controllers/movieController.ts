@@ -83,4 +83,37 @@ export class MovieController {
             next(e)
         }
     }
+
+    /**
+     * This controller method is about to call movieService updateMovie function with id param and the request body
+     * @param {Request} req
+     * @param {Response} res
+     * @param {NextFunction} next
+     */
+    @loggedMethod('[MovieController] updateMovie')
+    public async updateMovie(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const { id } = req.params
+            const movie: MovieEntity | null = await this.movieService.updateMovie(id, req.body)
+            res.json(movie)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    /**
+     * This controller method is about to call movieService createMovie function with the request body
+     * @param {Request} req
+     * @param {Response} res
+     * @param {NextFunction} next
+     */
+    @loggedMethod('[MovieController] createMovie')
+    public async createMovie(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const movie: MovieEntity = await this.movieService.createMovie(req.body)
+            res.status(201).json(movie)
+        } catch (e) {
+            next(e)
+        }
+    }
 }

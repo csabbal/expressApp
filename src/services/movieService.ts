@@ -3,6 +3,7 @@ import { loggedMethod, logger } from "../utils/logger/logger"
 import { movieRepository } from "../repositories"
 import { FindOptions, IMovieRepository, SortOptions } from "../types/repositories"
 import { BadRequestError } from "../utils/error/Error"
+import { v4 as uuidv4 } from "uuid"
 
 export class MovieService {
     protected static _instance: MovieService
@@ -49,6 +50,26 @@ export class MovieService {
     public async getMovieById(id:string): Promise<MovieEntity|null> {
         const movies = await this.movieRepository.findOne({id})
         return movies
+    }
+
+    /**
+     * updateMovie method take care of updating one visible movie data based on the id from the db
+     * @returns {MovieEntity|null} returns with the updated MovieEntity via movieRepository
+    */
+    @loggedMethod('[MovieService] updateMovie')
+    public async updateMovie(id: string, data: Partial<MovieEntity>): Promise<MovieEntity|null> {
+        const movie = await this.movieRepository.updateOne({ id }, data)
+        return movie
+    }
+
+    /**
+     * createMovie method take care of creating a new movie entry in the db
+     * @returns {MovieEntity} returns with the created MovieEntity via movieRepository
+    */
+    @loggedMethod('[MovieService] createMovie')
+    public async createMovie(data: Partial<MovieEntity>): Promise<MovieEntity> {
+        const movie = await this.movieRepository.create({ ...data, id: uuidv4() } as MovieEntity)
+        return movie
     }
 
 

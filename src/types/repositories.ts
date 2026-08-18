@@ -22,6 +22,7 @@ export interface IRepository<T extends IEntity = IEntity> {
     findOne(data: Partial<T>): Promise<T|null>
     create(data: any): Promise<any>
     findWithParams(data?: Partial<T> | FindOptions<T>): Promise<T[]>
+    updateOne(filter: Partial<T>, data: Partial<T>): Promise<T|null>
 }
 
 // [INFRASTRUCTURE] Keep these — required for auth to work

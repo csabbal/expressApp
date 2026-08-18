@@ -176,5 +176,160 @@ router.get('/:id',
     movieController.getMovieById.bind(movieController)
 )
 
+/**
+ * @swagger
+ * /api/movie/{id}:
+ *   put:
+ *     summary: Update a concrete movie
+ *     security:
+ *        - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The id of the movie to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Inception
+ *               description:
+ *                 type: string
+ *                 example: A thief who steals corporate secrets through dream-sharing technology.
+ *               image:
+ *                 type: string
+ *                 example: https://example.com/inception.jpg
+ *               director:
+ *                 type: string
+ *                 example: Christopher Nolan
+ *               releaseDate:
+ *                 type: string
+ *                 example: 2010-07-16
+ *               genre:
+ *                 type: string
+ *                 example: Science Fiction
+ *               duration:
+ *                 type: string
+ *                 example: 148 min
+ *               rating:
+ *                 type: number
+ *                 format: float
+ *                 example: 8.8
+ *     responses:
+ *       200:
+ *         description: the updated movie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 title:
+ *                   type: string
+ *                   example: Inception
+ *                 director:
+ *                   type: string
+ *                   example: Christopher Nolan
+ *                 releaseDate:
+ *                   type: integer
+ *                   example: 2010.07.16
+ *                 genre:
+ *                   type: string
+ *                   example: Science Fiction
+ *                 rating:
+ *                   type: number
+ *                   format: float
+ *                   example: 8.8
+ *       404:
+ *         description: Movie not found
+ */
+router.put('/:id',
+    requireJwt,
+    verifyPrivileges([{ component: 'movie', privilege: 'write' }]),
+    movieController.updateMovie.bind(movieController)
+)
+
+/**
+ * @swagger
+ * /api/movie:
+ *   post:
+ *     summary: Create a new movie
+ *     security:
+ *        - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Inception
+ *               description:
+ *                 type: string
+ *                 example: A thief who steals corporate secrets through dream-sharing technology.
+ *               image:
+ *                 type: string
+ *                 example: https://example.com/inception.jpg
+ *               director:
+ *                 type: string
+ *                 example: Christopher Nolan
+ *               releaseDate:
+ *                 type: string
+ *                 example: 2010-07-16
+ *               genre:
+ *                 type: string
+ *                 example: Science Fiction
+ *               duration:
+ *                 type: string
+ *                 example: 148 min
+ *               rating:
+ *                 type: number
+ *                 format: float
+ *                 example: 8.8
+ *     responses:
+ *       201:
+ *         description: the created movie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 title:
+ *                   type: string
+ *                   example: Inception
+ *                 director:
+ *                   type: string
+ *                   example: Christopher Nolan
+ *                 releaseDate:
+ *                   type: integer
+ *                   example: 2010.07.16
+ *                 genre:
+ *                   type: string
+ *                   example: Science Fiction
+ *                 rating:
+ *                   type: number
+ *                   format: float
+ *                   example: 8.8
+ */
+router.post('/',
+    requireJwt,
+    verifyPrivileges([{ component: 'movie', privilege: 'write' }]),
+    movieController.createMovie.bind(movieController)
+)
+
 
 export default router

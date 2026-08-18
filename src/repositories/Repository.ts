@@ -41,6 +41,10 @@ export class Repository<T extends IEntity = IEntity> implements IRepository {
     async create(data: T): Promise<T> {
         return await this.model.create(data)
     }
+
+    async updateOne(filter: Partial<T>, data: Partial<T>): Promise<T | null> {
+        return await this.model.findOneAndUpdate(filter, data, { new: true })
+    }
 }
 
 
