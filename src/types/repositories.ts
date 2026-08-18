@@ -19,7 +19,7 @@ export interface FindOptions<T extends IEntity = IEntity> {
 
 export interface IRepository<T extends IEntity = IEntity> {
     find(data?: Partial<T>): Promise<T[]>
-    findOne(data: Partial<T>): Promise<T>
+    findOne(data: Partial<T>): Promise<T|null>
     create(data: any): Promise<any>
     findWithParams(data?: Partial<T> | FindOptions<T>): Promise<T[]>
 }

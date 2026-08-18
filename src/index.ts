@@ -1,6 +1,7 @@
 import { initDataSource } from './providers/data/index'
 import fs from 'fs'
 import express, { Application } from 'express'
+import http from 'http'
 import https from 'https'
 import bodyParser from 'body-parser'
 import cors from 'cors'
@@ -12,7 +13,7 @@ import { errorHandlerMiddleware } from './utils/error/Error'
 import { addPassportToAppFunction } from './providers/auth/passport'
 
 dotenv.config()
-const { PORT: appPort } = process.env
+const { PORT: appPort, PROTOCOL: appProtocol } = process.env
 const {
   DB_TYPE: type,
   DB_HOST: host,
@@ -23,7 +24,7 @@ const {
 } = process.env
 
 const options = {
-  key: fs.readFileSync('keys/server.key'), 
+  key: fs.readFileSync('keys/server.key'),
   cert: fs.readFileSync('keys/server.cert')
 }
 
@@ -46,11 +47,17 @@ app.use('/api', router)
 app.use(errorHandlerMiddleware)
 
 // init the data source
-await initDataSource({type, host, port, user, password, database})
+await initDataSource({ type, host, port, user, password, database })
 
 // start the application
-https.createServer(options,app).listen(appPort,() => {
-  logger.info(`Server is running  at https://localhost:${appPort}`)
-})
+if (appProtocol == "http") {
+  http.createServer(app).listen(appPort, () => {
+    logger.info(`Server is running  at ${appProtocol}://localhost:${appPort}`)
+  })
+} else {
+  https.createServer(options, app).listen(appPort, () => {
+    logger.info(`Server is running  at ${appProtocol}://localhost:${appPort}`)
+  })
+}
 
 export default app

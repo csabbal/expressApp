@@ -65,4 +65,22 @@ export class MovieController {
             next(e)
         }
     }
+
+    /**
+     * This controller method is about to call movieService getMovieById function with id param
+     * but before that it perform all of validations what it makes sens on the querystring paramaters
+     * @param {Request} req 
+     * @param {Response} res 
+     * @param {NextFunction} next 
+     */
+    @loggedMethod('[MovieController] getMovieById')
+    public async getMovieById(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const { id } = req.params
+            const movie: MovieEntity | null = await this.movieService.getMovieById(id)
+            res.json(movie)
+        } catch (e) {
+            next(e)
+        }
+    }
 }

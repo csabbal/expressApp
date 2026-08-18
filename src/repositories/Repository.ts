@@ -34,7 +34,7 @@ export class Repository<T extends IEntity = IEntity> implements IRepository {
         return await query.exec()
     }
 
-    async findOne(data: Partial<T>): Promise<T> {
+    async findOne(data: Partial<T>): Promise<T | null> {
         return await this.model.findOne(data)
     }
 

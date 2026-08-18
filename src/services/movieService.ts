@@ -40,6 +40,18 @@ export class MovieService {
         const movies = await this.movieRepository.findWithParams(params)
         return movies
     }
+
+    /**
+     * getMovieById method take care of fetching one visible movie data based on the id from the db
+     * @returns {MovieEntity[]} returns with all MovieEntity based on the options via movieRepository
+    */
+    @loggedMethod('[MovieService] getMovieById')
+    public async getMovieById(id:string): Promise<MovieEntity|null> {
+        const movies = await this.movieRepository.findOne({id})
+        return movies
+    }
+
+
     /**
      * mapRequestParamToFind method is to map the request paramaters to the findOptions
      * what is needed by the movieRepository

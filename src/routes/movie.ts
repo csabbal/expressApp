@@ -126,5 +126,55 @@ router.get('/list',
     movieController.getMovies.bind(movieController)
 )
 
+/**
+ * @swagger
+ * /api/movie/{id}:
+ *   get:
+ *     summary: Retrieve a concrete movie
+ *     security:
+ *        - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The id of the movie to retrieve
+ *     responses:
+ *       200:
+ *         description: a movie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 title:
+ *                   type: string
+ *                   example: Inception
+ *                 director:
+ *                   type: string
+ *                   example: Christopher Nolan
+ *                 releaseDate:
+ *                   type: integer
+ *                   example: 2010.07.16
+ *                 genre:
+ *                   type: string
+ *                   example: Science Fiction
+ *                 rating:
+ *                   type: number
+ *                   format: float
+ *                   example: 8.8
+ *       404:
+ *         description: Movie not found
+ */
+router.get('/:id',
+    requireJwt,
+    verifyPrivileges([{ component: 'movie', privilege: 'read' }]),
+    movieController.getMovieById.bind(movieController)
+)
+
 
 export default router
