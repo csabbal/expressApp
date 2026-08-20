@@ -1,6 +1,7 @@
 import { MovieEntity } from "./Movie"
 import { PermissionEntity, UserPermissionsEntity } from "./Permission"
 import { UserEntity } from "./User"
+import { FileEntity } from "./File"
 
 
 export interface IEntity {
@@ -30,6 +31,7 @@ export interface IRepository<T extends IEntity = IEntity> {
 export interface IUserRepository<T extends UserEntity=UserEntity> extends IRepository<T> {}
 export interface IUserPermissionsRepository<T extends UserPermissionsEntity> extends IRepository<T> {}
 export interface IPermissionRepository<T extends PermissionEntity> extends IRepository<T> {}
+export interface IFileRepository<T extends FileEntity=FileEntity> extends IRepository<T> {}
 
 // [EXAMPLE] Remove and add your own domain repository interfaces
 export interface IMovieRepository<T extends MovieEntity=MovieEntity> extends IRepository<T> {}
@@ -39,6 +41,7 @@ export interface IRepositories {
     User?: IUserRepository<UserEntity>
     Permission?: IPermissionRepository<PermissionEntity>
     UserPermissions?: IUserPermissionsRepository<UserPermissionsEntity>
+    File?: IFileRepository<FileEntity>
 
     // ================================================================
     // [BUSINESS] Add your domain repository types here.

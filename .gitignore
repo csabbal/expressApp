@@ -131,3 +131,7 @@ dist
 
 # Worktrees (git worktree add)
 .worktrees/
+
+# Uploaded files (generic file storage feature)
+/uploads/*
+!/uploads/.gitkeep

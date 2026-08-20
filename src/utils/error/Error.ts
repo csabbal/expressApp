@@ -48,6 +48,29 @@ export class ConflictError extends Error {
 }
 
 /**
+ * NotFoundError class will be instantiated when the requested resource does not exist
+ */
+export class NotFoundError extends Error {
+    readonly publicMessage: string
+
+    constructor(message: string, publicInformation?: string, stack?: string) {
+        super(message)
+        this.name = 'NotFoundError'
+        this.publicMessage = publicInformation ?? message
+        this.stack = stack
+    }
+
+    sendJSONResponse(res: express.Response) {
+        res.status(404).json({
+            success: false,
+            status: 404,
+            message: this.publicMessage,
+            stack: process.env.NODE_ENV === 'development' ? this.stack : {}
+        })
+    }
+}
+
+/**
  *  This class will be instantiated if the problem is regardless from the client
  */
 export class ServerError extends Error {
@@ -84,6 +107,8 @@ export async function errorHandlerMiddleware(err: any, req: Request, res: Respon
     if (err instanceof BadRequestError) {
         err.sendJSONResponse(res)
     } else if (err instanceof ConflictError) {
+        err.sendJSONResponse(res)
+    } else if (err instanceof NotFoundError) {
         err.sendJSONResponse(res)
     } else {
         const error = new ServerError(errMsg, errStack)

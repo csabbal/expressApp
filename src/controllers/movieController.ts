@@ -4,6 +4,7 @@ import { listRequestParams, MovieEntity } from '../types/Movie'
 import { loggedMethod, logger, LoggerClass } from '../utils/logger/logger'
 import _ from 'lodash'
 import { BadRequestError } from '../utils/error/Error'
+import { AppRequest } from '../types/CustomExpress'
 
 /**
  * This class is about to provides all requests of the user related endpoints via user service 
@@ -140,6 +141,25 @@ export class MovieController {
         try {
             const movie: MovieEntity = await this.movieService.createMovie(req.body)
             res.status(201).json(movie)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    /**
+     * This controller method is about to call movieService uploadImage function with id param and the uploaded file
+     * @param {Request} req
+     * @param {Response} res
+     * @param {NextFunction} next
+     */
+    @loggedMethod('[MovieController] uploadImage')
+    public async uploadImage(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const { id } = req.params
+            if (!req.file) throw new BadRequestError('image file is required')
+            const userId = (req as AppRequest).user.id
+            const movie = await this.movieService.uploadImage(id, req.file, userId)
+            res.json(movie)
         } catch (e) {
             next(e)
         }

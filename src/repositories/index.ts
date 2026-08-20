@@ -3,10 +3,12 @@ import { PermissionModel } from "../entities/Permissions.schema"
 import { UserModel } from "../entities/User.schema"
 import { MovieModel } from "../entities/Movie.schema"
 import { UserPermissionsModel } from "../entities/UserPermissions.schema"
+import { FileModel } from "../entities/File.schema"
 import { PermissionRepository } from "./Permission.repository"
 import { UserRepository } from "./User.repository"
 import { MovieRepository } from "./Movie.repository"
 import { UserPermissionsRepository } from "./UserPermissions.repository"
+import { FileRepository } from "./File.repository"
 import { IRepositories } from "../types/repositories"
 dotenv.config()
 const { DB_TYPE: type } = process.env
@@ -23,6 +25,7 @@ export class RepositoryFactory {
                 this.repositories.User = new UserRepository(UserModel)
                 this.repositories.Permission = new PermissionRepository(PermissionModel)
                 this.repositories.UserPermissions = new UserPermissionsRepository(UserPermissionsModel)
+                this.repositories.File = new FileRepository(FileModel) // [INFRASTRUCTURE]
 
                 // ================================================================
                 // [BUSINESS] Register your domain repositories here.
@@ -47,6 +50,7 @@ const repositories = initRepositories(type)
 export const userRepository = repositories.User
 export const permissionRepository = repositories.Permission
 export const userPermissionsRepository = repositories.UserPermissions
+export const fileRepository = repositories.File
 
 // [EXAMPLE] Remove and add your own domain repository exports
 export const movieRepository = repositories.Movie

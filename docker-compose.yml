@@ -18,6 +18,10 @@ services:
       target: production
     ports:
       - "8000:8000"
+    volumes:
+      - uploads_data:/usr/src/app/uploads
 networks:
   app_network:
     driver: bridge
+volumes:
+  uploads_data:
