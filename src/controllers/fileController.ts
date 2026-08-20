@@ -85,8 +85,8 @@ export class FileController {
             const { id } = req.params
             const quality = req.query.quality === 'low' ? 'low' : 'high'
             const target = await this.fileService.getDownloadTarget(id, quality)
-            res.setHeader('Content-Type', target.mimeType)
-            res.setHeader('Content-Disposition', `attachment; filename="${target.originalName}"`)
+            res.type(target.mimeType)
+            res.attachment(target.originalName)
             const stream = fs.createReadStream(target.path)
             stream.on('error', (err) => next(err))
             stream.pipe(res)

@@ -25,13 +25,13 @@ export class RepositoryFactory {
                 this.repositories.User = new UserRepository(UserModel)
                 this.repositories.Permission = new PermissionRepository(PermissionModel)
                 this.repositories.UserPermissions = new UserPermissionsRepository(UserPermissionsModel)
+                this.repositories.File = new FileRepository(FileModel) // [INFRASTRUCTURE]
 
                 // ================================================================
                 // [BUSINESS] Register your domain repositories here.
                 // When bootstrapping a new app: remove the movie lines and add your own.
                 // ================================================================
                 this.repositories.Movie = new MovieRepository(MovieModel) // [EXAMPLE]
-                this.repositories.File = new FileRepository(FileModel)
                 break
             default:
                 throw new Error('database type is unknown')
@@ -50,7 +50,7 @@ const repositories = initRepositories(type)
 export const userRepository = repositories.User
 export const permissionRepository = repositories.Permission
 export const userPermissionsRepository = repositories.UserPermissions
+export const fileRepository = repositories.File
 
 // [EXAMPLE] Remove and add your own domain repository exports
 export const movieRepository = repositories.Movie
-export const fileRepository = repositories.File

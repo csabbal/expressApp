@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { fileRepository } from '../repositories'
 import { IFileRepository } from '../types/repositories'
 import { FileEntity } from '../types/File'
-import { loggedMethod } from '../utils/logger/logger'
+import { loggedMethod, logger } from '../utils/logger/logger'
 import { NotFoundError } from '../utils/error/Error'
 
 export interface UploadFileOptions {
@@ -35,8 +35,8 @@ export class FileService {
      * @param {UploadFileOptions} options
      * @returns {FileEntity}
     */
-    @loggedMethod('[FileService] uploadFile')
     public async uploadFile(file: Express.Multer.File, options: UploadFileOptions = {}): Promise<FileEntity> {
+        logger.info('[FileService] uploadFile ' + file.originalname)
         const id = uuidv4()
         const extension = this.extractExtension(file.originalname)
         const targetDir = path.join(this.getUploadDir(), options.category ?? '', id)
@@ -106,7 +106,15 @@ export class FileService {
         quality: 'low' | 'high'
     ): Promise<{ path: string, mimeType: string, originalName: string }> {
         const file = await this.getFileById(id)
-        const targetPath = quality === 'low' && file.lowQualityPath ? file.lowQualityPath : file.originalPath
+        const useLowQuality = quality === 'low' && !!file.lowQualityPath
+        const targetPath = useLowQuality ? file.lowQualityPath : file.originalPath
+        if (useLowQuality) {
+            return {
+                path: targetPath,
+                mimeType: 'image/jpeg',
+                originalName: `${path.parse(file.originalName).name}.jpg`
+            }
+        }
         return { path: targetPath, mimeType: file.mimeType, originalName: file.originalName }
     }
 

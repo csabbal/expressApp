@@ -2,7 +2,7 @@ import { listRequestParams, MovieEntity } from "../types/Movie"
 import { loggedMethod, logger } from "../utils/logger/logger"
 import { movieRepository } from "../repositories"
 import { FindOptions, IMovieRepository, SortOptions } from "../types/repositories"
-import { BadRequestError } from "../utils/error/Error"
+import { BadRequestError, NotFoundError } from "../utils/error/Error"
 import { v4 as uuidv4 } from "uuid"
 import { FileService } from "./fileService"
 
@@ -29,12 +29,14 @@ export class MovieService {
      * @param {string} uploadedBy
      * @returns {MovieEntity|null}
     */
-    @loggedMethod('[MovieService] uploadImage')
     public async uploadImage(
         id: string,
         file: Express.Multer.File,
         uploadedBy: string
     ): Promise<MovieEntity | null> {
+        logger.info('[MovieService] uploadImage ' + id)
+        const existingMovie = await this.movieRepository.findOne({ id })
+        if (!existingMovie) throw new NotFoundError(`movie not found: ${id}`, 'movie not found')
         const fileEntity = await this.fileService.uploadFile(file, { category: 'movie', uploadedBy })
         const movie = await this.movieRepository.updateOne({ id }, { image: fileEntity.id } as Partial<MovieEntity>)
         return movie
