@@ -4,6 +4,7 @@ import userRouter from './user'
 import authRouter from './auth'
 import signupRouter from './signup'
 import movieRouter from './movie'
+import fileRouter from './file' // [INFRASTRUCTURE]
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
 import * as packageJson from '../../package.json'
@@ -72,6 +73,7 @@ router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swaggerOptions
 router.use('/user', userRouter)
 router.use('/auth', authRouter)
 router.use('/signup', signupRouter)
+router.use('/file', fileRouter) // [INFRASTRUCTURE]
 
 // ================================================================
 // [BUSINESS] Register your domain routes here.
