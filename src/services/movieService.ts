@@ -84,6 +84,7 @@ export class MovieService {
         try {
             const validSortArray = queryParams.sort.map(it => JSON.parse(it)) as SortOptions<MovieEntity>[]
             const params = {
+                filter: queryParams.filter,
                 limit: queryParams.limit,
                 offset: queryParams.offset,
                 sort: validSortArray

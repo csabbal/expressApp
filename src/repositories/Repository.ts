@@ -11,6 +11,38 @@ export class Repository<T extends IEntity = IEntity> implements IRepository {
 
     constructor(protected model: mongoose.Model<T>) { }
 
+    getFindParams(otherFindParams: { filter: string }) {
+        const stringFields:string[] = []
+        const numberFields:string[] = []
+        const filter = otherFindParams.filter
+        if (!filter) return {}
+       this.model.schema.eachPath((path, schemaType) => {
+        if (["_id", "__v"].includes(path)) return
+
+        if (schemaType.instance === "String") {
+            stringFields.push(path)
+        } else if (schemaType.instance === "Number") {
+            numberFields.push(path)
+        }
+        })
+
+        const orConditions = [
+        ...stringFields.map(field => ({
+            [field]: { $regex: filter, $options: "i" }
+        })),
+        ...numberFields.map(field => ({
+            $expr: {
+            $regexMatch: {
+                input: { $toString: `$${field}` },
+                regex: filter,
+                options: "i"
+            }
+            }
+        }))]
+
+        return { $or: orConditions }
+    }
+
     async find(data?: Partial<T>): Promise<T[]> {
         return await this.model.find(data)
     }
@@ -18,14 +50,15 @@ export class Repository<T extends IEntity = IEntity> implements IRepository {
     async findWithParams(data?: Partial<MovieEntity> | FindOptions<T>): Promise<T[]> {
 
         const { limit, offset, sort, ...otherFindParams } = data as FindOptions<T>
-        const query = this.model.find(otherFindParams)
+        const findParams = this.getFindParams(otherFindParams as any)
+        const query = this.model.find(findParams as any)
 
         if (offset) query.skip(offset)
         if (limit) query.limit(limit)
         if (sort) {
             logger.info('[Repository] findWithParams sort ' + JSON.stringify(sort))
-            const sortOptions = {} as any as Record<keyof T,string>
-            for(const option in sort) {
+            const sortOptions = {} as any as Record<keyof T, string>
+            for (const option in sort) {
                 const { direction, field } = sort[option]
                 sortOptions[field] = direction
             }

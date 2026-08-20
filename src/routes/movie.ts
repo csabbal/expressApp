@@ -68,6 +68,12 @@ router.get('/all',
  *           example: 50
  *         description: The maximum number of movies to return
  *       - in: query
+ *         name: filter
+ *         schema:
+ *           type: string
+ *           example: Spielberg
+ *         description: filtering the movie list
+ *       - in: query
  *         name: offset
  *         schema:
  *           type: integer

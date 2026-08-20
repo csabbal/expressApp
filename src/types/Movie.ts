@@ -12,6 +12,7 @@ export interface MovieEntity extends IEntity{
 }
 
 export interface listRequestParams{
+    filter?:string,
     limit:number,
     offset:number,
     sort:string[]

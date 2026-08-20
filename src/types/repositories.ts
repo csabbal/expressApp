@@ -14,6 +14,7 @@ export interface SortOptions<T extends IEntity = IEntity> {
 export interface FindOptions<T extends IEntity = IEntity> {
     limit?: number
     offset?: number
+    filter?: string
     sort?: SortOptions<T>[]
 }
 
