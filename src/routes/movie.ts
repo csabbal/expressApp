@@ -2,6 +2,7 @@ import express from 'express'
 import { MovieController } from '../controllers/movieController'
 import { requireJwt } from '../providers/auth/passport'
 import { jwtStrategyInstance } from '../providers/auth/jwtStrategy'
+import { singleFileUpload } from '../utils/upload/multer'
 
 // get the current router instance
 const router = express.Router()
@@ -211,7 +212,8 @@ router.get('/:id',
  *                 example: A thief who steals corporate secrets through dream-sharing technology.
  *               image:
  *                 type: string
- *                 example: https://example.com/inception.jpg
+ *                 description: id of a file uploaded via POST /api/movie/{id}/image
+ *                 example: 3f1c9b2a-6f7e-4a1d-9c3e-2b7a5d6e8f10
  *               director:
  *                 type: string
  *                 example: Christopher Nolan
@@ -286,7 +288,8 @@ router.put('/:id',
  *                 example: A thief who steals corporate secrets through dream-sharing technology.
  *               image:
  *                 type: string
- *                 example: https://example.com/inception.jpg
+ *                 description: id of a file uploaded via POST /api/movie/{id}/image
+ *                 example: 3f1c9b2a-6f7e-4a1d-9c3e-2b7a5d6e8f10
  *               director:
  *                 type: string
  *                 example: Christopher Nolan
@@ -337,5 +340,41 @@ router.post('/',
     movieController.createMovie.bind(movieController)
 )
 
+/**
+ * @swagger
+ * /api/movie/{id}/image:
+ *   post:
+ *     summary: Upload (or replace) a movie's image
+ *     security:
+ *        - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The id of the movie to attach the image to
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: the movie, with image set to the uploaded file's id
+ *       400:
+ *         description: no image file was provided
+ */
+router.post('/:id/image',
+    requireJwt,
+    verifyPrivileges([{ component: 'movie', privilege: 'write' }]),
+    singleFileUpload('image'),
+    movieController.uploadImage.bind(movieController)
+)
 
 export default router

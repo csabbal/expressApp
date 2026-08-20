@@ -4,20 +4,40 @@ import { movieRepository } from "../repositories"
 import { FindOptions, IMovieRepository, SortOptions } from "../types/repositories"
 import { BadRequestError } from "../utils/error/Error"
 import { v4 as uuidv4 } from "uuid"
+import { FileService } from "./fileService"
 
 export class MovieService {
     protected static _instance: MovieService
-    constructor(protected movieRepository: IMovieRepository) { }
+    constructor(protected movieRepository: IMovieRepository, protected fileService: FileService) { }
 
     /**
      * getInstance function provides that this class work as a singleton
-     * @returns 
+     * @returns
     */
     static getInstance() {
         if (!this._instance) {
-            this._instance = new MovieService(movieRepository)
+            this._instance = new MovieService(movieRepository, FileService.getInstance())
         }
         return this._instance
+    }
+
+    /**
+     * uploadImage method stores the given file under the 'movie' category via fileService,
+     * then updates the movie record to reference the resulting file's id
+     * @param {string} id
+     * @param {Express.Multer.File} file
+     * @param {string} uploadedBy
+     * @returns {MovieEntity|null}
+    */
+    @loggedMethod('[MovieService] uploadImage')
+    public async uploadImage(
+        id: string,
+        file: Express.Multer.File,
+        uploadedBy: string
+    ): Promise<MovieEntity | null> {
+        const fileEntity = await this.fileService.uploadFile(file, { category: 'movie', uploadedBy })
+        const movie = await this.movieRepository.updateOne({ id }, { image: fileEntity.id } as Partial<MovieEntity>)
+        return movie
     }
     /**
      * getAllMovies method take care of fetching all visible movie data from the db
