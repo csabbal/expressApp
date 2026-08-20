@@ -20,7 +20,7 @@ client picks which one to download via a `quality` query param.
 ## Goals
 
 - A generic `File` module other domain services can call directly in code
-  (not over HTTP) to store a file under a caller-chosen folder and get back
+  (not over HTTP) to store a file under a caller-chosen category and get back
   file metadata (including an id usable with the generic download endpoint).
 - A generic download endpoint that streams either the original or the
   degraded copy of any stored file, regardless of which domain module created
@@ -43,19 +43,20 @@ Root: `FILE_UPLOAD_DIR` (env, default `./uploads`), gitignored (with a
 `.gitkeep`), mounted as a Docker volume so uploads survive container
 restarts.
 
-Per file: `<FILE_UPLOAD_DIR>/<folder?>/<fileId>/original.<ext>`, plus
-`<FILE_UPLOAD_DIR>/<folder?>/<fileId>/low.<ext>` **only when the file is an
-image** (`mimetype` starts with `image/`). `folder` is an optional path
-segment supplied by the calling code (never by client request data — this
-avoids path traversal via untrusted input):
+Per file: `<FILE_UPLOAD_DIR>/<category?>/<fileId>/original.<ext>`, plus
+`<FILE_UPLOAD_DIR>/<category?>/<fileId>/low.<ext>` **only when the file is an
+image** (`mimetype` starts with `image/`). `category` is an optional
+single-segment string supplied by the calling code (never by client request
+data — this avoids path traversal via untrusted input) that is *also*
+persisted on the `FileEntity` so files can be queried by owning domain later
+(`fileRepository.find({ category: 'movie' })`):
 
-- Generic `POST /api/file` (no owning entity) → no `folder` →
-  `uploads/<fileId>/...`.
-- Movie image upload → `folder: 'images/movies'` →
-  `uploads/images/movies/<fileId>/...`.
-- Any future domain module picks its own folder string the same way movies
-  does; the file module itself has no knowledge of "movies" or any other
-  domain.
+- Generic `POST /api/file` (no owning entity) → no `category` →
+  `uploads/<fileId>/...`, `category: null` in the DB record.
+- Movie image upload → `category: 'movie'` → `uploads/movie/<fileId>/...`.
+- Any future domain module (e.g. `user`) picks its own category the same way
+  movies does; the file module itself has no knowledge of "movie" or any
+  other specific domain — `category` is an opaque string to it.
 
 For non-image files, there is no second copy — `lowQualityPath` stays `null`
 and a `quality=low` download request falls back to the original. Producing a
@@ -74,6 +75,7 @@ export interface FileEntity extends IEntity {
     mimeType: string
     size: number
     isImage: boolean
+    category: string | null
     originalPath: string
     lowQualityPath: string | null
     uploadedBy: string | null
@@ -85,9 +87,11 @@ export interface FileEntity extends IEntity {
 
 Mongoose schema mirroring `Movie.schema.ts`'s style: `id` (String, required),
 `originalName` (String, required), `mimeType` (String, required), `size`
-(Number, required), `isImage` (Boolean, required), `originalPath` (String,
-required), `lowQualityPath` (String, default `null`), `uploadedBy` (String,
-default `null`), `createdAt` (Date, default `Date.now`).
+(Number, required), `isImage` (Boolean, required), `category` (String,
+default `null`, indexed — it's the intended query field for "all files for
+domain X"), `originalPath` (String, required), `lowQualityPath` (String,
+default `null`), `uploadedBy` (String, default `null`), `createdAt` (Date,
+default `Date.now`).
 
 ### `src/repositories/File.repository.ts`
 
@@ -119,11 +123,11 @@ export class FileService {
 
     async uploadFile(
         file: { buffer: Buffer, originalname: string, mimetype: string, size: number },
-        options?: { folder?: string, uploadedBy?: string }
+        options?: { category?: string, uploadedBy?: string }
     ): Promise<FileEntity>
 
     async getFileById(id: string): Promise<FileEntity>          // throws NotFoundError
-    async getAllFiles(): Promise<FileEntity[]>
+    async getAllFiles(category?: string): Promise<FileEntity[]>
     async getDownloadTarget(id: string, quality: 'low' | 'high'): Promise<{ path: string, mimeType: string, originalName: string }>
 }
 ```
@@ -132,8 +136,9 @@ export class FileService {
 1. Generate `id` via `uuidv4()` (same as `movieService.createMovie`).
 2. Derive extension from `originalname` (fallback to a generic `.bin` if
    none).
-3. Build the target directory `<FILE_UPLOAD_DIR>/<options.folder ?? ''>/<id>/`
-   via `fs.promises.mkdir(..., { recursive: true })`.
+3. Build the target directory
+   `<FILE_UPLOAD_DIR>/<options.category ?? ''>/<id>/` via
+   `fs.promises.mkdir(..., { recursive: true })`.
 4. Write `original.<ext>` with the original buffer.
 5. If `mimetype` starts with `image/`: use `sharp(buffer).resize({ width:
    FILE_LOW_QUALITY_MAX_WIDTH, withoutEnlargement: true
@@ -142,9 +147,13 @@ export class FileService {
    source image format — simplest, and "ruined quality" doesn't need to
    preserve the original codec).
 6. `fileRepository.create({ id, originalName, mimeType, size, isImage,
-   originalPath, lowQualityPath, uploadedBy: options?.uploadedBy ?? null,
-   createdAt: new Date() })`.
+   category: options?.category ?? null, originalPath, lowQualityPath,
+   uploadedBy: options?.uploadedBy ?? null, createdAt: new Date() })`.
 7. Return the created `FileEntity`.
+
+`getAllFiles(category?)` — `fileRepository.find(category ? { category } :
+undefined)`, so `GET /api/file/all?category=movie` filters to one domain's
+files while omitting the param still lists everything.
 
 `getDownloadTarget(id, quality)`:
 1. `fileRepository.findOne({ id })`; throw `NotFoundError` if missing.
@@ -170,7 +179,8 @@ Same shape as `movieController.ts` (singleton via `getInstance()`,
   `BadRequestError` if absent, calls `fileService.uploadFile(req.file, {
   uploadedBy: (req as AppRequest).user.id })`, responds `201` with the
   `FileEntity`.
-- `getAllFiles(req, res, next)` — `res.json(await fileService.getAllFiles())`.
+- `getAllFiles(req, res, next)` — `res.json(await
+  fileService.getAllFiles(req.query.category as string | undefined))`.
 - `getFileById(req, res, next)` — `res.json(await
   fileService.getFileById(req.params.id))`.
 - `downloadFile(req, res, next)` — reads `quality` from `req.query`
@@ -238,7 +248,7 @@ New method:
 
 ```ts
 async uploadImage(movieId: string, file: UploadedFile, uploadedBy: string): Promise<MovieEntity | null> {
-    const fileEntity = await fileService.uploadFile(file, { folder: 'images/movies', uploadedBy })
+    const fileEntity = await fileService.uploadFile(file, { category: 'movie', uploadedBy })
     return await this.movieRepository.updateOne({ id: movieId }, { image: fileEntity.id })
 }
 ```
@@ -303,13 +313,13 @@ have no spec files):
   `BadRequestError`/`ConflictError` tests in that file.
 - `src/services/movieService.spec.ts` (new file, since none exists yet) —
   at minimum cover `uploadImage`: stubs `fileService.uploadFile` and
-  `movieRepository.updateOne`, asserts the folder passed is
-  `'images/movies'` and the movie is updated with the returned file id.
+  `movieRepository.updateOne`, asserts the category passed is `'movie'` and
+  the movie is updated with the returned file id.
 
 ## Explicitly out of scope
 
 - File deletion.
-- Client-supplied storage folder/namespace (folder is always
+- Client-supplied storage category/namespace (category is always
   developer-controlled code, never request data).
 - Any change to `MovieEntity.image` for pre-existing (pre-this-change)
   movies — this is template/example data.
