@@ -1,4 +1,5 @@
 import express from 'express'
+import fs from 'fs'
 import { MovieService } from '../services/movieService'
 import { listRequestParams, MovieEntity } from '../types/Movie'
 import { loggedMethod, logger, LoggerClass } from '../utils/logger/logger'
@@ -160,6 +161,28 @@ export class MovieController {
             const userId = (req as AppRequest).user.id
             const movie = await this.movieService.uploadImage(id, req.file, userId)
             res.json(movie)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    /**
+     * This controller method streams a movie's image bytes, resolved via movieService
+     * @param {Request} req
+     * @param {Response} res
+     * @param {NextFunction} next
+     */
+    @loggedMethod('[MovieController] downloadImage')
+    public async downloadImage(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const { id } = req.params
+            logger.info('downloadImage',id)
+            const quality = req.query.quality === 'low' ? 'low' : 'high'
+            const target = await this.movieService.streamImage(id, quality)
+            res.type(target.mimeType)
+            const stream = fs.createReadStream(target.path)
+            stream.on('error', (err) => next(err))
+            stream.pipe(res)
         } catch (e) {
             next(e)
         }

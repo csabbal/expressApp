@@ -393,7 +393,7 @@ router.post('/',
 
 /**
  * @swagger
- * /api/movie/{id}/image:
+ * /api/movie/image/{id}:
  *   post:
  *     summary: Upload (or replace) a movie's image
  *     security:
@@ -421,11 +421,49 @@ router.post('/',
  *       400:
  *         description: no image file was provided
  */
-router.post('/:id/image',
+router.post('/image/:id',
     requireJwt,
     verifyPrivileges([{ component: 'movie', privilege: 'write' }]),
     singleFileUpload('image'),
     movieController.uploadImage.bind(movieController)
+)
+
+/**
+ * @swagger
+ * /api/movie/image/{id}:
+ *   get:
+ *     summary: Download a movie's image, streamed from disk
+ *     security:
+ *        - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The id of the movie whose image to retrieve
+ *       - in: query
+ *         name: quality
+ *         schema:
+ *           type: string
+ *           enum: [low, high]
+ *           default: high
+ *         description: low returns the degraded copy (falls back to the original if none exists)
+ *     responses:
+ *       200:
+ *         description: the image bytes
+ *         content:
+ *           image/*:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: movie not found, or the movie has no image
+ */
+router.get('/image/:id',
+    requireJwt,
+    verifyPrivileges([{ component: 'movie', privilege: 'read' }]),
+    movieController.downloadImage.bind(movieController)
 )
 
 export default router

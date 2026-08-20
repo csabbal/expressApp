@@ -41,6 +41,25 @@ export class MovieService {
         const movie = await this.movieRepository.updateOne({ id }, { image: fileEntity.id } as Partial<MovieEntity>)
         return movie
     }
+
+    /**
+     * streamImage method resolves the physical file to stream for a movie's image,
+     * delegating the quality-based path resolution to fileService
+     * @param {string} id
+     * @param {'low'|'high'} quality
+     * @returns {{path: string, mimeType: string, originalName: string}}
+    */
+    public async streamImage(
+        id: string,
+        quality: 'low' | 'high'
+    ): Promise<{ path: string, mimeType: string, originalName: string }> {
+        const movie = await this.movieRepository.findOne({ id })
+        logger.info('movie',JSON.stringify(movie))
+        if (!movie) throw new NotFoundError(`movie not found: ${id}`, 'movie not found')
+        if (!movie.image) throw new NotFoundError(`movie has no image: ${id}`, 'movie has no image')
+        
+        return await this.fileService.getDownloadTarget(movie.image, quality)
+    }
     /**
      * getAllMovies method take care of fetching all visible movie data from the db
      * @returns {UserEntity[]} returns with all MovieEntity via movieRepository

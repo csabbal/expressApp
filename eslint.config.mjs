@@ -12,7 +12,7 @@ export default defineConfig([
     files: ["**/*.ts"],
     languageOptions: {
       parserOptions: {
-        project: "./tsconfig.json",
+        project: ["./tsconfig.json", "./tsconfig.scripts.json"],
       },
     },
     rules: {
@@ -45,6 +45,13 @@ export default defineConfig([
     files: ["**/types/*.ts"],
     rules: {
       "@typescript-eslint/no-empty-object-type": "off",
+    },
+  },
+  // Seed data has long, one-entry-per-line literals — line length isn't meaningful here
+  {
+    files: ["scripts/seedMovies.ts"],
+    rules: {
+      "max-len": "off",
     },
   },
 ]);

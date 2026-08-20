@@ -3,7 +3,7 @@ import { IEntity } from "./repositories"
 export interface MovieEntity extends IEntity{
     title: string,
     description: string,
-    image: string,
+    image: string | null,
     releaseDate: string,
     rating: number,
     genre: string,
