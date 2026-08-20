@@ -42,6 +42,18 @@ export class MovieService {
         return movies
     }
 
+     /**
+     * getMoviespageCount method take care of fetching all visible movie data from the db
+     * but it returns only just the total numbers. it omit the offset and page params.
+     * @returns {MovieEntity[]} returns with all MovieEntity based on the options via movieRepository
+    */
+    @loggedMethod('[MovieService] getMoviesPageCount')
+    public async getMoviesPageCount(queryParams: listRequestParams): Promise<number> {
+        const {limit, offset, ...filteringQueryParams} = queryParams
+        const movies = await this.getMovies(filteringQueryParams as listRequestParams)
+        return Math.round(movies.length / (limit ?? 1))
+    }
+
     /**
      * getMovieById method take care of fetching one visible movie data based on the id from the db
      * @returns {MovieEntity[]} returns with all MovieEntity based on the options via movieRepository
@@ -82,7 +94,9 @@ export class MovieService {
     @loggedMethod('[MovieService] mapRequestParamToFind')
     private mapRequestParamToFind(queryParams: listRequestParams): FindOptions<MovieEntity> {
         try {
-            const validSortArray = queryParams.sort.map(it => JSON.parse(it)) as SortOptions<MovieEntity>[]
+            const validSortArray = (queryParams.sort ? 
+                queryParams.sort.map(it => JSON.parse(it)) : []
+            ) as SortOptions<MovieEntity>[]
             const params = {
                 filter: queryParams.filter,
                 limit: queryParams.limit,

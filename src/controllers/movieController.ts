@@ -67,6 +67,34 @@ export class MovieController {
     }
 
     /**
+     * This controller method is about to call movieService getMoviesPagecount with paramaters taken as querystring
+     * to get the total number of pages of the potential records based on the query
+     * @param {Request} req 
+     * @param {Response} res 
+     * @param {NextFunction} next 
+     */
+    @loggedMethod('[MovieController] getMovies')
+    public async getMoviesPageCount(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const params = req.query as unknown as listRequestParams
+            // if the sort is not an array, then convert it to an array
+            if (params.sort && !Array.isArray(params.sort)) {
+                params.sort = [params.sort]
+            }
+            logger.info('[getMoviesPageCount] params' + LoggerClass.objectToString(params))
+            // checking the querystring paramaters
+            if (_.isNaN(params.limit)) throw new BadRequestError('limit is not a number')
+            if (!_.isArray(params?.sort || [])) throw new BadRequestError('sort is not an array')
+
+            // calling the movieService getMovies function with the querystring paramaters
+            const moviesPageCount: number = await this.movieService.getMoviesPageCount(params)
+            res.json(moviesPageCount)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    /**
      * This controller method is about to call movieService getMovieById function with id param
      * but before that it perform all of validations what it makes sens on the querystring paramaters
      * @param {Request} req 

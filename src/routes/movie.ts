@@ -55,6 +55,57 @@ router.get('/all',
 
 /**
  * @swagger
+ * /api/movie/pageCount:
+ *   get:
+ *     summary: Retrieve the total page count list of movies
+ *     security:
+ *        - BearerAuth: [] 
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 50
+ *         description: The maximum number of movies to return
+ *       - in: query
+ *         name: filter
+ *         schema:
+ *           type: string
+ *           example: Spielberg
+ *         description: filtering the movie list
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               field:
+ *                 type: string
+ *                 example: rating
+ *                 description: The field by which to sort the movies (e.g., title, releaseDate, rating)
+ *               direction:
+ *                 type: string
+ *                 enum: [asc, desc]
+ *                 example: desc
+ *                 description: The order in which to sort the movies (ascending or descending)
+ *         description: The sorting options for the movies, including field and order
+ *     responses:
+ *       200:
+ *         description: A number of total page count
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: number
+ */
+router.get('/pageCount',
+    requireJwt,
+    verifyPrivileges([{ component: 'movie', privilege: 'read' }]),
+    movieController.getMoviesPageCount.bind(movieController)
+)
+
+/**
+ * @swagger
  * /api/movie/list:
  *   get:
  *     summary: Retrieve a list of movies
