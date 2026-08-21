@@ -12,14 +12,14 @@ describe('RepositoryFactory', () => {
 
     beforeEach(() => {
         sandbox = sinon.createSandbox()
-        factory = new RepositoryFactory('mongo')
+        factory = new RepositoryFactory()
     })
     afterEach(() => {
         sandbox.restore()
     })
 
     describe('create', () => {
-        it('should instantiate the Repositories based on the given type', () => {
+        it('should instantiate the Repositories', () => {
             factory.create()
             expect(factory.repositories.User).to.be.instanceOf(UserRepository)
             expect(factory.repositories.Permission).to.be.instanceOf(PermissionRepository)

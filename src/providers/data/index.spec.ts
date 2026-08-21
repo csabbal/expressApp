@@ -52,8 +52,8 @@ describe('data source registry', () => {
 
     describe('initDataSource', () => {
         it('should call buildDataSource on the registered DataSource for the given name', async () => {
-            const buildDataSourceStub = sandbox.stub(dataSources.primary, 'buildDataSource').resolves()
-            await initDataSource('primary')
+            const buildDataSourceStub = sandbox.stub(dataSources.auth, 'buildDataSource').resolves()
+            await initDataSource('auth')
             expect(buildDataSourceStub.calledOnce).to.be.true
         })
         it('should treat every registered data source the same way', async () => {

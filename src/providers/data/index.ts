@@ -37,14 +37,6 @@ export class DataSourceFactory {
  * object has to exist by then regardless.
  */
 const dataSourceProperties: Record<string, DatabaseProperties> = {
-    primary: {
-        type: process.env.DB_TYPE,
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
-        user: process.env.DB_USERNAME,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_DATABASE
-    },
     learning: {
         type: process.env.LEARNING_DB_TYPE,
         host: process.env.LEARNING_DB_HOST,
