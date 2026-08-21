@@ -1,10 +1,9 @@
 import "reflect-metadata"
 import { CommandFailedEvent, CommandStartedEvent, CommandSucceededEvent } from 'mongodb'
-import { Connection, Mongoose } from 'mongoose'
+import { Connection } from 'mongoose'
 
 import { logger, LoggerClass } from "../../utils/logger/logger"
 import { DataSource } from "./DataSource"
-import { DatabaseProperties } from "../../types/Database"
 
 /**
  * This class is to take care about:
@@ -13,18 +12,12 @@ import { DatabaseProperties } from "../../types/Database"
  * make the connection to the database
  * the proper logging
  *
- * useDefaultConnection controls whether this DataSource drives the app's one
- * ambient default Mongoose connection (used implicitly by every mongoose.model()
- * call - the primary DB) or opens its own separate, named connection via
- * mongoose.createConnection() (used by entities that live in a different
- * database, e.g. the learning DB) - Mongoose only ever has one default
- * connection, so a second database can never reuse that path.
+ * Every Mongo DataSource - the app's primary DB, the learning DB, any future
+ * one - is handled identically here: its own named connection via
+ * mongoose.createConnection(), never the ambient mongoose default connection.
+ * There is no "the primary one is special" branch.
  */
 export default class MongoDataSource extends DataSource {
-
-    constructor(data: DatabaseProperties, ODM: Mongoose, protected useDefaultConnection: boolean = true) {
-        super(data, ODM)
-    }
 
     setLogging() {
         this.connection.on('commandStarted', (data: CommandStartedEvent) => {
@@ -41,8 +34,9 @@ export default class MongoDataSource extends DataSource {
     }
 
     setConnectionString() {
-        const base = `mongodb://${this.data.user}:${this.data.password}@${this.data.host}:${this.data.port}`
-        this.connectionString = this.useDefaultConnection ? base : `${base}/${this.data.database}?authSource=admin`
+        this.connectionString =
+            `mongodb://${this.data.user}:${this.data.password}@${this.data.host}:${this.data.port}` +
+            `/${this.data.database}?authSource=admin`
     }
 
     /**
@@ -56,18 +50,16 @@ export default class MongoDataSource extends DataSource {
      */
     getOrCreateConnection(): Connection {
         if (!this.connection) {
-            this.connection = this.useDefaultConnection ? this.ODM.connection : this.ODM.createConnection()
+            this.connection = this.ODM.createConnection()
         }
         return this.connection
     }
 
     async connectoToDatabase() {
         this.getOrCreateConnection()
-        const options = { monitorCommands: true, serverMonitoringMode: 'auto' } as const
-        if (this.useDefaultConnection) {
-            await this.ODM.connect(this.connectionString, options)
-        } else {
-            await this.connection.openUri(this.connectionString, options)
-        }
+        await this.connection.openUri(
+            this.connectionString,
+            { monitorCommands: true, serverMonitoringMode: 'auto' }
+        )
     }
 }

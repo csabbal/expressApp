@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import {MovieEntity } from '../types/Movie'
+import { getConnection } from '../providers/data'
 
 /**
  * Initialization a mongoose schema to store the movies
@@ -44,4 +45,4 @@ const MovieSchema = new mongoose.Schema({
   }
 })
 
-export const MovieModel = mongoose.model<MovieEntity>('Movie', MovieSchema)
+export const MovieModel = getConnection('primary').model<MovieEntity>('Movie', MovieSchema)

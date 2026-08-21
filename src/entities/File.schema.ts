@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { FileEntity } from '../types/File'
+import { getConnection } from '../providers/data'
 
 /**
  * Initialization a mongoose schema to store uploaded file metadata
@@ -48,4 +49,4 @@ const FileSchema = new mongoose.Schema({
   }
 })
 
-export const FileModel = mongoose.model<FileEntity>('File', FileSchema)
+export const FileModel = getConnection('primary').model<FileEntity>('File', FileSchema)

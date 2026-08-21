@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { TaskTypeEntity } from '../types/TaskType'
-import { getLearningConnection } from '../providers/data'
+import { getConnection } from '../providers/data'
 
 /**
  * Initialization a mongoose schema to store the task types
@@ -28,4 +28,4 @@ const TaskTypeSchema = new mongoose.Schema({
   }
 })
 
-export const TaskTypeModel = getLearningConnection().model<TaskTypeEntity>('TaskType', TaskTypeSchema, 'TaskTypes')
+export const TaskTypeModel = getConnection('learning').model<TaskTypeEntity>('TaskType', TaskTypeSchema, 'TaskTypes')

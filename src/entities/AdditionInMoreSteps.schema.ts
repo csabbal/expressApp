@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import { AdditionInMoreStepsEntity } from '../types/AdditionInMoreSteps'
-import { getLearningConnection } from '../providers/data'
+import { getConnection } from '../providers/data'
 
 /**
  * Initialization a mongoose schema to store the additionInMoreSteps practice items
@@ -24,5 +24,5 @@ const AdditionInMoreStepsSchema = new mongoose.Schema({
   }
 })
 
-export const AdditionInMoreStepsModel = getLearningConnection()
+export const AdditionInMoreStepsModel = getConnection('learning')
   .model<AdditionInMoreStepsEntity>('AdditionInMoreSteps', AdditionInMoreStepsSchema, 'additionInMoreSteps')

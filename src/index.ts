@@ -14,25 +14,6 @@ import { addPassportToAppFunction } from './providers/auth/passport'
 
 dotenv.config()
 const { PORT: appPort, PROTOCOL: appProtocol } = process.env
-const {
-  DB_TYPE: type,
-  DB_HOST: host,
-  DB_PORT: port,
-  DB_USERNAME: user,
-  DB_PASSWORD: password,
-  DB_DATABASE: database
-} = process.env
-
-// [BUSINESS] learning DB - a separate database backing the TaskType/
-// AdditionInMoreSteps/SubtractionInMoreSteps resources
-const {
-  LEARNING_DB_TYPE: learningType,
-  LEARNING_DB_HOST: learningHost,
-  LEARNING_DB_PORT: learningPort,
-  LEARNING_DB_USERNAME: learningUser,
-  LEARNING_DB_PASSWORD: learningPassword,
-  LEARNING_DB_DATABASE: learningDatabase
-} = process.env
 
 const options = {
   key: fs.readFileSync('keys/server.key'),
@@ -57,16 +38,10 @@ app.use('/api', router)
 // add the global error handling
 app.use(errorHandlerMiddleware)
 
-// init the data source(s)
-await initDataSource({ type, host, port, user, password, database })
-await initDataSource({
-  type: learningType,
-  host: learningHost,
-  port: learningPort,
-  user: learningUser,
-  password: learningPassword,
-  database: learningDatabase
-}, false)
+// init the data source(s) - every database the app talks to is registered
+// in providers/data/index.ts and connected here the same way, by name
+await initDataSource('primary')
+await initDataSource('learning')
 
 // start the application
 if (appProtocol == "http") {

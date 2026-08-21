@@ -1,6 +1,7 @@
 import "reflect-metadata"
 import dotenv from 'dotenv'
 import MongoDataSource from './MongoDataSource'
+import { DataSource } from './DataSource'
 import { DatabaseProperties } from "../../types/Database"
 import mongoose, {Mongoose, Connection} from "mongoose"
 
@@ -11,68 +12,68 @@ dotenv.config()
  */
 export class DataSourceFactory {
 
-    constructor(
-        protected data: DatabaseProperties,
-        protected ODM: Mongoose,
-        protected useDefaultConnection: boolean = true
-    ) {}
+    constructor(protected data: DatabaseProperties, protected ODM: Mongoose) {}
 
-    create() {
+    create(): DataSource {
         switch (this.data.type) {
             case 'mongo':
-                return new MongoDataSource(this.data, this.ODM, this.useDefaultConnection)
+                return new MongoDataSource(this.data, this.ODM)
             default:
                 throw new Error('database type is unknown')
         }
     }
 }
 
-const learningDbProperties: DatabaseProperties = {
-    type: process.env.LEARNING_DB_TYPE,
-    host: process.env.LEARNING_DB_HOST,
-    port: process.env.LEARNING_DB_PORT,
-    user: process.env.LEARNING_DB_USERNAME,
-    password: process.env.LEARNING_DB_PASSWORD,
-    database: process.env.LEARNING_DB_DATABASE
-}
-
 /**
- * Built once at module load, not lazily inside a function: entity schema files
- * for the learning resources (TaskType/AdditionInMoreSteps/SubtractionInMoreSteps)
- * import getLearningConnection() and register models on it eagerly at import
- * time. ES module imports fully resolve before src/index.ts's own body (its two
- * initDataSource calls included) ever runs, so the Connection object has to
- * exist by then regardless - the same constraint the primary/default connection
- * already lives under via mongoose.model().
- */
-const learningDataSource = new DataSourceFactory(learningDbProperties, mongoose, false).create() as MongoDataSource
-learningDataSource.setConnectionString()
-
-export function getLearningConnection(): Connection {
-    return learningDataSource.getOrCreateConnection()
-}
-
-/**
- * Connects a DataSource. Called twice from src/index.ts at boot: once for the
- * primary DB (the default Mongoose connection, useDefaultConnection left true)
- * and once for the learning DB (useDefaultConnection: false). Both go through
- * the same DataSourceFactory/DataSource abstraction and both are awaited before
- * the server starts listening, so bad config on either fails startup fast
- * instead of silently surfacing on the first request.
+ * Every database the app talks to is registered here, uniformly, by name -
+ * there is no "the primary one" special case, just entries in this map. Add a
+ * new database by adding a new entry, nothing else in this file changes.
  *
- * For the learning DB, the Connection itself was already created by
- * getLearningConnection() (see above) - this call awaits it actually being open
- * and attaches command logging, reusing the one learningDataSource singleton
- * rather than opening a second connection.
+ * Built at module load, not lazily: entity schema files (Movie/User/...,
+ * TaskType/AdditionInMoreSteps/SubtractionInMoreSteps/...) call
+ * getConnection(name) and register models on it eagerly at import time. ES
+ * module imports fully resolve before src/index.ts's own body - its
+ * initDataSource calls included - ever runs, so every DataSource's Connection
+ * object has to exist by then regardless.
  */
-export async function initDataSource(
-    data: DatabaseProperties,
-    useDefaultConnection: boolean = true
-): Promise<Connection> {
-    if (!useDefaultConnection) {
-        return await learningDataSource.buildDataSource()
+const dataSourceProperties: Record<string, DatabaseProperties> = {
+    primary: {
+        type: process.env.DB_TYPE,
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        user: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DATABASE
+    },
+    learning: {
+        type: process.env.LEARNING_DB_TYPE,
+        host: process.env.LEARNING_DB_HOST,
+        port: process.env.LEARNING_DB_PORT,
+        user: process.env.LEARNING_DB_USERNAME,
+        password: process.env.LEARNING_DB_PASSWORD,
+        database: process.env.LEARNING_DB_DATABASE
     }
-    const dataSourceFactory = new DataSourceFactory(data, mongoose, true)
-    const dataSoruce = dataSourceFactory.create()
-    return await dataSoruce.buildDataSource()
+}
+
+export const dataSources: Record<string, DataSource> = {}
+for (const name in dataSourceProperties) {
+    const dataSource = new DataSourceFactory(dataSourceProperties[name], mongoose).create()
+    dataSource.setConnectionString()
+    dataSources[name] = dataSource
+}
+
+export function getConnection(name: string): Connection {
+    return dataSources[name].getOrCreateConnection()
+}
+
+/**
+ * Connects a registered DataSource by name. Called once per database from
+ * src/index.ts at boot - all of them treated the same way - so bad config on
+ * any one fails startup fast instead of silently surfacing on the first
+ * request, and each gets its command logging attached.
+ */
+export async function initDataSource(name: string): Promise<Connection> {
+    const dataSource = dataSources[name]
+    if (!dataSource) throw new Error(`unknown data source: ${name}`)
+    return await dataSource.buildDataSource()
 }

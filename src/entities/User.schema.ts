@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import {UserEntity } from '../types/User'
+import { getConnection } from '../providers/data'
 
 /**
  * Initialization a mongoose schema to store the user
@@ -32,4 +33,4 @@ const UserSchema = new mongoose.Schema({
   }
 })
 
-export const UserModel = mongoose.model<UserEntity>('User', UserSchema)
+export const UserModel = getConnection('primary').model<UserEntity>('User', UserSchema)

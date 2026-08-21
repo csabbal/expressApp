@@ -8,7 +8,7 @@ import {Mongoose, Connection} from "mongoose"
  */
 export abstract class DataSource {
     protected connectionString:string
-    protected connection: Connection
+    protected connection!: Connection
     constructor(protected data:DatabaseProperties, protected ODM: Mongoose) {
         logger.info(this.data.type+' connection string: ' + LoggerClass.objectToString(data))
     }
@@ -20,6 +20,11 @@ export abstract class DataSource {
     setConnectionString():void {
         this.connectionString =  LoggerClass.objectToString(this.data)
      }
+
+    // synchronously gets (creating if needed) the underlying Connection, without opening it
+    getOrCreateConnection(): Connection {
+        return this.connection
+    }
 
     // a method to crate a connection to the dabatase
     async connectoToDatabase() {}

@@ -38,6 +38,10 @@ export class RepositoryFactory {
                 // When bootstrapping a new app: remove the movie lines and add your own.
                 // ================================================================
                 this.repositories.Movie = new MovieRepository(MovieModel) // [EXAMPLE]
+
+                // TaskType/AdditionInMoreSteps/SubtractionInMoreSteps are backed by the
+                // 'learning' DataSource (see providers/data/index.ts), not 'primary' -
+                // their Models are already bound to that connection in their schema files.
                 this.repositories.TaskType = new TaskTypeRepository(TaskTypeModel)
                 this.repositories.AdditionInMoreSteps =
                     new AdditionInMoreStepsRepository(AdditionInMoreStepsModel)
