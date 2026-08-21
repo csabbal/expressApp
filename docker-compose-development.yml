@@ -12,6 +12,7 @@ services:
       - "27017:27017"
     volumes:
       - ./data/dump/mongo-init-dump:/docker-entrypoint-initdb.d/dump
+      - mongo_data:/data/db
     restart: unless-stopped
   express:
     networks:
@@ -27,3 +28,5 @@ services:
 networks:
   app_network:
     driver: bridge
+volumes:
+  mongo_data:
