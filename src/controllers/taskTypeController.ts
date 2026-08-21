@@ -1,9 +1,11 @@
 import express from 'express'
+import fs from 'fs'
 import { TaskTypeService } from '../services/taskTypeService'
 import { listRequestParams, TaskTypeEntity } from '../types/TaskType'
 import { loggedMethod, logger, LoggerClass } from '../utils/logger/logger'
 import _ from 'lodash'
 import { BadRequestError } from '../utils/error/Error'
+import { AppRequest } from '../types/CustomExpress'
 
 /**
  * This class is about to provides all requests of the task type related endpoints via task type service
@@ -128,6 +130,46 @@ export class TaskTypeController {
             const { id } = req.params
             const taskType: TaskTypeEntity = await this.taskTypeService.delete(id)
             res.json(taskType)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    /**
+     * This controller method is about to call taskTypeService uploadImage function with id param and the uploaded file
+     * @param {Request} req
+     * @param {Response} res
+     * @param {NextFunction} next
+     */
+    @loggedMethod('[TaskTypeController] uploadImage')
+    public async uploadImage(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const { id } = req.params
+            if (!req.file) throw new BadRequestError('image file is required')
+            const userId = (req as AppRequest).user.id
+            const taskType = await this.taskTypeService.uploadImage(id, req.file, userId)
+            res.json(taskType)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    /**
+     * This controller method streams a task type's image bytes, resolved via taskTypeService
+     * @param {Request} req
+     * @param {Response} res
+     * @param {NextFunction} next
+     */
+    @loggedMethod('[TaskTypeController] downloadImage')
+    public async downloadImage(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const { id } = req.params
+            const quality = req.query.quality === 'low' ? 'low' : 'high'
+            const target = await this.taskTypeService.streamImage(id, quality)
+            res.type(target.mimeType)
+            const stream = fs.createReadStream(target.path)
+            stream.on('error', (err) => next(err))
+            stream.pipe(res)
         } catch (e) {
             next(e)
         }
