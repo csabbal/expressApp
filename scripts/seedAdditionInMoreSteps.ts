@@ -38,16 +38,17 @@ async function seed() {
     }
 
     const {
-        DB_HOST: host = 'localhost',
-        DB_PORT: port = '27017',
-        DB_USERNAME: user,
-        DB_PASSWORD: password
+        LEARNING_DB_HOST: host = 'localhost',
+        LEARNING_DB_PORT: port = '27017',
+        LEARNING_DB_USERNAME: user,
+        LEARNING_DB_PASSWORD: password,
+        LEARNING_DB_DATABASE: database = 'learning'
     } = process.env
 
     const client = new MongoClient(`mongodb://${user}:${password}@${host}:${port}`)
     await client.connect()
 
-    const collection = client.db('learning').collection<AdditionDoc>('additionInMoreSteps')
+    const collection = client.db(database).collection<AdditionDoc>('additionInMoreSteps')
 
     const { deletedCount } = await collection.deleteMany({})
     console.log(`Deleted ${deletedCount} existing document(s).`)
