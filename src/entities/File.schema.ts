@@ -49,4 +49,4 @@ const FileSchema = new mongoose.Schema({
   }
 })
 
-export const FileModel = getConnection('primary').model<FileEntity>('File', FileSchema)
+export const FileModel = getConnection('general').model<FileEntity>('File', FileSchema)

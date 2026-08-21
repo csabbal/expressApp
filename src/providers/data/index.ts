@@ -68,6 +68,14 @@ const dataSourceProperties: Record<string, DatabaseProperties> = {
         user: process.env.MOVIE_DB_USERNAME,
         password: process.env.MOVIE_DB_PASSWORD,
         database: process.env.MOVIE_DB_DATABASE
+    },
+    general: {
+        type: process.env.GENERAL_DB_TYPE,
+        host: process.env.GENERAL_DB_HOST,
+        port: process.env.GENERAL_DB_PORT,
+        user: process.env.GENERAL_DB_USERNAME,
+        password: process.env.GENERAL_DB_PASSWORD,
+        database: process.env.GENERAL_DB_DATABASE
     }
 }
 
