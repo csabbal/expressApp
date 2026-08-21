@@ -52,6 +52,22 @@ const dataSourceProperties: Record<string, DatabaseProperties> = {
         user: process.env.LEARNING_DB_USERNAME,
         password: process.env.LEARNING_DB_PASSWORD,
         database: process.env.LEARNING_DB_DATABASE
+    },
+    auth: {
+        type: process.env.AUTH_DB_TYPE,
+        host: process.env.AUTH_DB_HOST,
+        port: process.env.AUTH_DB_PORT,
+        user: process.env.AUTH_DB_USERNAME,
+        password: process.env.AUTH_DB_PASSWORD,
+        database: process.env.AUTH_DB_DATABASE
+    },
+    movie: {
+        type: process.env.MOVIE_DB_TYPE,
+        host: process.env.MOVIE_DB_HOST,
+        port: process.env.MOVIE_DB_PORT,
+        user: process.env.MOVIE_DB_USERNAME,
+        password: process.env.MOVIE_DB_PASSWORD,
+        database: process.env.MOVIE_DB_DATABASE
     }
 }
 

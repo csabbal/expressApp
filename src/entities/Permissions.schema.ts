@@ -20,4 +20,4 @@ export const PermissionSchema = new mongoose.Schema({
   }
 })
 
-export const PermissionModel = getConnection('primary').model<PermissionEntity>('Permission', PermissionSchema)
+export const PermissionModel = getConnection('auth').model<PermissionEntity>('Permission', PermissionSchema)

@@ -45,4 +45,4 @@ const MovieSchema = new mongoose.Schema({
   }
 })
 
-export const MovieModel = getConnection('primary').model<MovieEntity>('Movie', MovieSchema)
+export const MovieModel = getConnection('movie').model<MovieEntity>('Movie', MovieSchema)

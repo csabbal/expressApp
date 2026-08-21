@@ -33,4 +33,4 @@ const UserSchema = new mongoose.Schema({
   }
 })
 
-export const UserModel = getConnection('primary').model<UserEntity>('User', UserSchema)
+export const UserModel = getConnection('auth').model<UserEntity>('User', UserSchema)

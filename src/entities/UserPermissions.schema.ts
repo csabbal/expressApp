@@ -22,4 +22,4 @@ const UserPermissionsSchema = new mongoose.Schema({
 })
 
 export const UserPermissionsModel =
-    getConnection('primary').model<UserPermissionsEntity>('UserPermissions', UserPermissionsSchema)
+    getConnection('auth').model<UserPermissionsEntity>('UserPermissions', UserPermissionsSchema)

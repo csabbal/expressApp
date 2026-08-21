@@ -1,4 +1,4 @@
-import { initDataSource } from './providers/data/index'
+import { dataSources, initDataSource } from './providers/data/index'
 import fs from 'fs'
 import express, { Application } from 'express'
 import http from 'http'
@@ -40,8 +40,9 @@ app.use(errorHandlerMiddleware)
 
 // init the data source(s) - every database the app talks to is registered
 // in providers/data/index.ts and connected here the same way, by name
-await initDataSource('primary')
-await initDataSource('learning')
+for (const name of Object.keys(dataSources)) {
+  await initDataSource(name)
+}
 
 // start the application
 if (appProtocol == "http") {
