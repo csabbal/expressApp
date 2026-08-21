@@ -38,7 +38,10 @@ export class TaskTypeService {
         const existingTaskType = await this.taskTypeRepository.findOne({ id })
         if (!existingTaskType) throw new NotFoundError(`task type not found: ${id}`, 'task type not found')
         const fileEntity = await this.fileService.uploadFile(file, { category: 'taskType', uploadedBy })
-        const taskType = await this.taskTypeRepository.updateOne({ id }, { image: fileEntity.id } as Partial<TaskTypeEntity>)
+        const taskType = await this.taskTypeRepository.updateOne(
+            { id },
+            { image: fileEntity.id } as Partial<TaskTypeEntity>
+        )
         return taskType
     }
 
