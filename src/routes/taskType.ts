@@ -2,6 +2,7 @@ import express from 'express'
 import { TaskTypeController } from '../controllers/taskTypeController'
 import { requireJwt } from '../providers/auth/passport'
 import { jwtStrategyInstance } from '../providers/auth/jwtStrategy'
+import { singleFileUpload } from '../utils/upload/multer'
 
 // get the current router instance
 const router = express.Router()
@@ -191,6 +192,10 @@ router.get('/:id',
  *               name:
  *                 type: string
  *                 example: additionInMoreSteps
+ *               image:
+ *                 type: string
+ *                 description: id of a file uploaded via POST /api/taskType/image/{id}
+ *                 example: 3f1c9b2a-6f7e-4a1d-9c3e-2b7a5d6e8f10
  *               description:
  *                 type: string
  *                 example: Addition in more steps to practice shifting by 10.
@@ -245,6 +250,10 @@ router.put('/:id',
  *               name:
  *                 type: string
  *                 example: additionInMoreSteps
+ *               image:
+ *                 type: string
+ *                 description: id of a file uploaded via POST /api/taskType/image/{id}
+ *                 example: 3f1c9b2a-6f7e-4a1d-9c3e-2b7a5d6e8f10
  *               description:
  *                 type: string
  *                 example: Addition in more steps to practice shifting by 10.
@@ -274,6 +283,85 @@ router.post('/',
     requireJwt,
     verifyPrivileges([{ component: 'learning', privilege: 'write' }]),
     taskTypeController.create.bind(taskTypeController)
+)
+
+/**
+ * @swagger
+ * /api/taskType/image/{id}:
+ *   post:
+ *     summary: Upload (or replace) a task type's image
+ *     tags: [Learning]
+ *     security:
+ *        - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The id of the task type to attach the image to
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: the task type, with image set to the uploaded file's id
+ *       400:
+ *         description: no image file was provided
+ *       404:
+ *         description: task type not found
+ */
+router.post('/image/:id',
+    requireJwt,
+    verifyPrivileges([{ component: 'learning', privilege: 'write' }]),
+    singleFileUpload('image'),
+    taskTypeController.uploadImage.bind(taskTypeController)
+)
+
+/**
+ * @swagger
+ * /api/taskType/image/{id}:
+ *   get:
+ *     summary: Download a task type's image, streamed from disk
+ *     tags: [Learning]
+ *     security:
+ *        - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The id of the task type whose image to retrieve
+ *       - in: query
+ *         name: quality
+ *         schema:
+ *           type: string
+ *           enum: [low, high]
+ *           default: high
+ *         description: low returns the degraded copy (falls back to the original if none exists)
+ *     responses:
+ *       200:
+ *         description: the image bytes
+ *         content:
+ *           image/*:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: task type not found, or the task type has no image
+ */
+router.get('/image/:id',
+    requireJwt,
+    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
+    taskTypeController.downloadImage.bind(taskTypeController)
 )
 
 /**
