@@ -4,7 +4,8 @@ export interface TaskTypeEntity extends IEntity{
     subject: string,
     name: string,
     description: string,
-    rating: number
+    rating: number,
+    image: string | null
 }
 
 export interface listRequestParams{

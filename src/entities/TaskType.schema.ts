@@ -25,6 +25,11 @@ const TaskTypeSchema = new mongoose.Schema({
   rating: {
     required: true,
     type: Number
+  },
+  image: {
+    required: false,
+    type: String,
+    default: null
   }
 })
 
