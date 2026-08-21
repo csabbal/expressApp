@@ -1,6 +1,6 @@
 import { DatabaseProperties } from "../../types/Database"
 import { logger, LoggerClass } from "../../utils/logger/logger"
-import {Mongoose} from "mongoose"
+import {Mongoose, Connection} from "mongoose"
 
 /**
  *  This class is the base of the any DataSource in the database
@@ -8,29 +8,27 @@ import {Mongoose} from "mongoose"
  */
 export abstract class DataSource {
     protected connectionString:string
+    protected connection: Connection
     constructor(protected data:DatabaseProperties, protected ODM: Mongoose) {
         logger.info(this.data.type+' connection string: ' + LoggerClass.objectToString(data))
     }
 
-    // a method to set the custom logging 
+    // a method to set the custom logging
     setLogging():void { }
 
-    // a method to assemble a connectionString from the field data 
+    // a method to assemble a connectionString from the field data
     setConnectionString():void {
         this.connectionString =  LoggerClass.objectToString(this.data)
      }
 
-    // a method to crate a connection to the dabatase 
+    // a method to crate a connection to the dabatase
     async connectoToDatabase() {}
 
     // a builder method to setup the Data Source to use
-    async buildDataSource() {
+    async buildDataSource(): Promise<Connection> {
         this.setConnectionString()
+        await this.connectoToDatabase()
         this.setLogging()
-        this.connectoToDatabase()
+        return this.connection
     }
 }
-
-
-
-

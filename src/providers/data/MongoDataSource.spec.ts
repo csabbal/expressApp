@@ -47,6 +47,7 @@ describe('MongoDataSource', () => {
     describe('setLogging', () => {
         it('should subscribe to commandStarted commandFailed and commandSucceeded', async () => {
             const ODM = (datasource as any).ODM
+            datasource.getOrCreateConnection()
             const commandStartedStub = sandbox.spy(ODM.connection, 'on')
 
             datasource.setLogging()
@@ -61,6 +62,7 @@ describe('MongoDataSource', () => {
             let logInfoStub: SinonSpy
             beforeEach(()=>{
                 ODM = (datasource as any).ODM
+                datasource.getOrCreateConnection()
                 logInfoStub = sandbox.spy(logger, 'info')
                 datasource.setLogging()
             })

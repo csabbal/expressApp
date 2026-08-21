@@ -5,62 +5,74 @@ import { DatabaseProperties } from "../../types/Database"
 import mongoose, {Mongoose, Connection} from "mongoose"
 
 dotenv.config()
+
 /**
- * This factory class is to take care about the creation of DataSources 
+ * This factory class is to take care about the creation of DataSources
  */
 export class DataSourceFactory {
 
-    constructor(protected data: DatabaseProperties, protected ODM: Mongoose) {}
+    constructor(
+        protected data: DatabaseProperties,
+        protected ODM: Mongoose,
+        protected useDefaultConnection: boolean = true
+    ) {}
 
     create() {
         switch (this.data.type) {
             case 'mongo':
-                return new MongoDataSource(this.data, this.ODM)
+                return new MongoDataSource(this.data, this.ODM, this.useDefaultConnection)
             default:
                 throw new Error('database type is unknown')
         }
     }
 }
-export async function initDataSource(data: DatabaseProperties) {
-    const dataSourceFactory = new DataSourceFactory(data,mongoose)
-    const dataSoruce = dataSourceFactory.create()
-    await dataSoruce.buildDataSource()
-}
 
-let learningConnection: Connection
+const learningDbProperties: DatabaseProperties = {
+    type: process.env.LEARNING_DB_TYPE,
+    host: process.env.LEARNING_DB_HOST,
+    port: process.env.LEARNING_DB_PORT,
+    user: process.env.LEARNING_DB_USERNAME,
+    password: process.env.LEARNING_DB_PASSWORD,
+    database: process.env.LEARNING_DB_DATABASE
+}
 
 /**
- * The learning database is a separate database from the app's primary one,
- * configured independently via LEARNING_DB_* env vars (own host/credentials/
- * database name). It gets its own dedicated Mongoose connection
- * (mongoose.createConnection), not the app's default connection, so it is
- * never coupled to the primary DataSource's config.
+ * Built once at module load, not lazily inside a function: entity schema files
+ * for the learning resources (TaskType/AdditionInMoreSteps/SubtractionInMoreSteps)
+ * import getLearningConnection() and register models on it eagerly at import
+ * time. ES module imports fully resolve before src/index.ts's own body (its two
+ * initDataSource calls included) ever runs, so the Connection object has to
+ * exist by then regardless - the same constraint the primary/default connection
+ * already lives under via mongoose.model().
  */
+const learningDataSource = new DataSourceFactory(learningDbProperties, mongoose, false).create() as MongoDataSource
+learningDataSource.setConnectionString()
+
 export function getLearningConnection(): Connection {
-    if (!learningConnection) {
-        const {
-            LEARNING_DB_HOST: host,
-            LEARNING_DB_PORT: port,
-            LEARNING_DB_USERNAME: user,
-            LEARNING_DB_PASSWORD: password,
-            LEARNING_DB_DATABASE: database
-        } = process.env
-        learningConnection = mongoose.createConnection(
-            `mongodb://${user}:${password}@${host}:${port}/${database}?authSource=admin`
-        )
-    }
-    return learningConnection
+    return learningDataSource.getOrCreateConnection()
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
+/**
+ * Connects a DataSource. Called twice from src/index.ts at boot: once for the
+ * primary DB (the default Mongoose connection, useDefaultConnection left true)
+ * and once for the learning DB (useDefaultConnection: false). Both go through
+ * the same DataSourceFactory/DataSource abstraction and both are awaited before
+ * the server starts listening, so bad config on either fails startup fast
+ * instead of silently surfacing on the first request.
+ *
+ * For the learning DB, the Connection itself was already created by
+ * getLearningConnection() (see above) - this call awaits it actually being open
+ * and attaches command logging, reusing the one learningDataSource singleton
+ * rather than opening a second connection.
+ */
+export async function initDataSource(
+    data: DatabaseProperties,
+    useDefaultConnection: boolean = true
+): Promise<Connection> {
+    if (!useDefaultConnection) {
+        return await learningDataSource.buildDataSource()
+    }
+    const dataSourceFactory = new DataSourceFactory(data, mongoose, true)
+    const dataSoruce = dataSourceFactory.create()
+    return await dataSoruce.buildDataSource()
+}
