@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 import { MongoClient } from 'mongodb'
+import { v4 as uuidv4 } from 'uuid'
 
 dotenv.config()
 
@@ -10,6 +11,7 @@ dotenv.config()
  * restricted to 1-9 (see existing sample doc { term1: 9, term2: 8, result: 17 }).
  */
 interface AdditionDoc {
+    id: string
     term1: number
     term2: number
     result: number
@@ -21,7 +23,7 @@ function buildDocs(): AdditionDoc[] {
         for (let term2 = 1; term2 <= 9; term2++) {
             const result = term1 + term2
             if (result > 10 && result <= 19) {
-                docs.push({ term1, term2, result })
+                docs.push({ id: uuidv4(), term1, term2, result })
             }
         }
     }

@@ -5,6 +5,9 @@ import authRouter from './auth'
 import signupRouter from './signup'
 import movieRouter from './movie'
 import fileRouter from './file' // [INFRASTRUCTURE]
+import taskTypeRouter from './taskType'
+import additionInMoreStepsRouter from './additionInMoreSteps'
+import subtractionInMoreStepsRouter from './subtractionInMoreSteps'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
 import * as packageJson from '../../package.json'
@@ -81,5 +84,8 @@ router.use('/file', fileRouter) // [INFRASTRUCTURE]
 // and the line below, then add your own routes following the same pattern.
 // ================================================================
 router.use('/movie', movieRouter) // [EXAMPLE]
+router.use('/taskType', taskTypeRouter)
+router.use('/additionInMoreSteps', additionInMoreStepsRouter)
+router.use('/subtractionInMoreSteps', subtractionInMoreStepsRouter)
 
 export default router

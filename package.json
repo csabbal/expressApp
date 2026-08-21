@@ -15,6 +15,7 @@
     "seed:movies": "TS_NODE_PROJECT=tsconfig.scripts.json ts-node scripts/seedMovies.ts",
     "seed:additionInMoreSteps": "TS_NODE_PROJECT=tsconfig.scripts.json ts-node scripts/seedAdditionInMoreSteps.ts",
     "seed:substructionInMoreSteps": "TS_NODE_PROJECT=tsconfig.scripts.json ts-node scripts/seedSubstructionInMoreSteps.ts",
+    "seed:taskTypes": "TS_NODE_PROJECT=tsconfig.scripts.json ts-node scripts/seedTaskTypes.ts",
     "lint": "eslint"
   },
   "author": "csabbal",

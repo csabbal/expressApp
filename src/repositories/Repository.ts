@@ -78,6 +78,10 @@ export class Repository<T extends IEntity = IEntity> implements IRepository {
     async updateOne(filter: Partial<T>, data: Partial<T>): Promise<T | null> {
         return await this.model.findOneAndUpdate(filter, data, { new: true })
     }
+
+    async deleteOne(filter: Partial<T>): Promise<T | null> {
+        return await this.model.findOneAndDelete(filter)
+    }
 }
 
 

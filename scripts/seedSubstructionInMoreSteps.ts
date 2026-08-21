@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 import { MongoClient } from 'mongodb'
+import { v4 as uuidv4 } from 'uuid'
 
 dotenv.config()
 
@@ -13,6 +14,7 @@ dotenv.config()
  * { substractor: 17, reducer: 8, result: 9 }: 17 - 10 = 7, and 8 > 7).
  */
 interface SubtractionDoc {
+    id: string
     substractor: number
     reducer: number
     result: number
@@ -23,7 +25,7 @@ function buildDocs(): SubtractionDoc[] {
     for (let substractor = 11; substractor < 19; substractor++) {
         for (let reducer = 1; reducer <= 9; reducer++) {
             if (reducer > substractor - 10) {
-                docs.push({ substractor, reducer, result: substractor - reducer })
+                docs.push({ id: uuidv4(), substractor, reducer, result: substractor - reducer })
             }
         }
     }
