@@ -1,9 +1,10 @@
 import "reflect-metadata"
 import { CommandFailedEvent, CommandStartedEvent, CommandSucceededEvent } from 'mongodb'
-import { Connection } from 'mongoose'
+import { Mongoose } from 'mongoose'
 
 import { logger, LoggerClass } from "../../utils/logger/logger"
 import { DataSource } from "./DataSource"
+import { DatabaseProperties } from "../../types/Database"
 
 /**
  * This class is to take care about:
@@ -18,6 +19,17 @@ import { DataSource } from "./DataSource"
  * There is no "the primary one is special" branch.
  */
 export default class MongoDataSource extends DataSource {
+
+    constructor(data: DatabaseProperties, ODM: Mongoose) {
+        super(data, ODM)
+        // Created up front, not lazily: mongoose.createConnection() with no URI
+        // is synchronous and does no I/O - it just allocates a Connection that
+        // isn't open yet (models can still be registered on it, buffered until
+        // it opens later via connectoToDatabase). Entity schema files need this
+        // Connection to exist the moment they import getConnection(name), which
+        // can happen before connectoToDatabase ever runs.
+        this.connection = this.ODM.createConnection()
+    }
 
     setLogging() {
         this.connection.on('commandStarted', (data: CommandStartedEvent) => {
@@ -39,24 +51,7 @@ export default class MongoDataSource extends DataSource {
             `/${this.data.database}?authSource=admin`
     }
 
-    /**
-     * Synchronously gets (creating if needed) the underlying Connection, without
-     * opening it - mongoose.createConnection() with no URI creates a Connection
-     * that isn't connected yet (models can still be registered on it, buffered
-     * until it opens). This is what lets entity schema files register models at
-     * import time - the same way mongoose.model() on the default connection
-     * never itself does any I/O - without triggering a real network connection
-     * as a side effect of merely importing a module.
-     */
-    getOrCreateConnection(): Connection {
-        if (!this.connection) {
-            this.connection = this.ODM.createConnection()
-        }
-        return this.connection
-    }
-
     async connectoToDatabase() {
-        this.getOrCreateConnection()
         await this.connection.openUri(
             this.connectionString,
             { monitorCommands: true, serverMonitoringMode: 'auto' }

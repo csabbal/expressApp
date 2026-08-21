@@ -24,6 +24,12 @@ describe('MongoDataSource', () => {
         sandbox.restore()
     })
 
+    describe('constructor', () => {
+        it('should create the underlying connection up front', () => {
+            expect(datasource.getConnection()).to.be.instanceOf(mongoose.Connection)
+        })
+    })
+
     describe('setConnectionString', () => {
         it('should assemble the connectionstring from data field', () => {
             datasource.setConnectionString()
@@ -34,22 +40,9 @@ describe('MongoDataSource', () => {
         })
     })
 
-    describe('getOrCreateConnection', () => {
-        it('should create a connection without opening it, and memoize it', () => {
-            const createConnectionStub = sandbox.stub((datasource as any).ODM, 'createConnection')
-                .returns({} as any)
-            const connection = datasource.getOrCreateConnection()
-            expect(createConnectionStub.calledOnce).to.be.true
-            expect(createConnectionStub.calledWith()).to.be.true
-            expect(datasource.getOrCreateConnection()).to.equal(connection)
-            expect(createConnectionStub.calledOnce).to.be.true
-        })
-    })
-
     describe('connectToDatabase', () => {
         it('should open the connection with the connectionstring taken as parameter', async () => {
-            const openUriStub = sandbox.stub().resolves()
-            sandbox.stub((datasource as any).ODM, 'createConnection').returns({ openUri: openUriStub } as any)
+            const openUriStub = sandbox.stub(datasource.getConnection(), 'openUri').resolves()
             datasource.setConnectionString()
             await datasource.connectoToDatabase()
             expect(openUriStub.calledWith(
@@ -61,7 +54,7 @@ describe('MongoDataSource', () => {
 
     describe('setLogging', () => {
         it('should subscribe to commandStarted commandFailed and commandSucceeded', async () => {
-            const connection = datasource.getOrCreateConnection()
+            const connection = datasource.getConnection()
             const commandStartedStub = sandbox.spy(connection, 'on')
 
             datasource.setLogging()
@@ -75,7 +68,7 @@ describe('MongoDataSource', () => {
             let connection: any
             let logInfoStub: SinonSpy
             beforeEach(()=>{
-                connection = datasource.getOrCreateConnection()
+                connection = datasource.getConnection()
                 logInfoStub = sandbox.spy(logger, 'info')
                 datasource.setLogging()
             })

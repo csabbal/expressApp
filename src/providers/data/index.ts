@@ -55,6 +55,9 @@ const dataSourceProperties: Record<string, DatabaseProperties> = {
     }
 }
 
+// create() constructs the DataSource, which creates its Connection immediately
+// (see MongoDataSource's constructor) - so every registered database has a
+// usable Connection object by the time this loop finishes, at module load.
 export const dataSources: Record<string, DataSource> = {}
 for (const name in dataSourceProperties) {
     const dataSource = new DataSourceFactory(dataSourceProperties[name], mongoose).create()
@@ -63,7 +66,7 @@ for (const name in dataSourceProperties) {
 }
 
 export function getConnection(name: string): Connection {
-    return dataSources[name].getOrCreateConnection()
+    return dataSources[name].getConnection()
 }
 
 /**

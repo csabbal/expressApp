@@ -74,7 +74,7 @@ describe('data source registry', () => {
     describe('getConnection', () => {
         it('should return the connection from the registered DataSource for the given name', () => {
             const fakeConnection = {} as any
-            sandbox.stub(dataSources.learning, 'getOrCreateConnection').returns(fakeConnection)
+            sandbox.stub(dataSources.learning, 'getConnection').returns(fakeConnection)
             expect(getConnection('learning')).to.equal(fakeConnection)
         })
     })

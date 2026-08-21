@@ -21,8 +21,8 @@ export abstract class DataSource {
         this.connectionString =  LoggerClass.objectToString(this.data)
      }
 
-    // synchronously gets (creating if needed) the underlying Connection, without opening it
-    getOrCreateConnection(): Connection {
+    // returns the underlying Connection, created up front by the subclass constructor
+    getConnection(): Connection {
         return this.connection
     }
 
