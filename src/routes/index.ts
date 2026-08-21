@@ -47,6 +47,15 @@ const swaggerOptions = {
                 url: `${protocol}://${url}:${port}`,
             },
         ],
+        // Endpoints are grouped by which database backs them (see
+        // providers/data/index.ts), not by individual resource.
+        tags: [
+            { name: 'Auth', description: 'User/Permission/UserPermissions - backed by the auth database' },
+            { name: 'Movie', description: 'Movie (example) - backed by the movie database' },
+            { name: 'General', description: 'File - backed by the general database' },
+            { name: 'Learning', description: 'TaskType/AdditionInMoreSteps/SubtractionInMoreSteps ' +
+                '(example) - backed by the learning database' },
+        ],
         components: {
             securitySchemes: {
                 googleAuth: {

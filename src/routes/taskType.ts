@@ -15,6 +15,7 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  * /api/taskType/all:
  *   get:
  *     summary: Retrieve a list of task types
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     responses:
@@ -45,7 +46,7 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  */
 router.get('/all',
     requireJwt,
-    verifyPrivileges([{ component: 'taskType', privilege: 'read' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
     taskTypeController.getAll.bind(taskTypeController)
 )
 
@@ -54,6 +55,7 @@ router.get('/all',
  * /api/taskType/list:
  *   get:
  *     summary: Retrieve a list of task types
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -115,7 +117,7 @@ router.get('/all',
  */
 router.get('/list',
     requireJwt,
-    verifyPrivileges([{ component: 'taskType', privilege: 'read' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
     taskTypeController.getList.bind(taskTypeController)
 )
 
@@ -124,6 +126,7 @@ router.get('/list',
  * /api/taskType/{id}:
  *   get:
  *     summary: Retrieve a concrete task type
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -156,7 +159,7 @@ router.get('/list',
  */
 router.get('/:id',
     requireJwt,
-    verifyPrivileges([{ component: 'taskType', privilege: 'read' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
     taskTypeController.getById.bind(taskTypeController)
 )
 
@@ -165,6 +168,7 @@ router.get('/:id',
  * /api/taskType/{id}:
  *   put:
  *     summary: Update a concrete task type
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -216,7 +220,7 @@ router.get('/:id',
  */
 router.put('/:id',
     requireJwt,
-    verifyPrivileges([{ component: 'taskType', privilege: 'write' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'write' }]),
     taskTypeController.update.bind(taskTypeController)
 )
 
@@ -225,6 +229,7 @@ router.put('/:id',
  * /api/taskType:
  *   post:
  *     summary: Create a new task type
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     requestBody:
@@ -267,7 +272,7 @@ router.put('/:id',
  */
 router.post('/',
     requireJwt,
-    verifyPrivileges([{ component: 'taskType', privilege: 'write' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'write' }]),
     taskTypeController.create.bind(taskTypeController)
 )
 
@@ -276,6 +281,7 @@ router.post('/',
  * /api/taskType/{id}:
  *   delete:
  *     summary: Delete a concrete task type
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -308,7 +314,7 @@ router.post('/',
  */
 router.delete('/:id',
     requireJwt,
-    verifyPrivileges([{ component: 'taskType', privilege: 'delete' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'delete' }]),
     taskTypeController.delete.bind(taskTypeController)
 )
 

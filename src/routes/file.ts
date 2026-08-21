@@ -16,6 +16,7 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  * /api/file:
  *   post:
  *     summary: Upload a new file
+ *     tags: [General]
  *     security:
  *        - BearerAuth: []
  *     requestBody:
@@ -64,6 +65,7 @@ router.post('/',
  * /api/file/all:
  *   get:
  *     summary: Retrieve a list of uploaded files
+ *     tags: [General]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -87,6 +89,7 @@ router.get('/all',
  * /api/file/{id}:
  *   get:
  *     summary: Retrieve a file's metadata
+ *     tags: [General]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -112,6 +115,7 @@ router.get('/:id',
  * /api/file/{id}/download:
  *   get:
  *     summary: Download a file's bytes, streamed from disk
+ *     tags: [General]
  *     security:
  *        - BearerAuth: []
  *     parameters:

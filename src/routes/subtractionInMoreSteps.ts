@@ -15,6 +15,7 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  * /api/subtractionInMoreSteps/all:
  *   get:
  *     summary: Retrieve a list of subtractionInMoreSteps practice items
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     responses:
@@ -42,7 +43,7 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  */
 router.get('/all',
     requireJwt,
-    verifyPrivileges([{ component: 'subtractionInMoreSteps', privilege: 'read' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
     subtractionInMoreStepsController.getAll.bind(subtractionInMoreStepsController)
 )
 
@@ -51,6 +52,7 @@ router.get('/all',
  * /api/subtractionInMoreSteps/list:
  *   get:
  *     summary: Retrieve a list of subtractionInMoreSteps practice items
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -110,7 +112,7 @@ router.get('/all',
  */
 router.get('/list',
     requireJwt,
-    verifyPrivileges([{ component: 'subtractionInMoreSteps', privilege: 'read' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
     subtractionInMoreStepsController.getList.bind(subtractionInMoreStepsController)
 )
 
@@ -119,6 +121,7 @@ router.get('/list',
  * /api/subtractionInMoreSteps/{id}:
  *   get:
  *     summary: Retrieve a concrete subtractionInMoreSteps item
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -149,7 +152,7 @@ router.get('/list',
  */
 router.get('/:id',
     requireJwt,
-    verifyPrivileges([{ component: 'subtractionInMoreSteps', privilege: 'read' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
     subtractionInMoreStepsController.getById.bind(subtractionInMoreStepsController)
 )
 
@@ -158,6 +161,7 @@ router.get('/:id',
  * /api/subtractionInMoreSteps/{id}:
  *   put:
  *     summary: Update a concrete subtractionInMoreSteps item
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -204,7 +208,7 @@ router.get('/:id',
  */
 router.put('/:id',
     requireJwt,
-    verifyPrivileges([{ component: 'subtractionInMoreSteps', privilege: 'write' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'write' }]),
     subtractionInMoreStepsController.update.bind(subtractionInMoreStepsController)
 )
 
@@ -213,6 +217,7 @@ router.put('/:id',
  * /api/subtractionInMoreSteps:
  *   post:
  *     summary: Create a new subtractionInMoreSteps item
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     requestBody:
@@ -250,7 +255,7 @@ router.put('/:id',
  */
 router.post('/',
     requireJwt,
-    verifyPrivileges([{ component: 'subtractionInMoreSteps', privilege: 'write' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'write' }]),
     subtractionInMoreStepsController.create.bind(subtractionInMoreStepsController)
 )
 
@@ -259,6 +264,7 @@ router.post('/',
  * /api/subtractionInMoreSteps/{id}:
  *   delete:
  *     summary: Delete a concrete subtractionInMoreSteps item
+ *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -289,7 +295,7 @@ router.post('/',
  */
 router.delete('/:id',
     requireJwt,
-    verifyPrivileges([{ component: 'subtractionInMoreSteps', privilege: 'delete' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'delete' }]),
     subtractionInMoreStepsController.delete.bind(subtractionInMoreStepsController)
 )
 

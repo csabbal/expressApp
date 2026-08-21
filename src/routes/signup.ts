@@ -12,6 +12,7 @@ const signupController = SignupController.getInstance()
  * /api/signup/local:
  *   post:
  *     summary: register a new local user
+ *     tags: [Auth]
  *     requestBody:
  *       content:
  *         application/json:

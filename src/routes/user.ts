@@ -15,6 +15,7 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  * /api/user/all:
  *   get:
  *     summary: Retrieve a list of users
+ *     tags: [Auth]
  *     security:
  *        - BearerAuth: [] 
  *     responses:

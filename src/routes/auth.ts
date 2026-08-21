@@ -14,6 +14,7 @@ const authController = AuthController.getInstance()
  * /api/auth/local:
  *   post:
  *     summary: auth users
+ *     tags: [Auth]
  *    
  *     requestBody:
  *       content:
@@ -50,6 +51,7 @@ router.get('/google/callback', requireGoogleAuth, authController.authCallback.bi
 * /api/auth/logout:
 *   post:
 *     summary: logout
+ *     tags: [Auth]
 *     responses:
 *       200:
 *         description: user logged out        

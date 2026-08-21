@@ -16,6 +16,7 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  * /api/movie/all:
  *   get:
  *     summary: Retrieve a list of movies
+ *     tags: [Movie]
  *     security:
  *        - BearerAuth: [] 
  *     responses:
@@ -59,6 +60,7 @@ router.get('/all',
  * /api/movie/pageCount:
  *   get:
  *     summary: Retrieve the total page count list of movies
+ *     tags: [Movie]
  *     security:
  *        - BearerAuth: [] 
  *     parameters:
@@ -110,6 +112,7 @@ router.get('/pageCount',
  * /api/movie/list:
  *   get:
  *     summary: Retrieve a list of movies
+ *     tags: [Movie]
  *     security:
  *        - BearerAuth: [] 
  *     parameters:
@@ -189,6 +192,7 @@ router.get('/list',
  * /api/movie/{id}:
  *   get:
  *     summary: Retrieve a concrete movie
+ *     tags: [Movie]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -239,6 +243,7 @@ router.get('/:id',
  * /api/movie/{id}:
  *   put:
  *     summary: Update a concrete movie
+ *     tags: [Movie]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -322,6 +327,7 @@ router.put('/:id',
  * /api/movie:
  *   post:
  *     summary: Create a new movie
+ *     tags: [Movie]
  *     security:
  *        - BearerAuth: []
  *     requestBody:
@@ -396,6 +402,7 @@ router.post('/',
  * /api/movie/image/{id}:
  *   post:
  *     summary: Upload (or replace) a movie's image
+ *     tags: [Movie]
  *     security:
  *        - BearerAuth: []
  *     parameters:
@@ -433,6 +440,7 @@ router.post('/image/:id',
  * /api/movie/image/{id}:
  *   get:
  *     summary: Download a movie's image, streamed from disk
+ *     tags: [Movie]
  *     security:
  *        - BearerAuth: []
  *     parameters:
