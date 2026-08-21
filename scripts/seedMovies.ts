@@ -73,16 +73,7 @@ async function seed() {
         process.exit(1)
     }
 
-    const {
-        DB_TYPE: type,
-        DB_HOST: host,
-        DB_PORT: port,
-        DB_USERNAME: user,
-        DB_PASSWORD: password,
-        DB_DATABASE: database
-    } = process.env
-
-    await initDataSource({ type, host, port, user, password, database })
+    await initDataSource('movie')
 
     const { deletedCount } = await MovieModel.deleteMany({})
     console.log(`Deleted ${deletedCount} existing movie(s).`)
