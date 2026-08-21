@@ -37,6 +37,7 @@ export class DataSourceFactory {
  * object has to exist by then regardless.
  */
 const dataSourceProperties: Record<string, DatabaseProperties> = {
+    // [EXAMPLE] backs the learning TaskType/AdditionInMoreSteps/SubtractionInMoreSteps resources
     learning: {
         type: process.env.LEARNING_DB_TYPE,
         host: process.env.LEARNING_DB_HOST,
@@ -53,6 +54,7 @@ const dataSourceProperties: Record<string, DatabaseProperties> = {
         password: process.env.AUTH_DB_PASSWORD,
         database: process.env.AUTH_DB_DATABASE
     },
+    // [EXAMPLE] backs the Movie resource
     movie: {
         type: process.env.MOVIE_DB_TYPE,
         host: process.env.MOVIE_DB_HOST,

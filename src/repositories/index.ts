@@ -51,7 +51,8 @@ export class RepositoryFactory {
 
         // ================================================================
         // [BUSINESS] Register your domain repositories here.
-        // When bootstrapping a new app: remove the movie case and add your own.
+        // When bootstrapping a new app: remove the movie/TaskType/
+        // AdditionInMoreSteps/SubtractionInMoreSteps cases below and add your own.
         // ================================================================
         switch (process.env.MOVIE_DB_TYPE) { // [EXAMPLE]
             case 'mongo':
@@ -61,9 +62,9 @@ export class RepositoryFactory {
                 throw new Error('movie database type is unknown')
         }
 
-        // TaskType/AdditionInMoreSteps/SubtractionInMoreSteps are backed by the
-        // 'learning' DataSource (see providers/data/index.ts) - their Models are
-        // already bound to that connection in their schema files.
+        // [EXAMPLE] TaskType/AdditionInMoreSteps/SubtractionInMoreSteps are backed
+        // by the 'learning' DataSource (see providers/data/index.ts) - their Models
+        // are already bound to that connection in their schema files.
         switch (process.env.LEARNING_DB_TYPE) {
             case 'mongo':
                 this.repositories.TaskType = new TaskTypeRepository(TaskTypeModel)
@@ -94,7 +95,7 @@ export const fileRepository = repositories.File
 // [EXAMPLE] Remove and add your own domain repository exports
 export const movieRepository = repositories.Movie
 
-// [BUSINESS]
+// [EXAMPLE] Remove and add your own domain repository exports
 export const taskTypeRepository = repositories.TaskType
 export const additionInMoreStepsRepository = repositories.AdditionInMoreSteps
 export const subtractionInMoreStepsRepository = repositories.SubtractionInMoreSteps

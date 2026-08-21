@@ -80,12 +80,13 @@ router.use('/file', fileRouter) // [INFRASTRUCTURE]
 
 // ================================================================
 // [BUSINESS] Register your domain routes here.
-// When bootstrapping a new app: remove the movie import at the top
-// and the line below, then add your own routes following the same pattern.
+// When bootstrapping a new app: remove the movie/taskType/additionInMoreSteps/
+// subtractionInMoreSteps imports at the top and the lines below, then add
+// your own routes following the same pattern.
 // ================================================================
 router.use('/movie', movieRouter) // [EXAMPLE]
-router.use('/taskType', taskTypeRouter)
-router.use('/additionInMoreSteps', additionInMoreStepsRouter)
-router.use('/subtractionInMoreSteps', subtractionInMoreStepsRouter)
+router.use('/taskType', taskTypeRouter) // [EXAMPLE]
+router.use('/additionInMoreSteps', additionInMoreStepsRouter) // [EXAMPLE]
+router.use('/subtractionInMoreSteps', subtractionInMoreStepsRouter) // [EXAMPLE]
 
 export default router

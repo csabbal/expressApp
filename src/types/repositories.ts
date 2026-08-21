@@ -40,7 +40,7 @@ export interface IFileRepository<T extends FileEntity=FileEntity> extends IRepos
 // [EXAMPLE] Remove and add your own domain repository interfaces
 export interface IMovieRepository<T extends MovieEntity=MovieEntity> extends IRepository<T> {}
 
-// [BUSINESS]
+// [EXAMPLE]
 export interface ITaskTypeRepository<T extends TaskTypeEntity=TaskTypeEntity> extends IRepository<T> {}
 export interface IAdditionInMoreStepsRepository<
     T extends AdditionInMoreStepsEntity=AdditionInMoreStepsEntity
@@ -58,10 +58,11 @@ export interface IRepositories {
 
     // ================================================================
     // [BUSINESS] Add your domain repository types here.
-    // When bootstrapping a new app: remove Movie and add your own.
+    // When bootstrapping a new app: remove Movie/TaskType/AdditionInMoreSteps/
+    // SubtractionInMoreSteps below and add your own.
     // ================================================================
     Movie?: IMovieRepository<MovieEntity> // [EXAMPLE]
-    TaskType?: ITaskTypeRepository<TaskTypeEntity>
-    AdditionInMoreSteps?: IAdditionInMoreStepsRepository<AdditionInMoreStepsEntity>
-    SubtractionInMoreSteps?: ISubtractionInMoreStepsRepository<SubtractionInMoreStepsEntity>
+    TaskType?: ITaskTypeRepository<TaskTypeEntity> // [EXAMPLE]
+    AdditionInMoreSteps?: IAdditionInMoreStepsRepository<AdditionInMoreStepsEntity> // [EXAMPLE]
+    SubtractionInMoreSteps?: ISubtractionInMoreStepsRepository<SubtractionInMoreStepsEntity> // [EXAMPLE]
 }
