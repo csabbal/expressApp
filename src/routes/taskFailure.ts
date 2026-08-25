@@ -41,6 +41,9 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *                 type: string
  *                 description: optional, what went wrong
  *                 example: expected 42, got 24
+ *             required:
+ *               - taskId
+ *               - taskTypeName
  *     responses:
  *       200:
  *         description: the created or updated task failure record
@@ -68,6 +71,8 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *                 lastFailedAt:
  *                   type: string
  *                   format: date-time
+ *       400:
+ *         description: taskId or taskTypeName missing or invalid
  */
 router.post('/',
     requireJwt,

@@ -44,11 +44,9 @@ export class TaskFailureService {
             const updated = await this.taskFailureRepository.updateOne(
                 { userId, taskId },
                 {
-                    count: existing.count + 1,
-                    lastFailedAt: now,
-                    errorMessage,
-                    taskTypeName
-                } as Partial<TaskFailureEntity>
+                    $inc: { count: 1 },
+                    $set: { lastFailedAt: now, errorMessage, taskTypeName }
+                } as any
             )
             // updateOne is typed Promise<T|null> (it targets an arbitrary filter), but we just
             // confirmed this (userId, taskId) pair exists via findOne above, so this narrows it.

@@ -55,6 +55,8 @@ export class RepositoryFactory {
         // [BUSINESS] Register your domain repositories here.
         // When bootstrapping a new app: remove the movie/TaskType/
         // AdditionInMoreSteps/SubtractionInMoreSteps cases below and add your own.
+        // TaskFailure (registered below, alongside the learning DB cases) is
+        // real business logic (not example domain code) - keep it.
         // ================================================================
         switch (process.env.MOVIE_DB_TYPE) { // [EXAMPLE]
             case 'mongo':

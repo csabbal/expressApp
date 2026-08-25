@@ -55,7 +55,7 @@ const swaggerOptions = {
             { name: 'Movie', description: 'Movie (example) - backed by the movie database' },
             { name: 'General', description: 'File - backed by the general database' },
             { name: 'Learning', description: 'TaskType/AdditionInMoreSteps/SubtractionInMoreSteps ' +
-                '(example) - backed by the learning database' },
+                '(example)/TaskFailure - backed by the learning database' },
         ],
         components: {
             securitySchemes: {
@@ -92,7 +92,8 @@ router.use('/file', fileRouter) // [INFRASTRUCTURE]
 // [BUSINESS] Register your domain routes here.
 // When bootstrapping a new app: remove the movie/taskType/additionInMoreSteps/
 // subtractionInMoreSteps imports at the top and the lines below, then add
-// your own routes following the same pattern.
+// your own routes following the same pattern. taskFailure is real business
+// logic (not example domain code) - keep it.
 // ================================================================
 router.use('/movie', movieRouter) // [EXAMPLE]
 router.use('/taskType', taskTypeRouter) // [EXAMPLE]

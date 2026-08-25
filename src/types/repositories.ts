@@ -61,7 +61,8 @@ export interface IRepositories {
     // ================================================================
     // [BUSINESS] Add your domain repository types here.
     // When bootstrapping a new app: remove Movie/TaskType/AdditionInMoreSteps/
-    // SubtractionInMoreSteps below and add your own.
+    // SubtractionInMoreSteps below and add your own. TaskFailure is real
+    // business logic (not example domain code) - keep it.
     // ================================================================
     Movie?: IMovieRepository<MovieEntity> // [EXAMPLE]
     TaskType?: ITaskTypeRepository<TaskTypeEntity> // [EXAMPLE]
