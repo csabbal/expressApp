@@ -120,7 +120,7 @@ router.post('/',
  */
 router.get('/all',
     requireJwt,
-    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'failure-read' }]),
     taskFailureController.getAll.bind(taskFailureController)
 )
 
@@ -200,7 +200,7 @@ router.get('/all',
  */
 router.get('/list',
     requireJwt,
-    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'failure-read' }]),
     taskFailureController.getList.bind(taskFailureController)
 )
 
@@ -251,7 +251,7 @@ router.get('/list',
  */
 router.get('/:id',
     requireJwt,
-    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
+    verifyPrivileges([{ component: 'learning', privilege: 'failure-read' }]),
     taskFailureController.getById.bind(taskFailureController)
 )
 
