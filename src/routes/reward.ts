@@ -1,0 +1,125 @@
+import express from 'express'
+import { RewardController } from '../controllers/rewardController'
+import { requireJwt } from '../providers/auth/passport'
+import { jwtStrategyInstance } from '../providers/auth/jwtStrategy'
+
+// get the current router instance
+const router = express.Router()
+
+// get the current reward controller instance
+const rewardController = RewardController.getInstance()
+const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyInstance)
+
+/**
+ * @swagger
+ * /api/reward:
+ *   post:
+ *     summary: Grant the authenticated user a random unwon reward image for solving a task
+ *     description: >
+ *       Picks one random File (category 'taskType') the user hasn't already won, records
+ *       the win, and returns the created record. Responds 404 if every taskType-category
+ *       image has already been won by this user.
+ *     tags: [Learning]
+ *     security:
+ *        - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               category:
+ *                 type: string
+ *                 description: the task's category
+ *                 example: math
+ *               startedAt:
+ *                 type: string
+ *                 format: date-time
+ *                 description: when the user started solving the task
+ *                 example: 2026-08-25T10:00:00.000Z
+ *             required:
+ *               - category
+ *               - startedAt
+ *     responses:
+ *       201:
+ *         description: the granted reward record
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 userId:
+ *                   type: string
+ *                 imageId:
+ *                   type: string
+ *                 category:
+ *                   type: string
+ *                 startedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 wonAt:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: category or startedAt missing or invalid
+ *       404:
+ *         description: no reward available - every taskType-category image already won
+ */
+router.post('/',
+    requireJwt,
+    verifyPrivileges([{ component: 'learning', privilege: 'write' }]),
+    rewardController.grantReward.bind(rewardController)
+)
+
+/**
+ * @swagger
+ * /api/reward/won:
+ *   get:
+ *     summary: Retrieve the image ids the authenticated user has already won
+ *     tags: [Learning]
+ *     security:
+ *        - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: a list of won image ids
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ */
+router.get('/won',
+    requireJwt,
+    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
+    rewardController.getWon.bind(rewardController)
+)
+
+/**
+ * @swagger
+ * /api/reward/available:
+ *   get:
+ *     summary: Retrieve the image ids the authenticated user could still win
+ *     tags: [Learning]
+ *     security:
+ *        - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: a list of image ids not yet won by this user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ */
+router.get('/available',
+    requireJwt,
+    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
+    rewardController.getAvailable.bind(rewardController)
+)
+
+export default router
