@@ -43,11 +43,18 @@ export class TaskFailureService {
         if (existing) {
             const updated = await this.taskFailureRepository.updateOne(
                 { userId, taskId },
-                { count: existing.count + 1, lastFailedAt: now, errorMessage, taskTypeName } as Partial<TaskFailureEntity>
+                {
+                    count: existing.count + 1,
+                    lastFailedAt: now,
+                    errorMessage,
+                    taskTypeName
+                } as Partial<TaskFailureEntity>
             )
             // updateOne is typed Promise<T|null> (it targets an arbitrary filter), but we just
             // confirmed this (userId, taskId) pair exists via findOne above, so this narrows it.
-            if (!updated) throw new NotFoundError(`task failure not found: ${userId}/${taskId}`, 'task failure not found')
+            if (!updated) {
+                throw new NotFoundError(`task failure not found: ${userId}/${taskId}`, 'task failure not found')
+            }
             return updated
         }
 
