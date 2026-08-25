@@ -12,7 +12,8 @@ const RewardSchema = new mongoose.Schema({
   },
   userId: {
     required: true,
-    type: String
+    type: String,
+    index: true
   },
   imageId: {
     required: true,

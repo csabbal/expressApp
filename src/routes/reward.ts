@@ -17,8 +17,8 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *     summary: Grant the authenticated user a random unwon reward image for solving a task
  *     description: >
  *       Picks one random File (category 'taskType') the user hasn't already won, records
- *       the win, and returns the created record. Responds 404 if every taskType-category
- *       image has already been won by this user.
+ *       the win, and returns the created record. Responds 404 if no reward is available -
+ *       the taskType image pool is empty, or the user has already won every image in it.
  *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
@@ -66,7 +66,9 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *       400:
  *         description: category or startedAt missing or invalid
  *       404:
- *         description: no reward available - every taskType-category image already won
+ *         description: >
+ *           no reward available - the taskType image pool is empty, or the user has already
+ *           won every image in it
  */
 router.post('/',
     requireJwt,

@@ -3,7 +3,7 @@ import { RewardEntity } from "../types/Reward"
 import { loggedMethod } from "../utils/logger/logger"
 import { rewardRepository } from "../repositories"
 import { IRewardRepository } from "../types/repositories"
-import { NotFoundError } from "../utils/error/Error"
+import { BadRequestError, NotFoundError } from "../utils/error/Error"
 import { v4 as uuidv4 } from "uuid"
 import { FileService } from "./fileService"
 
@@ -32,6 +32,7 @@ export class RewardService {
     */
     @loggedMethod('[RewardService] grantReward')
     public async grantReward(userId: string, category: string, startedAt: Date): Promise<RewardEntity> {
+        if (!userId) throw new BadRequestError('userId is required')
         const unwonPool = await this.getUnwonPool(userId)
         if (unwonPool.length === 0) throw new NotFoundError('no reward available', 'no reward available')
 
@@ -54,8 +55,9 @@ export class RewardService {
     */
     @loggedMethod('[RewardService] getWonImageIds')
     public async getWonImageIds(userId: string): Promise<string[]> {
+        if (!userId) throw new BadRequestError('userId is required')
         const rewards = await this.rewardRepository.find({ userId })
-        return rewards.map(reward => reward.imageId)
+        return [...new Set(rewards.map(reward => reward.imageId))]
     }
 
     /**
@@ -66,6 +68,7 @@ export class RewardService {
     */
     @loggedMethod('[RewardService] getAvailableImageIds')
     public async getAvailableImageIds(userId: string): Promise<string[]> {
+        if (!userId) throw new BadRequestError('userId is required')
         const unwonPool = await this.getUnwonPool(userId)
         return unwonPool.map(file => file.id)
     }
@@ -78,6 +81,7 @@ export class RewardService {
      * @returns {FileEntity[]}
     */
     private async getUnwonPool(userId: string): Promise<FileEntity[]> {
+        // the reward pool is every taskType-category image, regardless of the task's own category
         const pool = await this.fileService.getAllFiles('taskType')
         const wonImageIds = new Set((await this.rewardRepository.find({ userId })).map(reward => reward.imageId))
         return pool.filter(file => !wonImageIds.has(file.id))

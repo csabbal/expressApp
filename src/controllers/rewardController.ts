@@ -33,6 +33,7 @@ export class RewardController {
         try {
             const { category, startedAt } = req.body
             if (!_.isString(category) || _.isEmpty(category)) throw new BadRequestError('category is required')
+            if (!_.isString(startedAt)) throw new BadRequestError('startedAt must be a valid date')
             const parsedStartedAt = new Date(startedAt)
             if (_.isNaN(parsedStartedAt.getTime())) throw new BadRequestError('startedAt must be a valid date')
 
