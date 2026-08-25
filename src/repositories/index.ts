@@ -8,6 +8,7 @@ import { TaskTypeModel } from "../entities/TaskType.schema"
 import { AdditionInMoreStepsModel } from "../entities/AdditionInMoreSteps.schema"
 import { SubtractionInMoreStepsModel } from "../entities/SubtractionInMoreSteps.schema"
 import { TaskFailureModel } from "../entities/TaskFailure.schema"
+import { RewardModel } from "../entities/Reward.schema"
 import { PermissionRepository } from "./Permission.repository"
 import { UserRepository } from "./User.repository"
 import { MovieRepository } from "./Movie.repository"
@@ -17,6 +18,7 @@ import { TaskTypeRepository } from "./TaskType.repository"
 import { AdditionInMoreStepsRepository } from "./AdditionInMoreSteps.repository"
 import { SubtractionInMoreStepsRepository } from "./SubtractionInMoreSteps.repository"
 import { TaskFailureRepository } from "./TaskFailure.repository"
+import { RewardRepository } from "./Reward.repository"
 import { IRepositories } from "../types/repositories"
 dotenv.config()
 
@@ -55,8 +57,8 @@ export class RepositoryFactory {
         // [BUSINESS] Register your domain repositories here.
         // When bootstrapping a new app: remove the movie/TaskType/
         // AdditionInMoreSteps/SubtractionInMoreSteps cases below and add your own.
-        // TaskFailure (registered below, alongside the learning DB cases) is
-        // real business logic (not example domain code) - keep it.
+        // TaskFailure/Reward (registered below, alongside the learning DB cases) are
+        // real business logic (not example domain code) - keep them.
         // ================================================================
         switch (process.env.MOVIE_DB_TYPE) { // [EXAMPLE]
             case 'mongo':
@@ -77,6 +79,7 @@ export class RepositoryFactory {
                 this.repositories.SubtractionInMoreSteps =
                     new SubtractionInMoreStepsRepository(SubtractionInMoreStepsModel)
                 this.repositories.TaskFailure = new TaskFailureRepository(TaskFailureModel)
+                this.repositories.Reward = new RewardRepository(RewardModel)
                 break
             default:
                 throw new Error('learning database type is unknown')
@@ -105,3 +108,4 @@ export const taskTypeRepository = repositories.TaskType
 export const additionInMoreStepsRepository = repositories.AdditionInMoreSteps
 export const subtractionInMoreStepsRepository = repositories.SubtractionInMoreSteps
 export const taskFailureRepository = repositories.TaskFailure
+export const rewardRepository = repositories.Reward

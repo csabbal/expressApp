@@ -6,6 +6,7 @@ import { TaskTypeEntity } from "./TaskType"
 import { AdditionInMoreStepsEntity } from "./AdditionInMoreSteps"
 import { SubtractionInMoreStepsEntity } from "./SubtractionInMoreSteps"
 import { TaskFailureEntity } from "./TaskFailure"
+import { RewardEntity } from "./Reward"
 
 
 export interface IEntity {
@@ -50,6 +51,7 @@ export interface ISubtractionInMoreStepsRepository<
     T extends SubtractionInMoreStepsEntity=SubtractionInMoreStepsEntity
 > extends IRepository<T> {}
 export interface ITaskFailureRepository<T extends TaskFailureEntity=TaskFailureEntity> extends IRepository<T> {}
+export interface IRewardRepository<T extends RewardEntity=RewardEntity> extends IRepository<T> {}
 
 export interface IRepositories {
     // [INFRASTRUCTURE] Keep these — required for auth to work
@@ -61,12 +63,13 @@ export interface IRepositories {
     // ================================================================
     // [BUSINESS] Add your domain repository types here.
     // When bootstrapping a new app: remove Movie/TaskType/AdditionInMoreSteps/
-    // SubtractionInMoreSteps below and add your own. TaskFailure is real
-    // business logic (not example domain code) - keep it.
+    // SubtractionInMoreSteps below and add your own. TaskFailure/Reward are
+    // real business logic (not example domain code) - keep them.
     // ================================================================
     Movie?: IMovieRepository<MovieEntity> // [EXAMPLE]
     TaskType?: ITaskTypeRepository<TaskTypeEntity> // [EXAMPLE]
     AdditionInMoreSteps?: IAdditionInMoreStepsRepository<AdditionInMoreStepsEntity> // [EXAMPLE]
     SubtractionInMoreSteps?: ISubtractionInMoreStepsRepository<SubtractionInMoreStepsEntity> // [EXAMPLE]
     TaskFailure?: ITaskFailureRepository<TaskFailureEntity>
+    Reward?: IRewardRepository<RewardEntity>
 }
