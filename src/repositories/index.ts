@@ -7,6 +7,7 @@ import { FileModel } from "../entities/File.schema"
 import { TaskTypeModel } from "../entities/TaskType.schema"
 import { AdditionInMoreStepsModel } from "../entities/AdditionInMoreSteps.schema"
 import { SubtractionInMoreStepsModel } from "../entities/SubtractionInMoreSteps.schema"
+import { TaskFailureModel } from "../entities/TaskFailure.schema"
 import { PermissionRepository } from "./Permission.repository"
 import { UserRepository } from "./User.repository"
 import { MovieRepository } from "./Movie.repository"
@@ -15,6 +16,7 @@ import { FileRepository } from "./File.repository"
 import { TaskTypeRepository } from "./TaskType.repository"
 import { AdditionInMoreStepsRepository } from "./AdditionInMoreSteps.repository"
 import { SubtractionInMoreStepsRepository } from "./SubtractionInMoreSteps.repository"
+import { TaskFailureRepository } from "./TaskFailure.repository"
 import { IRepositories } from "../types/repositories"
 dotenv.config()
 
@@ -72,6 +74,7 @@ export class RepositoryFactory {
                     new AdditionInMoreStepsRepository(AdditionInMoreStepsModel)
                 this.repositories.SubtractionInMoreSteps =
                     new SubtractionInMoreStepsRepository(SubtractionInMoreStepsModel)
+                this.repositories.TaskFailure = new TaskFailureRepository(TaskFailureModel)
                 break
             default:
                 throw new Error('learning database type is unknown')
@@ -99,3 +102,4 @@ export const movieRepository = repositories.Movie
 export const taskTypeRepository = repositories.TaskType
 export const additionInMoreStepsRepository = repositories.AdditionInMoreSteps
 export const subtractionInMoreStepsRepository = repositories.SubtractionInMoreSteps
+export const taskFailureRepository = repositories.TaskFailure

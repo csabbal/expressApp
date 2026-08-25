@@ -5,6 +5,7 @@ import { FileEntity } from "./File"
 import { TaskTypeEntity } from "./TaskType"
 import { AdditionInMoreStepsEntity } from "./AdditionInMoreSteps"
 import { SubtractionInMoreStepsEntity } from "./SubtractionInMoreSteps"
+import { TaskFailureEntity } from "./TaskFailure"
 
 
 export interface IEntity {
@@ -48,6 +49,7 @@ export interface IAdditionInMoreStepsRepository<
 export interface ISubtractionInMoreStepsRepository<
     T extends SubtractionInMoreStepsEntity=SubtractionInMoreStepsEntity
 > extends IRepository<T> {}
+export interface ITaskFailureRepository<T extends TaskFailureEntity=TaskFailureEntity> extends IRepository<T> {}
 
 export interface IRepositories {
     // [INFRASTRUCTURE] Keep these — required for auth to work
@@ -65,4 +67,5 @@ export interface IRepositories {
     TaskType?: ITaskTypeRepository<TaskTypeEntity> // [EXAMPLE]
     AdditionInMoreSteps?: IAdditionInMoreStepsRepository<AdditionInMoreStepsEntity> // [EXAMPLE]
     SubtractionInMoreSteps?: ISubtractionInMoreStepsRepository<SubtractionInMoreStepsEntity> // [EXAMPLE]
+    TaskFailure?: ITaskFailureRepository<TaskFailureEntity>
 }
