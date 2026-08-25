@@ -8,6 +8,7 @@ import fileRouter from './file' // [INFRASTRUCTURE]
 import taskTypeRouter from './taskType'
 import additionInMoreStepsRouter from './additionInMoreSteps'
 import subtractionInMoreStepsRouter from './subtractionInMoreSteps'
+import taskFailureRouter from './taskFailure'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
 import * as packageJson from '../../package.json'
@@ -97,5 +98,6 @@ router.use('/movie', movieRouter) // [EXAMPLE]
 router.use('/taskType', taskTypeRouter) // [EXAMPLE]
 router.use('/additionInMoreSteps', additionInMoreStepsRouter) // [EXAMPLE]
 router.use('/subtractionInMoreSteps', subtractionInMoreStepsRouter) // [EXAMPLE]
+router.use('/taskFailure', taskFailureRouter)
 
 export default router
