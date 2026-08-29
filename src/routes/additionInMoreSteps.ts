@@ -306,9 +306,9 @@ router.delete('/:id',
  *     summary: Validate a submitted additionInMoreSteps result
  *     description: >
  *       Checks whether the given result is correct for the given task. If it isn't,
- *       upserts a task failure for the authenticated user and this taskId, incrementing
- *       count if one already exists (see POST /api/taskFailure) - the failure record
- *       itself is not returned, only the validation outcome and error details.
+ *       upserts a task failure for the authenticated user, this taskId and this testId,
+ *       incrementing count if one already exists (see POST /api/taskFailure) - the failure
+ *       record itself is not returned, only the validation outcome and error details.
  *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
@@ -323,6 +323,10 @@ router.delete('/:id',
  *                 type: string
  *                 description: id of the additionInMoreSteps item being solved
  *                 example: 3f1c9b2a-6f7e-4a1d-9c3e-2b7a5d6e8f10
+ *               testId:
+ *                 type: string
+ *                 description: id of the Test this attempt belongs to
+ *                 example: 9c3e2b7a-5d6e-4a1d-8f10-3f1c9b2a6f7e
  *               result:
  *                 type: object
  *                 description: the full worked-out result submitted by the client
@@ -362,6 +366,7 @@ router.delete('/:id',
  *                   - helper2Result
  *             required:
  *               - taskId
+ *               - testId
  *               - result
  *     responses:
  *       200:
@@ -386,7 +391,7 @@ router.delete('/:id',
  *                     helper1Result:
  *                       - "12 != 10"
  *       400:
- *         description: taskId or a result field is missing or invalid
+ *         description: taskId, testId or a result field is missing or invalid
  */
 router.post('/validate',
     requireJwt,

@@ -163,8 +163,9 @@ export class AdditionInMoreStepsController {
     @loggedMethod('[AdditionInMoreStepsController] validate')
     public async validate(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
-            const { taskId, result } = req.body
+            const { taskId, testId, result } = req.body
             if (!_.isString(taskId) || _.isEmpty(taskId)) throw new BadRequestError('taskId is required')
+            if (!_.isString(testId) || _.isEmpty(testId)) throw new BadRequestError('testId is required')
             if (!_.isPlainObject(result)) throw new BadRequestError('result is required')
 
             for (const field of ADDITION_IN_MORE_STEPS_RESULT_NUMBER_FIELDS) {
@@ -175,7 +176,7 @@ export class AdditionInMoreStepsController {
 
             const userId = (req as AppRequest).user.id
             const validationResult: AdditionInMoreStepsValidationResult = await this.additionInMoreStepsService
-                .validate(userId, taskId, result as AdditionInMoreStepsResult)
+                .validate(userId, taskId, testId, result as AdditionInMoreStepsResult)
             res.json(validationResult)
         } catch (e) {
             next(e)

@@ -38,10 +38,11 @@ export class AdditionInMoreStepsService {
 
     /**
      * validate method checks whether the client-submitted result for an additionInMoreSteps task
-     * is correct. When it isn't, it records/upgrades a task failure for (userId, taskId) via
-     * taskFailureService instead of leaving that bookkeeping to the caller.
+     * is correct. When it isn't, it records/upgrades a task failure for (userId, taskId, testId)
+     * via taskFailureService instead of leaving that bookkeeping to the caller.
      * @param {string} userId
      * @param {string} taskId
+     * @param {string} testId
      * @param {AdditionInMoreStepsResult} result
      * @returns {AdditionInMoreStepsValidationResult}
     */
@@ -49,6 +50,7 @@ export class AdditionInMoreStepsService {
     public async validate(
         userId: string,
         taskId: string,
+        testId: string,
         result: AdditionInMoreStepsResult
     ): Promise<AdditionInMoreStepsValidationResult> {
         const [isValid, errors] = this.isResultCorrect(result)
@@ -58,6 +60,7 @@ export class AdditionInMoreStepsService {
             userId,
             taskId,
             ADDITION_IN_MORE_STEPS_TASK_TYPE_NAME,
+            testId,
             JSON.stringify(errors)
         )
         return { isValid, errors }
