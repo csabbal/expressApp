@@ -6,6 +6,7 @@ import { TaskTypeEntity } from "./TaskType"
 import { AdditionInMoreStepsEntity } from "./AdditionInMoreSteps"
 import { SubtractionInMoreStepsEntity } from "./SubtractionInMoreSteps"
 import { TaskFailureEntity } from "./TaskFailure"
+import { TaskSuccessEntity } from "./TaskSuccess"
 import { RewardEntity } from "./Reward"
 import { TestEntity } from "./Test"
 
@@ -52,6 +53,7 @@ export interface ISubtractionInMoreStepsRepository<
     T extends SubtractionInMoreStepsEntity=SubtractionInMoreStepsEntity
 > extends IRepository<T> {}
 export interface ITaskFailureRepository<T extends TaskFailureEntity=TaskFailureEntity> extends IRepository<T> {}
+export interface ITaskSuccessRepository<T extends TaskSuccessEntity=TaskSuccessEntity> extends IRepository<T> {}
 export interface IRewardRepository<T extends RewardEntity=RewardEntity> extends IRepository<T> {}
 export interface ITestRepository<T extends TestEntity=TestEntity> extends IRepository<T> {}
 
@@ -73,6 +75,7 @@ export interface IRepositories {
     AdditionInMoreSteps?: IAdditionInMoreStepsRepository<AdditionInMoreStepsEntity> // [EXAMPLE]
     SubtractionInMoreSteps?: ISubtractionInMoreStepsRepository<SubtractionInMoreStepsEntity> // [EXAMPLE]
     TaskFailure?: ITaskFailureRepository<TaskFailureEntity>
+    TaskSuccess?: ITaskSuccessRepository<TaskSuccessEntity>
     Reward?: IRewardRepository<RewardEntity>
     Test?: ITestRepository<TestEntity>
 }

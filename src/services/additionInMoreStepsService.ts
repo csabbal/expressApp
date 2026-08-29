@@ -11,6 +11,7 @@ import { FindOptions, IAdditionInMoreStepsRepository, SortOptions } from "../typ
 import { BadRequestError, NotFoundError } from "../utils/error/Error"
 import { v4 as uuidv4 } from "uuid"
 import { TaskFailureService } from "./taskFailureService"
+import { TaskSuccessService } from "./taskSuccessService"
 
 const ADDITION_IN_MORE_STEPS_TASK_TYPE_NAME = 'additionInMoreSteps'
 
@@ -19,7 +20,8 @@ export class AdditionInMoreStepsService {
     protected static _instance: AdditionInMoreStepsService
     constructor(
         protected additionInMoreStepsRepository: IAdditionInMoreStepsRepository,
-        protected taskFailureService: TaskFailureService
+        protected taskFailureService: TaskFailureService,
+        protected taskSuccessService: TaskSuccessService
     ) { }
 
     /**
@@ -30,7 +32,8 @@ export class AdditionInMoreStepsService {
         if (!this._instance) {
             this._instance = new AdditionInMoreStepsService(
                 additionInMoreStepsRepository,
-                TaskFailureService.getInstance()
+                TaskFailureService.getInstance(),
+                TaskSuccessService.getInstance()
             )
         }
         return this._instance
@@ -38,7 +41,8 @@ export class AdditionInMoreStepsService {
 
     /**
      * validate method checks whether the client-submitted result for an additionInMoreSteps task
-     * is correct. When it isn't, it records/upgrades a task failure for (userId, taskId, testId)
+     * is correct. When it is, it records the solved task for (userId, taskId, testId) via
+     * taskSuccessService. When it isn't, it records/upgrades a task failure for the same triple
      * via taskFailureService instead of leaving that bookkeeping to the caller.
      * @param {string} userId
      * @param {string} taskId
@@ -54,7 +58,15 @@ export class AdditionInMoreStepsService {
         result: AdditionInMoreStepsResult
     ): Promise<AdditionInMoreStepsValidationResult> {
         const [isValid, errors] = this.isResultCorrect(result)
-        if (isValid) return { isValid, errors: {} }
+        if (isValid) {
+            await this.taskSuccessService.recordSuccess(
+                userId,
+                taskId,
+                ADDITION_IN_MORE_STEPS_TASK_TYPE_NAME,
+                testId
+            )
+            return { isValid, errors: {} }
+        }
 
         await this.taskFailureService.recordFailure(
             userId,

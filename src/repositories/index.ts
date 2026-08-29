@@ -8,6 +8,7 @@ import { TaskTypeModel } from "../entities/TaskType.schema"
 import { AdditionInMoreStepsModel } from "../entities/AdditionInMoreSteps.schema"
 import { SubtractionInMoreStepsModel } from "../entities/SubtractionInMoreSteps.schema"
 import { TaskFailureModel } from "../entities/TaskFailure.schema"
+import { TaskSuccessModel } from "../entities/TaskSuccess.schema"
 import { RewardModel } from "../entities/Reward.schema"
 import { TestModel } from "../entities/Test.schema"
 import { PermissionRepository } from "./Permission.repository"
@@ -19,6 +20,7 @@ import { TaskTypeRepository } from "./TaskType.repository"
 import { AdditionInMoreStepsRepository } from "./AdditionInMoreSteps.repository"
 import { SubtractionInMoreStepsRepository } from "./SubtractionInMoreSteps.repository"
 import { TaskFailureRepository } from "./TaskFailure.repository"
+import { TaskSuccessRepository } from "./TaskSuccess.repository"
 import { RewardRepository } from "./Reward.repository"
 import { TestRepository } from "./Test.repository"
 import { IRepositories } from "../types/repositories"
@@ -81,6 +83,7 @@ export class RepositoryFactory {
                 this.repositories.SubtractionInMoreSteps =
                     new SubtractionInMoreStepsRepository(SubtractionInMoreStepsModel)
                 this.repositories.TaskFailure = new TaskFailureRepository(TaskFailureModel)
+                this.repositories.TaskSuccess = new TaskSuccessRepository(TaskSuccessModel)
                 this.repositories.Reward = new RewardRepository(RewardModel)
                 this.repositories.Test = new TestRepository(TestModel)
                 break
@@ -111,5 +114,6 @@ export const taskTypeRepository = repositories.TaskType
 export const additionInMoreStepsRepository = repositories.AdditionInMoreSteps
 export const subtractionInMoreStepsRepository = repositories.SubtractionInMoreSteps
 export const taskFailureRepository = repositories.TaskFailure
+export const taskSuccessRepository = repositories.TaskSuccess
 export const rewardRepository = repositories.Reward
 export const testRepository = repositories.Test
