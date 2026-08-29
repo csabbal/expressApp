@@ -192,10 +192,6 @@ router.get('/:id',
  *               name:
  *                 type: string
  *                 example: additionInMoreSteps
- *               image:
- *                 type: string
- *                 description: id of a file uploaded via POST /api/taskType/image/{id}
- *                 example: 3f1c9b2a-6f7e-4a1d-9c3e-2b7a5d6e8f10
  *               description:
  *                 type: string
  *                 example: Addition in more steps to practice shifting by 10.
@@ -250,10 +246,6 @@ router.put('/:id',
  *               name:
  *                 type: string
  *                 example: additionInMoreSteps
- *               image:
- *                 type: string
- *                 description: id of a file uploaded via POST /api/taskType/image/{id}
- *                 example: 3f1c9b2a-6f7e-4a1d-9c3e-2b7a5d6e8f10
  *               description:
  *                 type: string
  *                 example: Addition in more steps to practice shifting by 10.
@@ -289,7 +281,11 @@ router.post('/',
  * @swagger
  * /api/taskType/image/{id}:
  *   post:
- *     summary: Upload (or replace) a task type's image
+ *     summary: Upload an image tagged under the 'taskType' file category
+ *     description: >
+ *       The task type must exist, but the uploaded file is not linked back to it -
+ *       retrieve it afterward via the generic GET /api/file/all?category=taskType
+ *       and GET /api/file/{id}/download endpoints.
  *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
@@ -299,7 +295,7 @@ router.post('/',
  *         required: true
  *         schema:
  *           type: string
- *         description: The id of the task type to attach the image to
+ *         description: The id of the task type the image is uploaded for
  *     requestBody:
  *       required: true
  *       content:
@@ -311,8 +307,8 @@ router.post('/',
  *                 type: string
  *                 format: binary
  *     responses:
- *       200:
- *         description: the task type, with image set to the uploaded file's id
+ *       201:
+ *         description: the uploaded file's metadata
  *       400:
  *         description: no image file was provided
  *       404:
@@ -323,45 +319,6 @@ router.post('/image/:id',
     verifyPrivileges([{ component: 'learning', privilege: 'write' }]),
     singleFileUpload('image'),
     taskTypeController.uploadImage.bind(taskTypeController)
-)
-
-/**
- * @swagger
- * /api/taskType/image/{id}:
- *   get:
- *     summary: Download a task type's image, streamed from disk
- *     tags: [Learning]
- *     security:
- *        - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The id of the task type whose image to retrieve
- *       - in: query
- *         name: quality
- *         schema:
- *           type: string
- *           enum: [low, high]
- *           default: high
- *         description: low returns the degraded copy (falls back to the original if none exists)
- *     responses:
- *       200:
- *         description: the image bytes
- *         content:
- *           image/*:
- *             schema:
- *               type: string
- *               format: binary
- *       404:
- *         description: task type not found, or the task type has no image
- */
-router.get('/image/:id',
-    requireJwt,
-    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
-    taskTypeController.downloadImage.bind(taskTypeController)
 )
 
 /**

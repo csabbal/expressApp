@@ -1,4 +1,5 @@
 import { listRequestParams, TaskTypeEntity } from "../types/TaskType"
+import { FileEntity } from "../types/File"
 import { loggedMethod, logger } from "../utils/logger/logger"
 import { taskTypeRepository } from "../repositories"
 import { FindOptions, ITaskTypeRepository, SortOptions } from "../types/repositories"
@@ -22,45 +23,23 @@ export class TaskTypeService {
     }
 
     /**
-     * uploadImage method stores the given file under the 'taskType' category via fileService,
-     * then updates the task type record to reference the resulting file's id
+     * uploadImage method stores the given file under the 'taskType' category via fileService.
+     * The task type is only validated to exist - no reference to the file is kept on it;
+     * the uploaded file is found again via the generic /api/file endpoints (filter by category).
      * @param {string} id
      * @param {Express.Multer.File} file
      * @param {string} uploadedBy
-     * @returns {TaskTypeEntity|null}
+     * @returns {FileEntity}
     */
     public async uploadImage(
         id: string,
         file: Express.Multer.File,
         uploadedBy: string
-    ): Promise<TaskTypeEntity | null> {
+    ): Promise<FileEntity> {
         logger.info('[TaskTypeService] uploadImage ' + id)
         const existingTaskType = await this.taskTypeRepository.findOne({ id })
         if (!existingTaskType) throw new NotFoundError(`task type not found: ${id}`, 'task type not found')
-        const fileEntity = await this.fileService.uploadFile(file, { category: 'taskType', uploadedBy })
-        const taskType = await this.taskTypeRepository.updateOne(
-            { id },
-            { image: fileEntity.id } as Partial<TaskTypeEntity>
-        )
-        return taskType
-    }
-
-    /**
-     * streamImage method resolves the physical file to stream for a task type's image,
-     * delegating the quality-based path resolution to fileService
-     * @param {string} id
-     * @param {'low'|'high'} quality
-     * @returns {{path: string, mimeType: string, originalName: string}}
-    */
-    public async streamImage(
-        id: string,
-        quality: 'low' | 'high'
-    ): Promise<{ path: string, mimeType: string, originalName: string }> {
-        const taskType = await this.taskTypeRepository.findOne({ id })
-        if (!taskType) throw new NotFoundError(`task type not found: ${id}`, 'task type not found')
-        if (!taskType.image) throw new NotFoundError(`task type has no image: ${id}`, 'task type has no image')
-
-        return await this.fileService.getDownloadTarget(taskType.image, quality)
+        return await this.fileService.uploadFile(file, { category: 'task', uploadedBy })
     }
 
     /**
