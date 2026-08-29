@@ -80,6 +80,16 @@ export class TaskFailureService {
     }
 
     /**
+     * count method take care of fetching the total number of task failures from the db
+     * @returns {number} returns with the number of task failures via taskFailureRepository
+    */
+    @loggedMethod('[TaskFailureService] count')
+    public async count(): Promise<number> {
+        const taskFailures = await this.taskFailureRepository.find()
+        return taskFailures.length
+    }
+
+    /**
      * getList method take care of fetching task failures from the db
      * based on the offset, limit and the sort paramaters what client define in params attribute
      * @returns {TaskFailureEntity[]} returns with all TaskFailureEntity based on the options via taskFailureRepository

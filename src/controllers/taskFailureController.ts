@@ -65,6 +65,23 @@ export class TaskFailureController {
     }
 
     /**
+     * This controller method is about to call taskFailureService count function
+     * in order to fetch the total number of task failures
+     * @param {Request} req
+     * @param {Response} res
+     * @param {NextFunction} next
+     */
+    @loggedMethod('[TaskFailureController] count')
+    public async count(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const count = await this.taskFailureService.count()
+            res.json({ count })
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    /**
      * This controller method is about to call taskFailureService getList function with paramaters taken
      * as querystring but before that it perform all of validations what it makes sens on the querystring paramaters
      * @param {Request} req

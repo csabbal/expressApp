@@ -206,6 +206,31 @@ router.get('/list',
 
 /**
  * @swagger
+ * /api/taskFailure/count:
+ *   get:
+ *     summary: Retrieve the total number of task failures
+ *     tags: [Learning]
+ *     security:
+ *        - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: the total number of task failures
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: number
+ */
+router.get('/count',
+    requireJwt,
+    verifyPrivileges([{ component: 'learning', privilege: 'failure-read' }]),
+    taskFailureController.count.bind(taskFailureController)
+)
+
+/**
+ * @swagger
  * /api/taskFailure/{id}:
  *   get:
  *     summary: Retrieve a concrete task failure record
