@@ -1,5 +1,4 @@
 import { IEntity } from "./repositories"
-import { TaskFailureEntity } from "./TaskFailure"
 
 export interface AdditionInMoreStepsEntity extends IEntity{
     term1: number,
@@ -25,7 +24,9 @@ export interface AdditionInMoreStepsResult {
     helper2Result: number
 }
 
+export type AdditionStateError = Partial<Record<keyof AdditionInMoreStepsResult,string[]>>
+
 export interface AdditionInMoreStepsValidationResult {
     isValid: boolean,
-    taskFailure?: TaskFailureEntity
+    errors: Partial<AdditionStateError>
 }

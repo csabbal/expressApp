@@ -2,6 +2,7 @@ import {
     AdditionInMoreStepsEntity,
     AdditionInMoreStepsResult,
     AdditionInMoreStepsValidationResult,
+    AdditionStateError,
     listRequestParams
 } from "../types/AdditionInMoreSteps"
 import { loggedMethod, logger } from "../utils/logger/logger"
@@ -12,6 +13,7 @@ import { v4 as uuidv4 } from "uuid"
 import { TaskFailureService } from "./taskFailureService"
 
 const ADDITION_IN_MORE_STEPS_TASK_TYPE_NAME = 'additionInMoreSteps'
+
 
 export class AdditionInMoreStepsService {
     protected static _instance: AdditionInMoreStepsService
@@ -49,15 +51,16 @@ export class AdditionInMoreStepsService {
         taskId: string,
         result: AdditionInMoreStepsResult
     ): Promise<AdditionInMoreStepsValidationResult> {
-        const isValid = this.isResultCorrect(result)
-        if (isValid) return { isValid }
+        const [isValid, errors] = this.isResultCorrect(result)
+        if (isValid) return { isValid, errors: {} }
 
-        const taskFailure = await this.taskFailureService.recordFailure(
+        await this.taskFailureService.recordFailure(
             userId,
             taskId,
-            ADDITION_IN_MORE_STEPS_TASK_TYPE_NAME
+            ADDITION_IN_MORE_STEPS_TASK_TYPE_NAME,
+            JSON.stringify(errors)
         )
-        return { isValid, taskFailure }
+        return { isValid, errors }
     }
 
     /**
@@ -65,9 +68,42 @@ export class AdditionInMoreStepsService {
      * @param {AdditionInMoreStepsResult} result
      * @returns {boolean}
     */
-    protected isResultCorrect(_result: AdditionInMoreStepsResult): boolean {
-        // TODO: implement the additionInMoreSteps validation logic
-        throw new Error('Not implemented')
+    protected isResultCorrect(data: AdditionInMoreStepsResult): [boolean,AdditionStateError] {
+        let errors:AdditionStateError = {}
+        let isValid = true
+
+        if (data.helper1term1 != data.term1) {
+            isValid = false
+            const message = data.helper1term1 + " != " + data.term1
+            errors = { ...errors, ['helper1term1']: [...errors['helper1term1'] || [],message]  }
+        }
+        if (data.helper1Result != 10) {
+            isValid = false
+            const message = data.helper1Result + " != 10"
+            errors = { ...errors, ['helper1Result']: [...errors['helper1Result'] || [],message]  }
+        }
+        if (data.helper1Result != data.helper2term1) {
+            isValid = false
+            const message = data.helper1Result + " != " + data.helper2term1
+            errors = { ...errors, ['helper2term1']: [...errors['helper2term1'] || [],message]  }
+        }
+        if (data.helper1term1 + data.helper1term2 != data.helper1Result) {
+            isValid = false
+            const message = data.helper1term1 + " + " + data.helper1term2 + " != " + data.helper1Result
+            errors = { ...errors, ['helper1Result']: [...errors['helper1Result'] || [],message] }
+        }
+        if (data.helper2term1 + data.helper2term2 != data.helper2Result) {
+            isValid = false
+            const message = data.helper2term1 + " + " + data.helper2term2 + " != " + data.helper2Result
+            errors = { ...errors, ['helper2Result']: [...errors['helper2Result'] || [],message]  }
+        }
+        if (data.term1 + data.term2 != data.helper2Result) {
+            isValid = false
+            const message = data.term1 + " + " + data.term2 + " != " + data.helper2Result
+            errors = { ...errors, ['helper2Result']: [...errors['helper2Result'] || [],message]  }
+        }
+
+        return [isValid, errors] as const
     }
 
     /**

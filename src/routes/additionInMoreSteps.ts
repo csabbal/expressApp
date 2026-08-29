@@ -307,7 +307,8 @@ router.delete('/:id',
  *     description: >
  *       Checks whether the given result is correct for the given task. If it isn't,
  *       upserts a task failure for the authenticated user and this taskId, incrementing
- *       count if one already exists (see POST /api/taskFailure).
+ *       count if one already exists (see POST /api/taskFailure) - the failure record
+ *       itself is not returned, only the validation outcome and error details.
  *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
@@ -372,29 +373,18 @@ router.delete('/:id',
  *               properties:
  *                 isValid:
  *                   type: boolean
- *                 taskFailure:
+ *                 errors:
  *                   type: object
- *                   description: present only when isValid is false
- *                   properties:
- *                     id:
+ *                   description: >
+ *                     empty when isValid is true; otherwise, one entry per invalid result
+ *                     field, each holding the messages explaining why that field is wrong
+ *                   additionalProperties:
+ *                     type: array
+ *                     items:
  *                       type: string
- *                     userId:
- *                       type: string
- *                     taskId:
- *                       type: string
- *                     taskTypeName:
- *                       type: string
- *                     errorMessage:
- *                       type: string
- *                       nullable: true
- *                     count:
- *                       type: number
- *                     firstFailedAt:
- *                       type: string
- *                       format: date-time
- *                     lastFailedAt:
- *                       type: string
- *                       format: date-time
+ *                   example:
+ *                     helper1Result:
+ *                       - "12 != 10"
  *       400:
  *         description: taskId or a result field is missing or invalid
  */
