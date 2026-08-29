@@ -19,11 +19,13 @@ interface AdditionDoc {
 
 function buildDocs(): AdditionDoc[] {
     const docs: AdditionDoc[] = []
+    let id = 1
     for (let term1 = 1; term1 <= 9; term1++) {
         for (let term2 = 1; term2 <= 9; term2++) {
             const result = term1 + term2
             if (result > 10 && result <= 19) {
-                docs.push({ id: uuidv4(), term1, term2, result })
+                docs.push({ id: id.toString(), term1, term2, result })
+                id++
             }
         }
     }

@@ -22,10 +22,12 @@ interface SubtractionDoc {
 
 function buildDocs(): SubtractionDoc[] {
     const docs: SubtractionDoc[] = []
+    let id = 1
     for (let substractor = 11; substractor < 19; substractor++) {
         for (let reducer = 1; reducer <= 9; reducer++) {
             if (reducer > substractor - 10) {
-                docs.push({ id: uuidv4(), substractor, reducer, result: substractor - reducer })
+                docs.push({ id: id.toString(), substractor, reducer, result: substractor - reducer })
+                id++
             }
         }
     }
