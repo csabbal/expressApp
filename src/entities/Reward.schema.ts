@@ -22,14 +22,6 @@ const RewardSchema = new mongoose.Schema({
   category: {
     required: true,
     type: String
-  },
-  startedAt: {
-    required: true,
-    type: Date
-  },
-  wonAt: {
-    required: true,
-    type: Date
   }
 })
 

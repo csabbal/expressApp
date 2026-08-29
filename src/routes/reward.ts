@@ -33,14 +33,8 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *                 type: string
  *                 description: the task's category
  *                 example: math
- *               startedAt:
- *                 type: string
- *                 format: date-time
- *                 description: when the user started solving the task
- *                 example: 2026-08-25T10:00:00.000Z
  *             required:
  *               - category
- *               - startedAt
  *     responses:
  *       201:
  *         description: the granted reward record
@@ -57,14 +51,8 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *                   type: string
  *                 category:
  *                   type: string
- *                 startedAt:
- *                   type: string
- *                   format: date-time
- *                 wonAt:
- *                   type: string
- *                   format: date-time
  *       400:
- *         description: category or startedAt missing or invalid
+ *         description: category missing or invalid
  *       404:
  *         description: >
  *           no reward available - the taskType image pool is empty, or the user has already

@@ -31,14 +31,11 @@ export class RewardController {
     @loggedMethod('[RewardController] grantReward')
     public async grantReward(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
-            const { category, startedAt } = req.body
+            const { category } = req.body
             if (!_.isString(category) || _.isEmpty(category)) throw new BadRequestError('category is required')
-            if (!_.isString(startedAt)) throw new BadRequestError('startedAt must be a valid date')
-            const parsedStartedAt = new Date(startedAt)
-            if (_.isNaN(parsedStartedAt.getTime())) throw new BadRequestError('startedAt must be a valid date')
 
             const userId = (req as AppRequest).user.id
-            const reward: RewardEntity = await this.rewardService.grantReward(userId, category, parsedStartedAt)
+            const reward: RewardEntity = await this.rewardService.grantReward(userId, category)
             res.status(201).json(reward)
         } catch (e) {
             next(e)

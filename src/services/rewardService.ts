@@ -24,14 +24,14 @@ export class RewardService {
 
     /**
      * grantReward method picks one random 'taskType'-category file the given user hasn't
-     * already won, records the win, and returns the created reward record
+     * already won, records the win, and returns the created reward record. The reward itself
+     * carries no timing - when it was earned is tracked by the Test that references it.
      * @param {string} userId
      * @param {string} category
-     * @param {Date} startedAt
      * @returns {RewardEntity}
     */
     @loggedMethod('[RewardService] grantReward')
-    public async grantReward(userId: string, category: string, startedAt: Date): Promise<RewardEntity> {
+    public async grantReward(userId: string, category: string): Promise<RewardEntity> {
         if (!userId) throw new BadRequestError('userId is required')
         const unwonPool = await this.getUnwonPool(userId)
         if (unwonPool.length === 0) throw new NotFoundError('no reward available', 'no reward available')
@@ -41,9 +41,7 @@ export class RewardService {
             id: uuidv4(),
             userId,
             imageId: picked.id,
-            category,
-            startedAt,
-            wonAt: new Date()
+            category
         } as RewardEntity)
         return reward
     }
