@@ -72,6 +72,20 @@ export class FileService {
     }
 
     /**
+     * uploadFiles method stores several files, each via uploadFile, and returns their metadata
+     * in the same order they were given
+     * @param {Express.Multer.File[]} files
+     * @param {UploadFileOptions} options
+     * @returns {FileEntity[]}
+    */
+    public async uploadFiles(
+        files: Express.Multer.File[],
+        options: UploadFileOptions = {}
+    ): Promise<FileEntity[]> {
+        return await Promise.all(files.map(file => this.uploadFile(file, options)))
+    }
+
+    /**
      * getAllFiles method lists all stored file records, optionally filtered by category
      * @param {string} category
      * @returns {FileEntity[]}

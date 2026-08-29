@@ -40,6 +40,28 @@ export class FileController {
     }
 
     /**
+     * uploadFiles controller method stores several multipart files taken from multer via
+     * fileService, in one request
+     * @param {Request} req
+     * @param {Response} res
+     * @param {NextFunction} next
+     */
+    @loggedMethod('[FileController] uploadFiles')
+    public async uploadFiles(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const uploadedFiles = req.files as Express.Multer.File[] | undefined
+            if (!uploadedFiles || uploadedFiles.length === 0) {
+                throw new BadRequestError('at least one file is required')
+            }
+            const uploadedBy = (req as AppRequest).user?.id
+            const files: FileEntity[] = await this.fileService.uploadFiles(uploadedFiles, { uploadedBy })
+            res.status(201).json(files)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    /**
      * getAllFiles controller method lists file metadata, optionally filtered by ?category=
      * @param {Request} req
      * @param {Response} res

@@ -2,7 +2,7 @@ import express from 'express'
 import { FileController } from '../controllers/fileController'
 import { requireJwt } from '../providers/auth/passport'
 import { jwtStrategyInstance } from '../providers/auth/jwtStrategy'
-import { singleFileUpload } from '../utils/upload/multer'
+import { singleFileUpload, multipleFileUpload } from '../utils/upload/multer'
 
 // get the current router instance
 const router = express.Router()
@@ -58,6 +58,61 @@ router.post('/',
     verifyPrivileges([{ component: 'file', privilege: 'write' }]),
     singleFileUpload('file'),
     fileController.uploadFile.bind(fileController)
+)
+
+/**
+ * @swagger
+ * /api/file/multiple:
+ *   post:
+ *     summary: Upload multiple files at once
+ *     tags: [General]
+ *     security:
+ *        - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               files:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *     responses:
+ *       201:
+ *         description: the stored files' metadata, in the same order they were uploaded
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   originalName:
+ *                     type: string
+ *                   mimeType:
+ *                     type: string
+ *                   size:
+ *                     type: number
+ *                   isImage:
+ *                     type: boolean
+ *                   category:
+ *                     type: string
+ *                     nullable: true
+ *       400:
+ *         description: >
+ *           no files were provided, too many files were provided (default limit 10, see
+ *           FILE_UPLOAD_MAX_COUNT), or one of the files exceeds the size limit
+ */
+router.post('/multiple',
+    requireJwt,
+    verifyPrivileges([{ component: 'file', privilege: 'write' }]),
+    multipleFileUpload('files'),
+    fileController.uploadFiles.bind(fileController)
 )
 
 /**
