@@ -1,9 +1,26 @@
 import express from 'express'
 import { AdditionInMoreStepsService } from '../services/additionInMoreStepsService'
-import { AdditionInMoreStepsEntity, listRequestParams } from '../types/AdditionInMoreSteps'
+import {
+    AdditionInMoreStepsEntity,
+    AdditionInMoreStepsResult,
+    AdditionInMoreStepsValidationResult,
+    listRequestParams
+} from '../types/AdditionInMoreSteps'
 import { loggedMethod, logger, LoggerClass } from '../utils/logger/logger'
 import _ from 'lodash'
 import { BadRequestError } from '../utils/error/Error'
+import { AppRequest } from '../types/CustomExpress'
+
+const ADDITION_IN_MORE_STEPS_RESULT_NUMBER_FIELDS: (keyof AdditionInMoreStepsResult)[] = [
+    'term1',
+    'term2',
+    'helper1term1',
+    'helper1term2',
+    'helper1Result',
+    'helper2term1',
+    'helper2term2',
+    'helper2Result'
+]
 
 /**
  * This class is about to provides all requests of the additionInMoreSteps related
@@ -130,6 +147,36 @@ export class AdditionInMoreStepsController {
             const { id } = req.params
             const item: AdditionInMoreStepsEntity = await this.additionInMoreStepsService.delete(id)
             res.json(item)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    /**
+     * This controller method validates a client-submitted additionInMoreSteps result for a given
+     * task, after checking that taskId and every field of the result were provided. The
+     * authenticated user's id (not a client-supplied one) is used for failure bookkeeping.
+     * @param {Request} req
+     * @param {Response} res
+     * @param {NextFunction} next
+     */
+    @loggedMethod('[AdditionInMoreStepsController] validate')
+    public async validate(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const { taskId, result } = req.body
+            if (!_.isString(taskId) || _.isEmpty(taskId)) throw new BadRequestError('taskId is required')
+            if (!_.isPlainObject(result)) throw new BadRequestError('result is required')
+
+            for (const field of ADDITION_IN_MORE_STEPS_RESULT_NUMBER_FIELDS) {
+                if (!_.isFinite((result as AdditionInMoreStepsResult)[field])) {
+                    throw new BadRequestError(`result.${field} is required and must be a number`)
+                }
+            }
+
+            const userId = (req as AppRequest).user.id
+            const validationResult: AdditionInMoreStepsValidationResult = await this.additionInMoreStepsService
+                .validate(userId, taskId, result as AdditionInMoreStepsResult)
+            res.json(validationResult)
         } catch (e) {
             next(e)
         }

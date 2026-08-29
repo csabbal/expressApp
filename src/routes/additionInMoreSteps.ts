@@ -299,4 +299,109 @@ router.delete('/:id',
     additionInMoreStepsController.delete.bind(additionInMoreStepsController)
 )
 
+/**
+ * @swagger
+ * /api/additionInMoreSteps/validate:
+ *   post:
+ *     summary: Validate a submitted additionInMoreSteps result
+ *     description: >
+ *       Checks whether the given result is correct for the given task. If it isn't,
+ *       upserts a task failure for the authenticated user and this taskId, incrementing
+ *       count if one already exists (see POST /api/taskFailure).
+ *     tags: [Learning]
+ *     security:
+ *        - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *                 description: id of the additionInMoreSteps item being solved
+ *                 example: 3f1c9b2a-6f7e-4a1d-9c3e-2b7a5d6e8f10
+ *               result:
+ *                 type: object
+ *                 description: the full worked-out result submitted by the client
+ *                 properties:
+ *                   term1:
+ *                     type: number
+ *                     example: 9
+ *                   term2:
+ *                     type: number
+ *                     example: 8
+ *                   helper1term1:
+ *                     type: number
+ *                     example: 9
+ *                   helper1term2:
+ *                     type: number
+ *                     example: 1
+ *                   helper1Result:
+ *                     type: number
+ *                     example: 10
+ *                   helper2term1:
+ *                     type: number
+ *                     example: 10
+ *                   helper2term2:
+ *                     type: number
+ *                     example: 7
+ *                   helper2Result:
+ *                     type: number
+ *                     example: 17
+ *                 required:
+ *                   - term1
+ *                   - term2
+ *                   - helper1term1
+ *                   - helper1term2
+ *                   - helper1Result
+ *                   - helper2term1
+ *                   - helper2term2
+ *                   - helper2Result
+ *             required:
+ *               - taskId
+ *               - result
+ *     responses:
+ *       200:
+ *         description: the validation outcome
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 isValid:
+ *                   type: boolean
+ *                 taskFailure:
+ *                   type: object
+ *                   description: present only when isValid is false
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     userId:
+ *                       type: string
+ *                     taskId:
+ *                       type: string
+ *                     taskTypeName:
+ *                       type: string
+ *                     errorMessage:
+ *                       type: string
+ *                       nullable: true
+ *                     count:
+ *                       type: number
+ *                     firstFailedAt:
+ *                       type: string
+ *                       format: date-time
+ *                     lastFailedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: taskId or a result field is missing or invalid
+ */
+router.post('/validate',
+    requireJwt,
+    verifyPrivileges([{ component: 'learning', privilege: 'write' }]),
+    additionInMoreStepsController.validate.bind(additionInMoreStepsController)
+)
+
 export default router

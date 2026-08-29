@@ -1,13 +1,24 @@
-import { AdditionInMoreStepsEntity, listRequestParams } from "../types/AdditionInMoreSteps"
+import {
+    AdditionInMoreStepsEntity,
+    AdditionInMoreStepsResult,
+    AdditionInMoreStepsValidationResult,
+    listRequestParams
+} from "../types/AdditionInMoreSteps"
 import { loggedMethod, logger } from "../utils/logger/logger"
 import { additionInMoreStepsRepository } from "../repositories"
 import { FindOptions, IAdditionInMoreStepsRepository, SortOptions } from "../types/repositories"
 import { BadRequestError, NotFoundError } from "../utils/error/Error"
 import { v4 as uuidv4 } from "uuid"
+import { TaskFailureService } from "./taskFailureService"
+
+const ADDITION_IN_MORE_STEPS_TASK_TYPE_NAME = 'additionInMoreSteps'
 
 export class AdditionInMoreStepsService {
     protected static _instance: AdditionInMoreStepsService
-    constructor(protected additionInMoreStepsRepository: IAdditionInMoreStepsRepository) { }
+    constructor(
+        protected additionInMoreStepsRepository: IAdditionInMoreStepsRepository,
+        protected taskFailureService: TaskFailureService
+    ) { }
 
     /**
      * getInstance function provides that this class work as a singleton
@@ -15,9 +26,48 @@ export class AdditionInMoreStepsService {
     */
     static getInstance() {
         if (!this._instance) {
-            this._instance = new AdditionInMoreStepsService(additionInMoreStepsRepository)
+            this._instance = new AdditionInMoreStepsService(
+                additionInMoreStepsRepository,
+                TaskFailureService.getInstance()
+            )
         }
         return this._instance
+    }
+
+    /**
+     * validate method checks whether the client-submitted result for an additionInMoreSteps task
+     * is correct. When it isn't, it records/upgrades a task failure for (userId, taskId) via
+     * taskFailureService instead of leaving that bookkeeping to the caller.
+     * @param {string} userId
+     * @param {string} taskId
+     * @param {AdditionInMoreStepsResult} result
+     * @returns {AdditionInMoreStepsValidationResult}
+    */
+    @loggedMethod('[AdditionInMoreStepsService] validate')
+    public async validate(
+        userId: string,
+        taskId: string,
+        result: AdditionInMoreStepsResult
+    ): Promise<AdditionInMoreStepsValidationResult> {
+        const isValid = this.isResultCorrect(result)
+        if (isValid) return { isValid }
+
+        const taskFailure = await this.taskFailureService.recordFailure(
+            userId,
+            taskId,
+            ADDITION_IN_MORE_STEPS_TASK_TYPE_NAME
+        )
+        return { isValid, taskFailure }
+    }
+
+    /**
+     * isResultCorrect method is where the actual additionInMoreSteps validation logic belongs
+     * @param {AdditionInMoreStepsResult} result
+     * @returns {boolean}
+    */
+    protected isResultCorrect(_result: AdditionInMoreStepsResult): boolean {
+        // TODO: implement the additionInMoreSteps validation logic
+        throw new Error('Not implemented')
     }
 
     /**
