@@ -18,6 +18,10 @@ const TaskFailureSchema = new mongoose.Schema({
     required: true,
     type: String
   },
+  testId: {
+    required: true,
+    type: String
+  },
   taskTypeName: {
     required: true,
     type: String

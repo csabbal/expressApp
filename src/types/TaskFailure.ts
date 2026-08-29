@@ -3,6 +3,7 @@ import { IEntity } from "./repositories"
 export interface TaskFailureEntity extends IEntity {
     userId: string,
     taskId: string,
+    testId: string,
     taskTypeName: string,
     errorMessage: string | null,
     count: number,

@@ -21,12 +21,15 @@ export class TaskFailureService {
     }
 
     /**
-     * recordFailure method upserts a (userId, taskId) failure record: if one already
+     * recordFailure method upserts a (userId, taskId, testId) failure record: if one already
      * exists it increments count, bumps lastFailedAt, and overwrites taskTypeName/errorMessage;
      * otherwise it creates a new record with count 1 and firstFailedAt = lastFailedAt = now.
+     * Scoping by testId means each test run gets its own failure count for a given task,
+     * instead of accumulating into one lifetime counter per (userId, taskId).
      * @param {string} userId
      * @param {string} taskId
      * @param {string} taskTypeName
+     * @param {string} testId
      * @param {string} errorMessage
      * @returns {TaskFailureEntity}
     */
@@ -35,23 +38,26 @@ export class TaskFailureService {
         userId: string,
         taskId: string,
         taskTypeName: string,
+        testId: string,
         errorMessage: string | null = null
     ): Promise<TaskFailureEntity> {
-        const existing = await this.taskFailureRepository.findOne({ userId, taskId })
+        const existing = await this.taskFailureRepository.findOne({ userId, taskId, testId })
         const now = new Date()
 
         if (existing) {
             const updated = await this.taskFailureRepository.updateOne(
-                { userId, taskId },
+                { userId, taskId, testId },
                 {
                     $inc: { count: 1 },
                     $set: { lastFailedAt: now, errorMessage, taskTypeName }
                 } as any
             )
             // updateOne is typed Promise<T|null> (it targets an arbitrary filter), but we just
-            // confirmed this (userId, taskId) pair exists via findOne above, so this narrows it.
+            // confirmed this (userId, taskId, testId) triple exists via findOne above, so this narrows it.
             if (!updated) {
-                throw new NotFoundError(`task failure not found: ${userId}/${taskId}`, 'task failure not found')
+                throw new NotFoundError(
+                    `task failure not found: ${userId}/${taskId}/${testId}`, 'task failure not found'
+                )
             }
             return updated
         }
@@ -60,6 +66,7 @@ export class TaskFailureService {
             id: uuidv4(),
             userId,
             taskId,
+            testId,
             taskTypeName,
             errorMessage,
             count: 1,

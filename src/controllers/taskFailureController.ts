@@ -31,16 +31,18 @@ export class TaskFailureController {
     @loggedMethod('[TaskFailureController] recordFailure')
     public async recordFailure(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
-            const { taskId, taskTypeName, errorMessage } = req.body
+            const { taskId, taskTypeName, testId, errorMessage } = req.body
             if (!_.isString(taskId) || _.isEmpty(taskId)) throw new BadRequestError('taskId is required')
             if (!_.isString(taskTypeName) || _.isEmpty(taskTypeName)) {
                 throw new BadRequestError('taskTypeName is required')
             }
+            if (!_.isString(testId) || _.isEmpty(testId)) throw new BadRequestError('testId is required')
             if (!_.isNil(errorMessage) && !_.isString(errorMessage)) {
                 throw new BadRequestError('errorMessage must be a string')
             }
             const userId = (req as AppRequest).user.id
-            const taskFailure = await this.taskFailureService.recordFailure(userId, taskId, taskTypeName, errorMessage)
+            const taskFailure = await this.taskFailureService
+                .recordFailure(userId, taskId, taskTypeName, testId, errorMessage)
             res.json(taskFailure)
         } catch (e) {
             next(e)

@@ -16,9 +16,10 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *   post:
  *     summary: Record that the authenticated user failed to solve a task
  *     description: >
- *       Upserts by (userId, taskId): a repeat failure of the same task by the same
- *       user increments count and updates lastFailedAt/errorMessage/taskTypeName on
- *       the existing record instead of creating a new one.
+ *       Upserts by (userId, taskId, testId): a repeat failure of the same task within the
+ *       same test increments count and updates lastFailedAt/errorMessage/taskTypeName on
+ *       the existing record instead of creating a new one. A different testId - e.g. a
+ *       retake of the same task in a later test - starts its own failure count.
  *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
@@ -37,6 +38,10 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *                 type: string
  *                 description: name of the TaskType the task belongs to
  *                 example: additionInMoreSteps
+ *               testId:
+ *                 type: string
+ *                 description: id of the Test this failure happened during
+ *                 example: 9c3e2b7a-5d6e-4a1d-8f10-3f1c9b2a6f7e
  *               errorMessage:
  *                 type: string
  *                 description: optional, what went wrong
@@ -44,6 +49,7 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *             required:
  *               - taskId
  *               - taskTypeName
+ *               - testId
  *     responses:
  *       200:
  *         description: the created or updated task failure record
@@ -57,6 +63,8 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *                 userId:
  *                   type: string
  *                 taskId:
+ *                   type: string
+ *                 testId:
  *                   type: string
  *                 taskTypeName:
  *                   type: string
@@ -72,7 +80,7 @@ const verifyPrivileges = jwtStrategyInstance.verifyPrivileges.bind(jwtStrategyIn
  *                   type: string
  *                   format: date-time
  *       400:
- *         description: taskId or taskTypeName missing or invalid
+ *         description: taskId, taskTypeName or testId missing or invalid
  */
 router.post('/',
     requireJwt,
@@ -103,6 +111,8 @@ router.post('/',
  *                   userId:
  *                     type: string
  *                   taskId:
+ *                     type: string
+ *                   testId:
  *                     type: string
  *                   taskTypeName:
  *                     type: string
@@ -184,6 +194,8 @@ router.get('/all',
  *                     type: string
  *                   taskId:
  *                     type: string
+ *                   testId:
+ *                     type: string
  *                   taskTypeName:
  *                     type: string
  *                   errorMessage:
@@ -258,6 +270,8 @@ router.get('/count',
  *                   type: string
  *                 taskId:
  *                   type: string
+ *                 testId:
+ *                   type: string
  *                 taskTypeName:
  *                   type: string
  *                 errorMessage:
@@ -308,6 +322,8 @@ router.get('/:id',
  *                 userId:
  *                   type: string
  *                 taskId:
+ *                   type: string
+ *                 testId:
  *                   type: string
  *                 taskTypeName:
  *                   type: string
