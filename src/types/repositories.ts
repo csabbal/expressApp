@@ -30,7 +30,7 @@ export interface IRepository<T extends IEntity = IEntity> {
     find(data?: Partial<T>): Promise<T[]>
     findOne(data: Partial<T>): Promise<T|null>
     create(data: Partial<T>): Promise<T>
-    findWithParams(data?: Partial<T> | FindOptions<T>): Promise<T[]>
+    findWithParams(data?: Partial<T> | FindOptions<T>, scope?: Partial<T>): Promise<T[]>
     updateOne(filter: Partial<T>, data: Partial<T>): Promise<T|null>
     deleteOne(filter: Partial<T>): Promise<T|null>
 }

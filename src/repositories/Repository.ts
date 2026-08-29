@@ -47,10 +47,10 @@ export class Repository<T extends IEntity = IEntity> implements IRepository {
         return await this.model.find(data)
     }
 
-    async findWithParams(data?: Partial<MovieEntity> | FindOptions<T>): Promise<T[]> {
+    async findWithParams(data?: Partial<MovieEntity> | FindOptions<T>, scope?: Partial<T>): Promise<T[]> {
 
         const { limit, offset, sort, ...otherFindParams } = data as FindOptions<T>
-        const findParams = this.getFindParams(otherFindParams as any)
+        const findParams = { ...scope, ...this.getFindParams(otherFindParams as any) }
         const query = this.model.find(findParams as any)
 
         if (offset) query.skip(offset)

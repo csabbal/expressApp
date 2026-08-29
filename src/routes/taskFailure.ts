@@ -92,13 +92,13 @@ router.post('/',
  * @swagger
  * /api/taskFailure/all:
  *   get:
- *     summary: Retrieve a list of task failures
+ *     summary: Retrieve the authenticated user's task failures
  *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     responses:
  *       200:
- *         description: A list of task failures
+ *         description: A list of the authenticated user's task failures
  *         content:
  *           application/json:
  *             schema:
@@ -138,7 +138,7 @@ router.get('/all',
  * @swagger
  * /api/taskFailure/list:
  *   get:
- *     summary: Retrieve a list of task failures
+ *     summary: Retrieve the authenticated user's task failures
  *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
@@ -180,7 +180,7 @@ router.get('/all',
  *         description: The sorting options for the task failures, including field and order
  *     responses:
  *       200:
- *         description: A list of task failures
+ *         description: A list of the authenticated user's task failures
  *         content:
  *           application/json:
  *             schema:
@@ -220,13 +220,13 @@ router.get('/list',
  * @swagger
  * /api/taskFailure/count:
  *   get:
- *     summary: Retrieve the total number of task failures
+ *     summary: Retrieve the total number of the authenticated user's task failures
  *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
  *     responses:
  *       200:
- *         description: the total number of task failures
+ *         description: the total number of the authenticated user's task failures
  *         content:
  *           application/json:
  *             schema:
@@ -245,7 +245,7 @@ router.get('/count',
  * @swagger
  * /api/taskFailure/{id}:
  *   get:
- *     summary: Retrieve a concrete task failure record
+ *     summary: Retrieve a concrete task failure record belonging to the authenticated user
  *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
@@ -286,7 +286,7 @@ router.get('/count',
  *                   type: string
  *                   format: date-time
  *       404:
- *         description: Task failure not found
+ *         description: Task failure not found, or it belongs to a different user
  */
 router.get('/:id',
     requireJwt,
@@ -298,7 +298,7 @@ router.get('/:id',
  * @swagger
  * /api/taskFailure/{id}:
  *   delete:
- *     summary: Delete a concrete task failure record
+ *     summary: Delete a concrete task failure record belonging to the authenticated user
  *     tags: [Learning]
  *     security:
  *        - BearerAuth: []
@@ -339,7 +339,7 @@ router.get('/:id',
  *                   type: string
  *                   format: date-time
  *       404:
- *         description: Task failure not found
+ *         description: Task failure not found, or it belongs to a different user
  */
 router.delete('/:id',
     requireJwt,

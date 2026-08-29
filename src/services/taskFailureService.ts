@@ -77,55 +77,69 @@ export class TaskFailureService {
     }
 
     /**
-     * getAll method take care of fetching all task failures from the db
-     * @returns {TaskFailureEntity[]} returns with all TaskFailureEntity via taskFailureRepository
+     * getAll method take care of fetching all task failures belonging to the given user from the db
+     * @param {string} userId
+     * @returns {TaskFailureEntity[]} returns with the user's TaskFailureEntity records via taskFailureRepository
     */
     @loggedMethod('[TaskFailureService] getAll')
-    public async getAll(): Promise<TaskFailureEntity[]> {
-        const taskFailures = await this.taskFailureRepository.find()
+    public async getAll(userId: string): Promise<TaskFailureEntity[]> {
+        const taskFailures = await this.taskFailureRepository.find({ userId } as Partial<TaskFailureEntity>)
         return taskFailures
     }
 
     /**
-     * count method take care of fetching the total number of task failures from the db
-     * @returns {number} returns with the number of task failures via taskFailureRepository
+     * count method take care of fetching the total number of task failures belonging to the
+     * given user from the db
+     * @param {string} userId
+     * @returns {number} returns with the number of the user's task failures via taskFailureRepository
     */
     @loggedMethod('[TaskFailureService] count')
-    public async count(): Promise<number> {
-        const taskFailures = await this.taskFailureRepository.find()
+    public async count(userId: string): Promise<number> {
+        const taskFailures = await this.taskFailureRepository.find({ userId } as Partial<TaskFailureEntity>)
         return taskFailures.length
     }
 
     /**
-     * getList method take care of fetching task failures from the db
+     * getList method take care of fetching task failures belonging to the given user from the db,
      * based on the offset, limit and the sort paramaters what client define in params attribute
-     * @returns {TaskFailureEntity[]} returns with all TaskFailureEntity based on the options via taskFailureRepository
+     * @param {string} userId
+     * @param {listRequestParams} queryParams
+     * @returns {TaskFailureEntity[]} returns with the user's TaskFailureEntity based on the options
     */
     @loggedMethod('[TaskFailureService] getList')
-    public async getList(queryParams: listRequestParams): Promise<TaskFailureEntity[]> {
+    public async getList(userId: string, queryParams: listRequestParams): Promise<TaskFailureEntity[]> {
         const params = this.mapRequestParamToFind(queryParams)
-        const taskFailures = await this.taskFailureRepository.findWithParams(params)
+        const taskFailures = await this.taskFailureRepository.findWithParams(
+            params,
+            { userId } as Partial<TaskFailureEntity>
+        )
         return taskFailures
     }
 
     /**
-     * getById method take care of fetching one task failure based on the id from the db
+     * getById method take care of fetching one task failure based on the id from the db, scoped
+     * to records belonging to the given user
+     * @param {string} userId
+     * @param {string} id
      * @returns {TaskFailureEntity} returns with the found TaskFailureEntity via taskFailureRepository
     */
     @loggedMethod('[TaskFailureService] getById')
-    public async getById(id: string): Promise<TaskFailureEntity> {
-        const taskFailure = await this.taskFailureRepository.findOne({ id })
+    public async getById(userId: string, id: string): Promise<TaskFailureEntity> {
+        const taskFailure = await this.taskFailureRepository.findOne({ id, userId })
         if (!taskFailure) throw new NotFoundError(`task failure not found: ${id}`, 'task failure not found')
         return taskFailure
     }
 
     /**
-     * delete method take care of deleting one task failure based on the id from the db
+     * delete method take care of deleting one task failure based on the id from the db, scoped
+     * to records belonging to the given user
+     * @param {string} userId
+     * @param {string} id
      * @returns {TaskFailureEntity} returns with the deleted TaskFailureEntity via taskFailureRepository
     */
     @loggedMethod('[TaskFailureService] delete')
-    public async delete(id: string): Promise<TaskFailureEntity> {
-        const taskFailure = await this.taskFailureRepository.deleteOne({ id })
+    public async delete(userId: string, id: string): Promise<TaskFailureEntity> {
+        const taskFailure = await this.taskFailureRepository.deleteOne({ id, userId })
         if (!taskFailure) throw new NotFoundError(`task failure not found: ${id}`, 'task failure not found')
         return taskFailure
     }
