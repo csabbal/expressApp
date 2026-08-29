@@ -49,6 +49,18 @@ export class RewardService {
     }
 
     /**
+     * countWon method returns the total number of rewards the given user has won
+     * @param {string} userId
+     * @returns {number}
+    */
+    @loggedMethod('[RewardService] countWon')
+    public async countWon(userId: string): Promise<number> {
+        if (!userId) throw new BadRequestError('userId is required')
+        const rewards = await this.rewardRepository.find({ userId })
+        return rewards.length
+    }
+
+    /**
      * getWonImageIds method returns the ids of every image the given user has already won
      * @param {string} userId
      * @returns {string[]}
@@ -74,15 +86,15 @@ export class RewardService {
     }
 
     /**
-     * getUnwonPool method resolves the full 'taskType'-category file pool, then filters out
+     * getUnwonPool method resolves the full 'reward'-category file pool, then filters out
      * every image the given user has already won. Shared by grantReward and
      * getAvailableImageIds, which both need exactly this computation.
      * @param {string} userId
      * @returns {FileEntity[]}
     */
     private async getUnwonPool(userId: string): Promise<FileEntity[]> {
-        // the reward pool is every taskType-category image, regardless of the task's own category
-        const pool = await this.fileService.getAllFiles('taskType')
+        // the reward pool is every reward-category image, regardless of the task's own category
+        const pool = await this.fileService.getAllFiles('task')
         const wonImageIds = new Set((await this.rewardRepository.find({ userId })).map(reward => reward.imageId))
         return pool.filter(file => !wonImageIds.has(file.id))
     }

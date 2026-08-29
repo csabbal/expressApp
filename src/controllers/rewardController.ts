@@ -80,4 +80,22 @@ export class RewardController {
             next(e)
         }
     }
+
+    /**
+     * This controller method is about to call rewardService countWon function with the
+     * authenticated user's id, in order to fetch the total number of rewards that user has won
+     * @param {Request} req
+     * @param {Response} res
+     * @param {NextFunction} next
+     */
+    @loggedMethod('[RewardController] countWon')
+    public async countWon(req: express.Request, res: express.Response, next: express.NextFunction) {
+        try {
+            const userId = (req as AppRequest).user.id
+            const count = await this.rewardService.countWon(userId)
+            res.json({ count })
+        } catch (e) {
+            next(e)
+        }
+    }
 }

@@ -124,4 +124,29 @@ router.get('/available',
     rewardController.getAvailable.bind(rewardController)
 )
 
+/**
+ * @swagger
+ * /api/reward/won/count:
+ *   get:
+ *     summary: Retrieve the total number of rewards the authenticated user has won
+ *     tags: [Learning]
+ *     security:
+ *        - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: the total number of rewards won by this user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: number
+ */
+router.get('/won/count',
+    requireJwt,
+    verifyPrivileges([{ component: 'learning', privilege: 'read' }]),
+    rewardController.countWon.bind(rewardController)
+)
+
 export default router
