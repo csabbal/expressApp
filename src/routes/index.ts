@@ -10,6 +10,7 @@ import additionInMoreStepsRouter from './additionInMoreSteps'
 import subtractionInMoreStepsRouter from './subtractionInMoreSteps'
 import taskFailureRouter from './taskFailure'
 import rewardRouter from './reward'
+import testRouter from './test'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
 import * as packageJson from '../../package.json'
@@ -56,7 +57,7 @@ const swaggerOptions = {
             { name: 'Movie', description: 'Movie (example) - backed by the movie database' },
             { name: 'General', description: 'File - backed by the general database' },
             { name: 'Learning', description: 'TaskType/AdditionInMoreSteps/SubtractionInMoreSteps ' +
-                '(example)/TaskFailure/Reward - backed by the learning database' },
+                '(example)/TaskFailure/Reward/Test - backed by the learning database' },
         ],
         components: {
             securitySchemes: {
@@ -93,7 +94,7 @@ router.use('/file', fileRouter) // [INFRASTRUCTURE]
 // [BUSINESS] Register your domain routes here.
 // When bootstrapping a new app: remove the movie/taskType/additionInMoreSteps/
 // subtractionInMoreSteps imports at the top and the lines below, then add
-// your own routes following the same pattern. taskFailure/reward are real
+// your own routes following the same pattern. taskFailure/reward/test are real
 // business logic (not example domain code) - keep them.
 // ================================================================
 router.use('/movie', movieRouter) // [EXAMPLE]
@@ -102,5 +103,6 @@ router.use('/additionInMoreSteps', additionInMoreStepsRouter) // [EXAMPLE]
 router.use('/subtractionInMoreSteps', subtractionInMoreStepsRouter) // [EXAMPLE]
 router.use('/taskFailure', taskFailureRouter)
 router.use('/reward', rewardRouter)
+router.use('/test', testRouter)
 
 export default router

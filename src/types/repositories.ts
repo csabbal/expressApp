@@ -7,6 +7,7 @@ import { AdditionInMoreStepsEntity } from "./AdditionInMoreSteps"
 import { SubtractionInMoreStepsEntity } from "./SubtractionInMoreSteps"
 import { TaskFailureEntity } from "./TaskFailure"
 import { RewardEntity } from "./Reward"
+import { TestEntity } from "./Test"
 
 
 export interface IEntity {
@@ -27,7 +28,7 @@ export interface FindOptions<T extends IEntity = IEntity> {
 export interface IRepository<T extends IEntity = IEntity> {
     find(data?: Partial<T>): Promise<T[]>
     findOne(data: Partial<T>): Promise<T|null>
-    create(data: any): Promise<any>
+    create(data: Partial<T>): Promise<T>
     findWithParams(data?: Partial<T> | FindOptions<T>): Promise<T[]>
     updateOne(filter: Partial<T>, data: Partial<T>): Promise<T|null>
     deleteOne(filter: Partial<T>): Promise<T|null>
@@ -52,6 +53,7 @@ export interface ISubtractionInMoreStepsRepository<
 > extends IRepository<T> {}
 export interface ITaskFailureRepository<T extends TaskFailureEntity=TaskFailureEntity> extends IRepository<T> {}
 export interface IRewardRepository<T extends RewardEntity=RewardEntity> extends IRepository<T> {}
+export interface ITestRepository<T extends TestEntity=TestEntity> extends IRepository<T> {}
 
 export interface IRepositories {
     // [INFRASTRUCTURE] Keep these — required for auth to work
@@ -72,4 +74,5 @@ export interface IRepositories {
     SubtractionInMoreSteps?: ISubtractionInMoreStepsRepository<SubtractionInMoreStepsEntity> // [EXAMPLE]
     TaskFailure?: ITaskFailureRepository<TaskFailureEntity>
     Reward?: IRewardRepository<RewardEntity>
+    Test?: ITestRepository<TestEntity>
 }
